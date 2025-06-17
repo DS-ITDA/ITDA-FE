@@ -13,7 +13,7 @@ const Login = () => {
   const handleConfirm = () => navigate('/');
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       로그인
       <Button selection={1} content={<div>홈</div>} onClick={() => navigate('/')} type="button" />
       <Button
@@ -24,9 +24,18 @@ const Login = () => {
       />
       <ToastMessage text={'준비 중...'} />
       <SpeechBubble
+        selection={'up'}
         content={
           <div>
             스토리는 <span style={{ color: '#533800', fontWeight: 600 }}>100자-800자</span>로 구성해주세요.
+          </div>
+        }
+      />
+      <SpeechBubble
+        selection={'down'}
+        content={
+          <div>
+            아래 스토리는 <span style={{ color: '#533800', fontWeight: 600 }}>100자-800자</span>로 구성해주세요.
           </div>
         }
       />
