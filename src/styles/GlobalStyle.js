@@ -42,11 +42,14 @@ const GlobalStyle = createGlobalStyle`
     font-display: swap;
   }
 
+  *{
+    box-sizing: border-box;
+  }
+
   html, body{
     font-family: 'Pretendard', 'HanSerif';
     background-color: #F6F5F3;
     margin: 0;
-    box-sizing: border-box;
   }
 
   a {
