@@ -1,4 +1,18 @@
 import styled from 'styled-components';
+import palette from '@styles/theme';
+
+export const SplashPage = styled.div`
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${palette.main.brown};
+`;
+
+export const SplashLogo = styled.img`
+  width: 144.16px;
+  height: 211.39px;
+`;
 
 export const LoginPage = styled.div`
   height: calc(100dvh - 130px);
