@@ -1,45 +1,48 @@
 import * as L from '@login/LoginStyle';
-import { useNavigate } from 'react-router-dom';
-import Button from '@components/common/Button/Button';
-import ToastMessage from '@components/common/ToastMessage/ToastMessage';
-import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
-
-import Back from '@assets/back-black.svg';
+import logo from '@assets/logo.svg';
+import splashLogo from '@assets/splash-logo.svg';
+import kakao from '@assets/login/kakao.svg';
+import naver from '@assets/login/naver.svg';
+import google from '@assets/login/google.svg';
+import { useState, useEffect } from 'react';
 
 const Login = () => {
-  const navigate = useNavigate();
+  const [splash, setSplash] = useState(true);
 
-  const handleCancel = () => navigate('/');
-  const handleConfirm = () => navigate('/');
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplash(false);
+    }, 2500);
+
+    return () => clearTimeout(timer); // 컴포넌트 언마운트 시 타이머 제거
+  }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      로그인
-      <Button selection={1} content={<div>홈</div>} onClick={() => navigate('/')} type="button" />
-      <Button
-        selection={2}
-        content={[<img src={Back} alt="prev" />, <img src={Back} alt="next" />]}
-        onClick={[handleCancel, handleConfirm]}
-        type="button"
-      />
-      <ToastMessage text={'준비 중...'} />
-      <SpeechBubble
-        selection={'up'}
-        content={
-          <div>
-            스토리는 <span style={{ color: '#533800', fontWeight: 600 }}>100자-800자</span>로 구성해주세요.
-          </div>
-        }
-      />
-      <SpeechBubble
-        selection={'down'}
-        content={
-          <div>
-            아래 스토리는 <span style={{ color: '#533800', fontWeight: 600 }}>100자-800자</span>로 구성해주세요.
-          </div>
-        }
-      />
-    </div>
+    <>
+      {splash ? (
+        <L.SplashPage>
+          <L.SplashLogo src={splashLogo} />
+        </L.SplashPage>
+      ) : (
+        <L.LoginPage>
+          <L.Logo src={logo} />
+          <L.Login>
+            <L.SocialLogin style={{ backgroundColor: '#FEE500' }}>
+              <L.SocialLogo src={kakao} />
+              <L.SocialText>카카오로 시작하기</L.SocialText>
+            </L.SocialLogin>
+            <L.SocialLogin style={{ backgroundColor: '#04C75B' }}>
+              <L.SocialLogo src={naver} />
+              <L.SocialText>네이버로 시작하기</L.SocialText>
+            </L.SocialLogin>
+            <L.SocialLogin style={{ backgroundColor: '#FFF' }}>
+              <L.SocialLogo src={google} />
+              <L.SocialText>구글 시작하기</L.SocialText>
+            </L.SocialLogin>
+          </L.Login>
+        </L.LoginPage>
+      )}
+    </>
   );
 };
 
