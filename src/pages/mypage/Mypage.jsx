@@ -7,8 +7,10 @@ import checkBrown from '@assets/mypage/check_brown.svg';
 import divider from '@assets/mypage/divider.svg';
 import palette from '@styles/theme';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Mypage = () => {
+  const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
 
   return (
@@ -17,7 +19,11 @@ const Mypage = () => {
         <span style={{ fontSize: '20px', fontWeight: 600 }}>조희원</span> 님
       </M.Nickname>
 
-      <M.Button style={{ backgroundColor: palette.main.brown30 }}>
+      <M.Button
+        style={{ backgroundColor: palette.main.brown30 }}
+        onClick={() => {
+          navigate('/view');
+        }}>
         <M.ButtonLeft>
           <M.Img src={book} />
           <M.Text>스토리북 열람</M.Text>
