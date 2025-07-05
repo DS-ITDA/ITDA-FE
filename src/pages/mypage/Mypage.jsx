@@ -84,7 +84,7 @@ const Mypage = () => {
 
       {modal && (
         <>
-          <M.Overlay />
+          <M.Overlay onClick={() => setModal('')} />
           <Modal
             content={<div>사진</div>}
             info={MODAL_CONFIG[modal].info}
