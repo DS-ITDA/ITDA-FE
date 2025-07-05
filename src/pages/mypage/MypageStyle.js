@@ -68,3 +68,13 @@ export const UserBtn = styled.div`
   padding: 14px;
   font-size: 14px;
 `;
+
+export const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 500;
+  background-color: ${palette.grayscale.black75};
+`;

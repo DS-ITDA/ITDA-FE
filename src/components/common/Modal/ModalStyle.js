@@ -2,8 +2,12 @@ import styled from 'styled-components';
 import palette from '@styles/theme';
 
 export const ModalPage = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: calc(100% - 70px);
-  margin: 0 35px;
+  z-index: 1000;
 `;
 
 export const Modal = styled.div`

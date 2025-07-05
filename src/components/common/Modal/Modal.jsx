@@ -1,4 +1,4 @@
-import * as M from '@components/mypage/Modal/ModalStyle';
+import * as M from '@components/common/Modal/ModalStyle';
 import palette from '@styles/theme';
 
 /**

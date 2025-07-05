@@ -1,4 +1,5 @@
 import * as M from '@mypage/MypageStyle';
+import Modal from '@components/common/Modal/Modal';
 import book from '@assets/mypage/book-24.svg';
 import notifications from '@assets/mypage/notifications-24.svg';
 import goStory from '@assets/mypage/arrow_outward.svg';
@@ -12,6 +13,24 @@ import { useNavigate } from 'react-router-dom';
 const Mypage = () => {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
+  const [modal, setModal] = useState('');
+
+  const MODAL_CONFIG = {
+    logout: {
+      info: '로그아웃하시겠습니까?',
+      btnText: '로그아웃',
+      onClick: () => {
+        console.log('로그아웃');
+      },
+    },
+    withdraw: {
+      info: '회원 탈퇴하시겠습니까?',
+      btnText: '회원 탈퇴',
+      onClick: () => {
+        console.log('탈퇴');
+      },
+    },
+  };
 
   return (
     <M.MyPage>
@@ -49,9 +68,35 @@ const Mypage = () => {
       </M.Divider>
 
       <M.UserBtns>
-        <M.UserBtn>로그아웃</M.UserBtn>
-        <M.UserBtn>회원 탈퇴</M.UserBtn>
+        <M.UserBtn
+          onClick={() => {
+            setModal('logout');
+          }}>
+          로그아웃
+        </M.UserBtn>
+        <M.UserBtn
+          onClick={() => {
+            setModal('withdraw');
+          }}>
+          회원 탈퇴
+        </M.UserBtn>
       </M.UserBtns>
+
+      {modal && (
+        <>
+          <M.Overlay />
+          <Modal
+            content={<div>사진</div>}
+            info={MODAL_CONFIG[modal].info}
+            btnText={MODAL_CONFIG[modal].btnText}
+            onClose={() => setModal('')}
+            onClick={() => {
+              MODAL_CONFIG[modal].onClick();
+              setModal('');
+            }}
+          />
+        </>
+      )}
     </M.MyPage>
   );
 };
