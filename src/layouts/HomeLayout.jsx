@@ -1,11 +1,14 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from '@components/common/Navbar/Navbar';
+import { Suspense } from 'react';
 
 const HomeLayout = () => {
   return (
     <>
       <Navbar />
-      <Outlet />
+      <Suspense fallback={null}>
+        <Outlet />
+      </Suspense>
     </>
   );
 };
