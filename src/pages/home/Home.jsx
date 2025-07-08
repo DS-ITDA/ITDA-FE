@@ -8,6 +8,8 @@ import books from '@data/books.json';
 import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
 import Button from '@components/common/Button/Button';
 import StoryIcon from '@assets/home/storybook-24.svg';
+import useImgUpload from '@hooks/useImgUpload';
+import CloseIcon from '@assets/home/x-24.svg';
 
 const Home = () => {
   const length = books.length;
@@ -19,6 +21,9 @@ const Home = () => {
   const [booksArr, setBooksArr] = useState(() => (length > 3 ? books.concat(books) : books));
 
   const sliderRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const { selectedImg, setSelectedImg, handleUpload } = useImgUpload();
 
   const handleBookcoverClick = (id) => {
     const idx = booksArr.findIndex((book) => book.id === id);
@@ -62,6 +67,13 @@ const Home = () => {
       });
     }
   }, [selectedBookId, selectedIdx]);
+
+  const handleRemoveImg = () => {
+    setSelectedImg(null);
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+  };
 
   return (
     <H.Home>
@@ -116,6 +128,17 @@ const Home = () => {
       </H.SliderWrapper>
 
       <H.ButtonWrapper>
+        {selectedImg && (
+          <H.UploadDiv>
+            <H.CloseDiv onClick={handleRemoveImg}>
+              <img src={CloseIcon} alt="닫기" />
+            </H.CloseDiv>
+            <H.SelectedImg>
+              <img src={selectedImg.thumbnail} alt="사진 선택" />
+            </H.SelectedImg>
+          </H.UploadDiv>
+        )}
+
         <Button
           selection={1}
           content={
@@ -126,7 +149,14 @@ const Home = () => {
                   스토리북 만들기
                 </div>
               </label>
-              <input type="file" name="file" id="file" style={{ display: 'none' }} />
+              <input
+                type="file"
+                name="file"
+                id="file"
+                ref={inputRef}
+                onChange={handleUpload}
+                style={{ display: 'none' }}
+              />
             </>
           }
           onClick={() => {}}

@@ -183,3 +183,46 @@ export const ButtonWrapper = styled.div`
   justify-content: flex-end;
   margin-bottom: 15px;
 `;
+
+export const UploadDiv = styled.div`
+  width: 100%;
+  padding: 0 10px;
+  position: relative;
+
+  margin-bottom: 6px;
+`;
+
+export const SelectedImg = styled.div`
+  width: 100%;
+  height: 197px;
+  background-color: ${palette.grayscale.grayDeep};
+
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.05);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+`;
+
+export const CloseDiv = styled.div`
+  position: absolute;
+  top: 7px;
+  right: 17px;
+
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+
+  background-color: ${palette.main.ivory};
+  border: 1px solid ${palette.main.beige};
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+`;
