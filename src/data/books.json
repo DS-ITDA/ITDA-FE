@@ -1,0 +1,53 @@
+[
+  {
+    "id": 1,
+    "title": "귀여운 나",
+    "color": "#DDBCB7",
+    "cover": "exampleImage.jpg",
+    "date": "25.05.23"
+  },
+  {
+    "id": 2,
+    "title": "제목이 넘어가너무길어길어",
+    "color": "#C4DDB7",
+    "cover": "exampleImage2.jpg",
+    "date": "25.02.23"
+  },
+  { "id": 3, "title": "제목1", "color": "#B7D3DD", "cover": "exampleImage3.jpg", "date": "23.05.23" },
+  {
+    "id": 4,
+    "title": "제목이 넘어가너무길어길어",
+    "color": "#C4DDB7",
+    "cover": "exampleImage4.jpg",
+    "date": "25.05.01"
+  },
+  {
+    "id": 5,
+    "title": "제목이 넘어가너무길어길어ㄷㄱㅅㄷㄱㅅㄷㄱㅅ",
+    "color": "#B7D3DD",
+    "cover": "exampleImage.jpg",
+    "date": "25.02.23"
+  },
+  {
+    "id": 6,
+    "title": "제목20자제목20자제목20자제목20자",
+    "color": "#D1B7DD",
+    "cover": "exampleImage.jpg",
+    "date": "25.05.20"
+  },
+  {
+    "id": 7,
+    "title": "제목이 넘어가너무길어길어",
+    "color": "#DDD2B7",
+    "cover": "exampleImage.jpg",
+    "date": "22.05.23"
+  },
+  {
+    "id": 8,
+    "title": "제목이 넘어가너무길어길어",
+    "color": "#D1B7DD",
+    "cover": "exampleImage.jpg",
+    "date": "25.05.03"
+  },
+  { "id": 9, "title": "제목이 넘어가너무길어길어", "color": "#C4DDB7", "cover": "exampleImage.jpg", "date": "25.10.23" }
+]
