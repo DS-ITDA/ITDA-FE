@@ -10,15 +10,15 @@
     "id": 2,
     "title": "제목이 넘어가너무길어길어",
     "color": "#C4DDB7",
-    "cover": "exampleImage.jpg",
+    "cover": "exampleImage2.jpg",
     "date": "25.02.23"
   },
-  { "id": 3, "title": "제목1", "color": "#B7D3DD", "cover": "exampleImage.jpg", "date": "23.05.23" },
+  { "id": 3, "title": "제목1", "color": "#B7D3DD", "cover": "exampleImage3.jpg", "date": "23.05.23" },
   {
     "id": 4,
     "title": "제목이 넘어가너무길어길어",
     "color": "#C4DDB7",
-    "cover": "exampleImage.jpg",
+    "cover": "exampleImage4.jpg",
     "date": "25.05.01"
   },
   {

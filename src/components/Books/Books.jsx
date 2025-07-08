@@ -1,18 +1,18 @@
-import * as B from '@components/Books/BooksStyle';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import books from '@data/books.json';
-import palette from '../../styles/theme';
-import { useRef } from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
 
-const Books = () => {
+import * as B from '@components/Books/BooksStyle';
+import books from '@data/books.json';
+import palette from '@styles/theme';
+
+const Books = ({ selectedBookId, onSelectBook }) => {
   const MIN_HEIGHT = 100;
   const MAX_HEIGHT = 160;
   const MAX_TITLE_LENGTH = 20;
 
   const divRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,11 +55,20 @@ const Books = () => {
     <B.Books $width={dimensions.width} $height={dimensions.height}>
       <B.Div ref={divRef}>
         <B.BookContainer>
-          {books.map((book) => (
-            <B.Book key={book.id} height={getBookHeight(book.title)} color={book.color}>
-              {book.title}
-            </B.Book>
-          ))}
+          {books.map((book) => {
+            const isSelected = book.id === selectedBookId;
+            const bookColor = isSelected ? book.color : palette.main.beige;
+
+            return (
+              <B.Book
+                key={book.id}
+                height={getBookHeight(book.title)}
+                color={bookColor}
+                onClick={() => onSelectBook(book.id)}>
+                {book.title}
+              </B.Book>
+            );
+          })}
           {books.length < 3 && (
             <B.Book height="100" color={palette.main.beige} onClick={() => navigate}>
               <B.Plus>+</B.Plus>
