@@ -1,7 +1,11 @@
 import styled, { keyframes, css } from 'styled-components';
 import palette from '@styles/theme';
 
-export const Home = styled.div``;
+export const Home = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 55px);
+`;
 
 export const UserContainer = styled.div`
   width: 100%;
@@ -82,7 +86,7 @@ const slide = keyframes`
 `;
 
 export const SliderWrapper = styled.div`
-  overflow: hidden;
+  overflow: scroll;
 
   width: 100%;
   height: 182px;
@@ -99,10 +103,10 @@ export const BookSlider = styled.div`
   display: flex;
   align-items: center;
 
-  animation: ${({ $length }) =>
-    $length > 3
+  animation: ${({ $length, $paused }) =>
+    $length > 3 && !$paused
       ? css`
-          ${slide} 20s linear infinite
+          ${slide} 10s linear infinite
         `
       : undefined};
 `;
@@ -172,4 +176,10 @@ export const ArrowWrapper = styled.div`
   justify-content: flex-end;
 `;
 
-export const ButtonWrapper = styled.div``;
+export const ButtonWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+`;

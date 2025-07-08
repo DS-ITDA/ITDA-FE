@@ -1,23 +1,67 @@
-import * as H from '@home/HomeStyle';
+import { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import * as H from '@home/HomeStyle';
 import Books from '@components/Books/Books';
 import Arrow20 from '@assets/home/arrow-up_right-20.svg';
 import books from '@data/books.json';
 import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
-import { useState } from 'react';
 import Button from '@components/common/Button/Button';
 import StoryIcon from '@assets/home/storybook-24.svg';
 
 const Home = () => {
-  const navigate = useNavigate();
   const length = books.length;
-  const [show, setShow] = useState(false);
-  let booksArr = [];
-  if (length > 3) {
-    booksArr = books.concat(books);
-  } else {
-    booksArr = books;
-  }
+
+  const navigate = useNavigate();
+
+  const [selectedIdx, setSelectedIdx] = useState(null);
+  const [selectedBookId, setSelectedBookId] = useState(null);
+  const [booksArr, setBooksArr] = useState(() => (length > 3 ? books.concat(books) : books));
+
+  const sliderRef = useRef(null);
+
+  const handleBookcoverClick = (id) => {
+    const idx = booksArr.findIndex((book) => book.id === id);
+
+    if (idx === -1) return;
+
+    const clickedBook = booksArr[idx];
+
+    if (selectedIdx === 0 && clickedBook.id === id) {
+      setSelectedIdx(null);
+      setSelectedBookId(null);
+      return;
+    }
+
+    const bookPosition = sliderRef.current?.querySelectorAll('[data-book-id]');
+    const clickedPosition = Array.from(bookPosition).find((el) => el.getAttribute('data-book-id') === String(id));
+
+    if (clickedPosition && sliderRef?.current) {
+      const slider = sliderRef.current;
+      const prevOffset = clickedPosition.offsetLeft;
+
+      const newList = [...booksArr.slice(idx), ...booksArr.slice(0, idx)];
+      setBooksArr(newList);
+      setSelectedIdx(0);
+      setSelectedBookId(id);
+
+      requestAnimationFrame(() => {
+        slider.scrollLeft = prevOffset;
+
+        requestAnimationFrame(() => {
+          sliderRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
+        });
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (selectedIdx === 0 && selectedBookId !== null) {
+      requestAnimationFrame(() => {
+        sliderRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
+      });
+    }
+  }, [selectedBookId, selectedIdx]);
 
   return (
     <H.Home>
@@ -31,9 +75,10 @@ const Home = () => {
               <img src={Arrow20} alt="이미지 생성하러 가기" />
             </H.ArrowDiv>
           </H.Title>
-          <Books />
+          <Books selectedBookId={selectedBookId} onSelectBook={handleBookcoverClick} />
         </H.User>
       </H.UserContainer>
+
       {length > 6 && (
         <SpeechBubble
           selection="up"
@@ -44,13 +89,14 @@ const Home = () => {
           }
         />
       )}
-      <H.SliderWrapper>
-        <H.BookSlider $length={length}>
+
+      <H.SliderWrapper ref={sliderRef}>
+        <H.BookSlider $length={length} $paused={selectedIdx !== null}>
           {booksArr.map((book, idx) => (
-            <H.BookCover onClick={() => setShow((prev) => !prev)} key={idx}>
+            <H.BookCover onClick={() => handleBookcoverClick(book.id)} key={idx} data-book-id={book.id}>
               <img src={`/images/${book.cover}`} alt={book.title} />
 
-              {show && (
+              {selectedBookId === book.id && idx === 0 && (
                 <H.BookOverlay>
                   <H.BookInfo>
                     <p>{book.title}</p>

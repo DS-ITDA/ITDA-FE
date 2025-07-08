@@ -20,7 +20,6 @@ export const Div = styled.div`
 export const BookContainer = styled.div`
   display: flex;
   flex-direction: column;
-  /* justify-content: center; */
 
   gap: 5px;
   margin-left: -2px;
@@ -41,6 +40,8 @@ export const Book = styled.div`
   width: ${({ height }) => `${height}px`};
   height: 29px;
   background-color: ${({ color }) => color};
+  box-shadow: 0px 0px 20px 0px ${({ color }) => color};
+  transition: all 300ms ease-in-out;
 
   display: flex;
   align-items: center;
@@ -58,6 +59,8 @@ export const Book = styled.div`
 
   flex-shrink: 0;
   display: inline-block;
+
+  cursor: pointer;
 `;
 
 export const Plus = styled.span`
