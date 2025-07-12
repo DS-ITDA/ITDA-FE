@@ -2,18 +2,17 @@ import * as S from '@components/SkeletonUi/SkeletonUiStyle';
 import * as H from '@home/HomeStyle';
 import ToastMessage from '../common/ToastMessage/ToastMessage';
 
-const SkeletonUi = ({ selectedImg }) => {
+const SkeletonUi = () => {
   return (
-    <S.Ai>
+    <S.SkeletonUi>
       <H.UploadDiv>
-        <H.SelectedImg>
-          <img src={selectedImg} alt="사진 선택" />
+        <S.SelectedImg>
           <S.Scan />
 
           <S.Message>
             <ToastMessage text="스캔 중 ..." />
           </S.Message>
-        </H.SelectedImg>
+        </S.SelectedImg>
       </H.UploadDiv>
 
       <S.TextSkeleton>
@@ -34,7 +33,7 @@ const SkeletonUi = ({ selectedImg }) => {
           <S.Skeleton />
         </S.GridSkeleton>
       </S.Wrapper>
-    </S.Ai>
+    </S.SkeletonUi>
   );
 };
 

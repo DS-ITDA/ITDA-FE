@@ -1,10 +1,16 @@
 import styled, { keyframes } from 'styled-components';
 import palette from '@styles/theme';
+import * as H from '@home/HomeStyle';
 
-export const Ai = styled.div`
+export const SkeletonUi = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100% - 55px);
+  height: calc(100dvh - 55px);
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 `;
 
 export const ImgWrapper = styled.div`
@@ -100,4 +106,8 @@ export const Message = styled.div`
   justify-content: center;
 
   z-index: 50;
+`;
+
+export const SelectedImg = styled(H.SelectedImg)`
+  background-color: transparent;
 `;

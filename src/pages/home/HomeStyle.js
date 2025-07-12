@@ -4,7 +4,7 @@ import palette from '@styles/theme';
 export const Home = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 55px);
+  height: calc(100dvh - 55px);
 `;
 
 export const UserContainer = styled.div`
