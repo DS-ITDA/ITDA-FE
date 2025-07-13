@@ -46,13 +46,15 @@ export const WhiteDivWrapper = styled.div`
   flex: 1;
 
   display: flex;
+  flex-direction: column;
+  gap: 11px;
   align-items: flex-start;
 `;
 
 export const WhiteDiv = styled.div`
   width: 100%;
-  height: 100%;
-  padding: 20px 17px;
+  /* height: 100%; */
+  padding: ${({ $padding }) => ($padding && `20px ${$padding}px`) || '20px 17px'};
 
   display: flex;
   flex-direction: column;
@@ -88,7 +90,7 @@ export const Grid = styled.div`
 export const ImgDiv = styled.div`
   width: 100%;
   max-width: 100%;
-  height: 100%;
+  height: 150px;
   overflow: hidden;
 
   border-radius: 7px;
@@ -129,4 +131,131 @@ export const ButtonDiv = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   margin-bottom: 15px;
+`;
+
+export const SelectDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  p {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 140%;
+    letter-spacing: -0.32px;
+  }
+`;
+
+export const SelectWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const SelectBtn = styled.button`
+  border: none;
+  outline: none;
+
+  width: 184px;
+
+  border-radius: 10px;
+  background-color: ${palette.main.ivory};
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 5px 8px 10px;
+
+  color: ${palette.grayscale.black};
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+
+  position: relative;
+`;
+
+export const ToggleImg = styled.div`
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.1));
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+`;
+
+export const List = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 3px;
+
+  border-radius: 10px;
+  background-color: ${palette.grayscale.white};
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  color: ${palette.grayscale.black};
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+
+  li {
+    border-radius: 10px;
+    padding: 8px 5px 8px 10px;
+
+    background-color: ${palette.main.beige};
+
+    min-height: 35.6px;
+  }
+`;
+
+export const SelectButton = styled.button`
+  color: ${palette.grayscale.black};
+  width: 100%;
+
+  display: flex;
+  padding: 0;
+`;
+
+export const Input = styled.input`
+  background-color: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+
+  color: ${palette.main.brown};
+
+  &::placeholder {
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 140%;
+    letter-spacing: -0.28px;
+
+    color: ${palette.main.brown};
+  }
+`;
+
+export const CustomButton = styled.button`
+  color: ${palette.main.brown};
+  width: 100%;
+
+  display: flex;
+  padding: 0;
 `;
