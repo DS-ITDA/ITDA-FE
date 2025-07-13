@@ -14,6 +14,7 @@ import ExamImg2 from '@assets/ai-exampleImage.jpg';
 import ArrowRightIcon from '@assets/arrow-right.svg';
 import CheckIcon from '@assets/Ai/check-40.svg';
 import toggleIcon from '@assets/Ai/toggle-24.svg';
+import CancleIcon from '@assets/Ai/x-24.svg';
 import { useRef } from 'react';
 
 const Ai = () => {
@@ -24,6 +25,10 @@ const Ai = () => {
   const [showSelect, setShowSelect] = useState(false);
   const [relationship, setRelationShip] = useState('아빠와 딸');
   const [relationInput, setRelationInput] = useState('');
+  const [place, setPlace] = useState('집 거실');
+  const [prevPlace, setPrevPlace] = useState('');
+  const [placeInput, setPlaceInput] = useState('');
+
   const selectRef = useRef(null);
 
   const location = useLocation();
@@ -61,6 +66,22 @@ const Ai = () => {
     if (e.key === 'Enter' && relationInput.trim()) {
       setRelationInput(relationInput.trim());
       setRelationShip(relationInput.trim());
+    }
+  };
+
+  const handleSetPlace = () => {
+    if (place === 'custom') {
+      setPlace(prevPlace);
+      setPlaceInput('');
+    } else {
+      setPlace('custom');
+      setPrevPlace(place);
+    }
+  };
+
+  const handlePlaceSubmit = (e) => {
+    if (e.key === 'Enter' && placeInput.trim()) {
+      setPlace(e.target.value);
     }
   };
 
@@ -233,7 +254,20 @@ const Ai = () => {
             <A.WhiteDiv $padding={20}>
               <A.SelectDiv>
                 <p>장소</p>
-                <select>아빠와 딸</select>
+                <A.PlaceButton>
+                  {place !== 'custom' && place}
+                  {place === 'custom' && (
+                    <A.Input
+                      placeholder="[직접 입력]"
+                      value={placeInput}
+                      onChange={(e) => setPlaceInput(e.target.value)}
+                      onKeyDown={handlePlaceSubmit}
+                    />
+                  )}
+                  <A.ToggleImg onClick={handleSetPlace}>
+                    <img src={CancleIcon} alt="취소" />
+                  </A.ToggleImg>
+                </A.PlaceButton>
               </A.SelectDiv>
             </A.WhiteDiv>
 

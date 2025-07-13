@@ -182,7 +182,7 @@ export const ToggleImg = styled.div`
   img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
   }
 `;
 
@@ -208,6 +208,7 @@ export const List = styled.ul`
   top: 40px;
   left: 0;
   right: 0;
+  z-index: 100;
 
   li {
     border-radius: 10px;
@@ -258,4 +259,20 @@ export const CustomButton = styled.button`
 
   display: flex;
   padding: 0;
+`;
+
+export const PlaceButton = styled(SelectButton)`
+  padding: 8px 5px 8px 10px;
+  background-color: ${palette.main.ivory};
+  width: 184px;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
