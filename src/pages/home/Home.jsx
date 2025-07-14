@@ -10,6 +10,7 @@ import Button from '@components/common/Button/Button';
 import StoryIcon from '@assets/home/storybook-24.svg';
 import useImgUpload from '@hooks/useImgUpload';
 import CloseIcon from '@assets/home/x-24.svg';
+import ArrowRightIcon from '@assets/arrow-right.svg';
 
 const Home = () => {
   const length = books.length;
@@ -139,29 +140,42 @@ const Home = () => {
           </H.UploadDiv>
         )}
 
-        <Button
-          selection={1}
-          content={
-            <>
-              <label htmlFor="file" style={{ cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <img src={StoryIcon} alt="스토리북 만들기" />
-                  스토리북 만들기
-                </div>
-              </label>
-              <input
-                type="file"
-                name="file"
-                id="file"
-                ref={inputRef}
-                onChange={handleUpload}
-                style={{ display: 'none' }}
-              />
-            </>
-          }
-          onClick={() => {}}
-          type="button"
-        />
+        {!selectedImg && (
+          <Button
+            selection={1}
+            content={
+              <>
+                <label htmlFor="file" style={{ cursor: 'pointer' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <img src={StoryIcon} alt="스토리북 만들기" />
+                    스토리북 만들기
+                  </div>
+                </label>
+                <input
+                  type="file"
+                  name="file"
+                  id="file"
+                  ref={inputRef}
+                  onChange={handleUpload}
+                  style={{ display: 'none' }}
+                />
+              </>
+            }
+            onClick={() => {}}
+            type="button"
+          />
+        )}
+
+        {selectedImg && (
+          <Button
+            selection={1}
+            content={<img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }}></img>}
+            onClick={() => {
+              navigate('/ai', { state: { selectedImg } });
+            }}
+            type="button"
+          />
+        )}
       </H.ButtonWrapper>
     </H.Home>
   );
