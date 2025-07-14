@@ -276,3 +276,54 @@ export const PlaceButton = styled(SelectButton)`
   justify-content: space-between;
   align-items: center;
 `;
+
+export const FeelingsDiv = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+export const FeelingsBtn = styled.div`
+  padding: 8px 10px;
+  border-radius: 10px;
+  background-color: ${palette.main.ivory};
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+`;
+
+export const CancleImg = styled(ToggleImg)`
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+
+  position: absolute;
+  top: -5px;
+  right: -5px;
+`;
+
+export const PlusBtn = styled(FeelingsBtn)`
+  padding: 8px 10px;
+  border: 1px solid ${palette.main.ivory};
+  background-color: transparent;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+`;
+
+export const FeelingsInput = styled(Input)`
+  min-width: 10px;
+  width: ${({ value }) => (value.length === 0 ? 0 : value.length + 1)}em;
+  background-color: ${palette.main.ivory};
+  border-radius: 10px;
+`;
