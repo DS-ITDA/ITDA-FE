@@ -1,7 +1,12 @@
 import * as R from '@readStory/ReadStoryStyle';
+import StorySplash from '@components/StorySplash/StorySplash';
 
 const ReadStory = () => {
-  return <div>스토리북 열람</div>;
+  return (
+    <>
+      <StorySplash />
+    </>
+  );
 };
 
 export default ReadStory;
