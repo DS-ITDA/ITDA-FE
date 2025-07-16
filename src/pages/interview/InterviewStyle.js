@@ -232,7 +232,7 @@ export const MainInfo = styled.div`
   display: flex;
   flex-direction: row;
 
-  font-size: 1.2rem;
+  font-size: 16px;
   font-weight: 400;
   line-height: 140%;
   letter-spacing: -0.32px;
@@ -240,7 +240,7 @@ export const MainInfo = styled.div`
   color: ${palette.grayscale.black};
 `;
 export const SubInfo = styled.div`
-  font-size: 1rem;
+  font-size: 14px;
   font-weight: 400;
   line-height: 140%;
   letter-spacing: -0.28px;
@@ -279,6 +279,7 @@ export const StyleContainer = styled.div`
   gap: 10px;
   margin-top: 15px;
 `;
+
 export const StyleBox = styled.div`
   display: flex;
   flex-direction: column;
@@ -290,6 +291,7 @@ export const StyleBox = styled.div`
   border: 1px solid ${palette.main.beige};
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
 `;
+
 export const StyleExample = styled.div`
   font-size: 1rem;
   font-weight: 400;

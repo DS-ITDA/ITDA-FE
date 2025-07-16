@@ -12,13 +12,16 @@ import editBrown from '@assets/interview/edit-brown-18.svg';
 import redo from '@assets/interview/redo-black-20.svg';
 import x from '@assets/interview/X.svg';
 import submit from '@assets/interview/submit.svg';
+import check from '@assets/interview/check.svg';
 import ToastMessage from '@components/common/ToastMessage/ToastMessage';
+import palette from '../../styles/theme';
 
 const Interview = () => {
   const [btnContent, setBtnContent] = useState('selectStyle');
   const [isEditing, setIsEditing] = useState(false);
   const [answerText, setAnswerText] = useState('쇼타롱');
   const [example, setExample] = useState('');
+  const [selection, setSelection] = useState();
 
   const BtnContent_CONFIG = {
     start: interviewStart,
@@ -159,32 +162,77 @@ const Interview = () => {
           </I.InputBox>
 
           <I.StyleContainer>
-            <I.StyleBox>
-              <I.MainInfo>
-                <I.Span>동화</I.Span>
-              </I.MainInfo>
-              <I.StyleExample>
-                나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
-              </I.StyleExample>
-            </I.StyleBox>
+            {selection === 1 ? (
+              <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
+                <I.MainInfo>
+                  <img src={check} style={{ marginRight: '3px' }} />
+                  <I.Span style={{ color: palette.grayscale.white }}>동화</I.Span>
+                </I.MainInfo>
+                <I.StyleExample style={{ color: palette.grayscale.white }}>
+                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+                </I.StyleExample>
+              </I.StyleBox>
+            ) : (
+              <I.StyleBox
+                onClick={() => {
+                  setSelection(1);
+                }}>
+                <I.MainInfo>
+                  <I.Span>동화</I.Span>
+                </I.MainInfo>
+                <I.StyleExample>
+                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+                </I.StyleExample>
+              </I.StyleBox>
+            )}
 
-            <I.StyleBox>
-              <I.MainInfo>
-                <I.Span>동화</I.Span>
-              </I.MainInfo>
-              <I.StyleExample>
-                나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
-              </I.StyleExample>
-            </I.StyleBox>
+            {selection === 2 ? (
+              <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
+                <I.MainInfo>
+                  <img src={check} style={{ marginRight: '3px' }} />
+                  <I.Span style={{ color: palette.grayscale.white }}>동화</I.Span>
+                </I.MainInfo>
+                <I.StyleExample style={{ color: palette.grayscale.white }}>
+                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+                </I.StyleExample>
+              </I.StyleBox>
+            ) : (
+              <I.StyleBox
+                onClick={() => {
+                  setSelection(2);
+                }}>
+                <I.MainInfo>
+                  <I.Span>동화</I.Span>
+                </I.MainInfo>
+                <I.StyleExample>
+                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+                </I.StyleExample>
+              </I.StyleBox>
+            )}
 
-            <I.StyleBox>
-              <I.MainInfo>
-                <I.Span>동화</I.Span>
-              </I.MainInfo>
-              <I.StyleExample>
-                나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
-              </I.StyleExample>
-            </I.StyleBox>
+            {selection === 3 ? (
+              <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
+                <I.MainInfo>
+                  <img src={check} style={{ marginRight: '3px' }} />
+                  <I.Span style={{ color: palette.grayscale.white }}>동화</I.Span>
+                </I.MainInfo>
+                <I.StyleExample style={{ color: palette.grayscale.white }}>
+                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+                </I.StyleExample>
+              </I.StyleBox>
+            ) : (
+              <I.StyleBox
+                onClick={() => {
+                  setSelection(3);
+                }}>
+                <I.MainInfo>
+                  <I.Span>동화</I.Span>
+                </I.MainInfo>
+                <I.StyleExample>
+                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+                </I.StyleExample>
+              </I.StyleBox>
+            )}
           </I.StyleContainer>
         </I.SelectPage>
       )}
