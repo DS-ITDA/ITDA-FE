@@ -14,6 +14,7 @@ import x from '@assets/interview/X.svg';
 import submit from '@assets/interview/submit.svg';
 import check from '@assets/interview/check.svg';
 import ToastMessage from '@components/common/ToastMessage/ToastMessage';
+import PathNavbar from '@components/common/Navbar/PathNavbar';
 import palette from '../../styles/theme';
 
 const Interview = () => {
@@ -32,8 +33,12 @@ const Interview = () => {
     next: interviewNext,
   };
 
+  const goBack = () => {};
+  const goNext = () => {};
+
   return (
     <I.InterviewPage>
+      <PathNavbar left={false} right={false} goBack={() => goBack()} goNext={() => goNext()} />
       {/* 페이지 콘텐츠 */}
       {/* 첫 화면 */}
       {btnContent === 'start' && (

@@ -10,10 +10,9 @@ export const Nav = styled.div`
   padding: 0 20px;
 `;
 
-export const Logo = styled.div`
+export const Logo = styled.img`
   width: 32px;
   height: 32px;
-  background-color: black;
 `;
 
 export const Img32 = styled.img`
