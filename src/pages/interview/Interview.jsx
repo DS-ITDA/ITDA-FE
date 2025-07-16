@@ -6,10 +6,19 @@ import interviewRecordOff from '@assets/interview/interview-record-off-90.svg';
 import interviewRecordOn from '@assets/interview/interview-record-on-90.svg';
 import interviewStopOff from '@assets/interview/interview-stop-off.svg-90.svg';
 import interviewStopOn from '@assets/interview/interview-stop-on-90.svg';
+import interviewNext from '@assets/interview/interview-next-90.svg';
+import edit from '@assets/interview/edit-black-20.svg';
+import editBrown from '@assets/interview/edit-brown-18.svg';
+import redo from '@assets/interview/redo-black-20.svg';
+import x from '@assets/interview/X.svg';
+import submit from '@assets/interview/submit.svg';
 import ToastMessage from '@components/common/ToastMessage/ToastMessage';
 
 const Interview = () => {
-  const [btnContent, setBtnContent] = useState('start');
+  const [btnContent, setBtnContent] = useState('selectStyle');
+  const [isEditing, setIsEditing] = useState(false);
+  const [answerText, setAnswerText] = useState('쇼타롱');
+  const [example, setExample] = useState('');
 
   const BtnContent_CONFIG = {
     start: interviewStart,
@@ -17,6 +26,7 @@ const Interview = () => {
     recordOn: interviewRecordOn,
     stopOff: interviewStopOff,
     stopOn: interviewStopOn,
+    next: interviewNext,
   };
 
   return (
@@ -79,21 +89,124 @@ const Interview = () => {
         </I.AnswerPage>
       )}
 
+      {/* 답변 리스트 + 수정 */}
+      {btnContent === 'next' && (
+        <I.ListPage>
+          <I.QuestionBox>
+            이 사진이 찍힐 때 설렘과 기대가 느껴졌다고 했어요. 어떤 일이 있었던 날이었는지 떠오르시나요?
+          </I.QuestionBox>
+          <I.AnswerBox>
+            <I.EditBox>
+              {isEditing ? (
+                <I.Editing
+                  onClick={() => {
+                    setIsEditing(false);
+                  }}>
+                  <img src={editBrown} style={{ marginRight: '2px' }} />
+                  내용을 수정해보세요
+                  <img src={x} />
+                </I.Editing>
+              ) : (
+                <img
+                  src={edit}
+                  alt="수정하기"
+                  onClick={() => {
+                    setIsEditing(true);
+                  }}
+                />
+              )}
+              <img src={redo} alt="재답변하기" />
+            </I.EditBox>
+            {isEditing ? (
+              <I.textarea
+                value={answerText}
+                onChange={(e) => {
+                  setAnswerText(e.target.value);
+                }}
+              />
+            ) : (
+              <I.AnswerText>{answerText}</I.AnswerText>
+            )}
+          </I.AnswerBox>
+        </I.ListPage>
+      )}
+
+      {/* 스타일 선택 */}
+      {btnContent === 'selectStyle' && (
+        <I.SelectPage>
+          <I.SelectInfo>
+            <I.MainInfo>
+              아래 제시된<I.Span>스토리 스타일을 선택</I.Span>하거나,
+            </I.MainInfo>
+            <I.MainInfo>
+              원하는 스타일이 있다면 <I.Span>직접 입력</I.Span>해보세요.
+            </I.MainInfo>
+
+            <I.SubInfo style={{ marginTop: '8px' }}>스토리 스타일과 일러스트 스타일 모두</I.SubInfo>
+            <I.SubInfo>자세히 적어주면 더 정확한 결과를 만나볼 수 있어요.</I.SubInfo>
+          </I.SelectInfo>
+
+          <I.InputBox>
+            <I.StyleInput
+              placeholder={'💭 예시 문구를 작성해보세요...'}
+              type={'text'}
+              value={example}
+              onChange={(e) => {
+                setExample(e.target.value);
+              }}
+            />
+            <img src={submit} style={{ width: '40px' }} />
+          </I.InputBox>
+
+          <I.StyleContainer>
+            <I.StyleBox>
+              <I.MainInfo>
+                <I.Span>동화</I.Span>
+              </I.MainInfo>
+              <I.StyleExample>
+                나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+              </I.StyleExample>
+            </I.StyleBox>
+
+            <I.StyleBox>
+              <I.MainInfo>
+                <I.Span>동화</I.Span>
+              </I.MainInfo>
+              <I.StyleExample>
+                나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+              </I.StyleExample>
+            </I.StyleBox>
+
+            <I.StyleBox>
+              <I.MainInfo>
+                <I.Span>동화</I.Span>
+              </I.MainInfo>
+              <I.StyleExample>
+                나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+              </I.StyleExample>
+            </I.StyleBox>
+          </I.StyleContainer>
+        </I.SelectPage>
+      )}
+
       {/* 하단 버튼 */}
-      <I.BottomContainer>
-        <I.BottomBtn>
-          <I.Button
-            src={BtnContent_CONFIG[btnContent]}
-            onClick={() => {
-              if (btnContent === 'start') setBtnContent('recordReady');
-              else if (btnContent === 'recordReady') setBtnContent('recordOn');
-              else if (btnContent === 'recordOn') setBtnContent('stopOn');
-              else if (btnContent === 'stopOn') setBtnContent('stopOff');
-            }}
-          />
-          <I.BtnBottom src={interviewBottom} />
-        </I.BottomBtn>
-      </I.BottomContainer>
+      {btnContent !== 'selectStyle' && (
+        <I.BottomContainer>
+          <I.BottomBtn>
+            <I.Button
+              src={BtnContent_CONFIG[btnContent]}
+              onClick={() => {
+                if (btnContent === 'start') setBtnContent('recordReady');
+                else if (btnContent === 'recordReady') setBtnContent('recordOn');
+                else if (btnContent === 'recordOn') setBtnContent('stopOn');
+                else if (btnContent === 'stopOn') setBtnContent('next');
+                else if (btnContent === 'next') setBtnContent('selectStyle');
+              }}
+            />
+            <I.BtnBottom src={interviewBottom} />
+          </I.BottomBtn>
+        </I.BottomContainer>
+      )}
     </I.InterviewPage>
   );
 };
