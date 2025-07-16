@@ -4,12 +4,12 @@ import palette from '@styles/theme';
 export const InterviewPage = styled.div`
   width: 100%;
   height: calc(100% - 90px);
-  margin: 30px 0;
 `;
 
 //첫 화면
 export const FirstInfo = styled.div`
   margin-left: 20px;
+  margin-top: 30px;
 `;
 
 export const Text = styled.div`
@@ -35,6 +35,7 @@ export const ReadyPage = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 30%;
+  margin-top: 20px;
 `;
 
 export const MainPage = styled.div`
@@ -79,6 +80,7 @@ export const QuestPage = styled.div`
   display: flex;
   flex-direction: column;
   gap: 30%;
+  margin-top: 20px;
 `;
 
 export const AnswerPage = styled.div`
@@ -88,6 +90,7 @@ export const AnswerPage = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20%;
+  margin-top: 20px;
 `;
 
 //질문이 자연스럽게 위로 올라가는 애니메이션
@@ -143,6 +146,7 @@ export const ListPage = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: 20px;
 `;
 
 export const QuestionBox = styled.div`
@@ -220,7 +224,7 @@ export const SelectPage = styled.div`
 
   display: flex;
   flex-direction: column;
-  margin: 0 10px;
+  margin: 30px 10px;
 `;
 
 export const SelectInfo = styled.div`
@@ -231,6 +235,7 @@ export const SelectInfo = styled.div`
 export const MainInfo = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
 
   font-size: 16px;
   font-weight: 400;
@@ -295,6 +300,113 @@ export const StyleBox = styled.div`
 export const StyleExample = styled.div`
   font-size: 1rem;
   font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+`;
+
+//스토리 생성 중 화면
+export const InfoContainer = styled.div`
+  margin-left: 25px;
+`;
+
+export const Time = styled.div`
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 130%;
+  letter-spacing: -0.4px;
+  color: ${palette.grayscale.black};
+`;
+export const AlertBox = styled.div`
+  width: calc(100% - 40px);
+  padding: 20px;
+  margin: 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 19px;
+
+  border-radius: 17px;
+  background-color: ${palette.grayscale.white};
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.05);
+`;
+
+export const CheckingAlert = styled.div`
+  width: 100%;
+  padding: 10px 7px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  border-radius: 10px;
+  background-color: ${palette.main.ivory};
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+`;
+
+export const AlertIcon = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const GoHome = styled.div`
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.32px;
+  color: ${palette.grayscale.black};
+
+  width: calc(100% - 20px);
+  padding: 14px 88px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 25px;
+  background-color: ${palette.grayscale.white};
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+
+  position: fixed;
+  bottom: 15px;
+`;
+
+//알림 모달창
+export const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 500;
+  background-color: ${palette.grayscale.black75};
+`;
+
+export const Modal = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  z-index: 1000;
+`;
+
+export const SaveAlert = styled.div`
+  width: 100%;
+  padding: 10px 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 25px;
+  background-color: ${palette.main.brown};
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+
+  color: ${palette.grayscale.white};
+
+  font-size: 14px;
+  font-weight: 600;
   line-height: 140%;
   letter-spacing: -0.28px;
 `;

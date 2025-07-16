@@ -1,5 +1,6 @@
 import * as I from '@interview/InterviewStyle';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import interviewBottom from '@assets/interview/interview-bottom.svg';
 import interviewStart from '@assets/interview/interview-start.svg';
 import interviewRecordOff from '@assets/interview/interview-record-off-90.svg';
@@ -13,18 +14,26 @@ import redo from '@assets/interview/redo-black-20.svg';
 import x from '@assets/interview/X.svg';
 import submit from '@assets/interview/submit.svg';
 import check from '@assets/interview/check.svg';
+import notifications from '@assets/interview/notifications-24.svg';
+import checkOff from '@assets/interview/check-24.svg';
+import checkOn from '@assets/interview/check-filled-24.svg';
+
 import ToastMessage from '@components/common/ToastMessage/ToastMessage';
 import PathNavbar from '@components/common/Navbar/PathNavbar';
 import palette from '../../styles/theme';
 
 const Interview = () => {
-  const [btnContent, setBtnContent] = useState('selectStyle');
+  const navigate = useNavigate();
+  const [State, setState] = useState('start');
   const [isEditing, setIsEditing] = useState(false);
   const [answerText, setAnswerText] = useState('쇼타롱');
   const [example, setExample] = useState('');
   const [selection, setSelection] = useState();
+  const [alert, setAlert] = useState(false);
+  const [alertModal, setAlertModal] = useState(false);
+  const [modalChecking, setModalChecking] = useState(false);
 
-  const BtnContent_CONFIG = {
+  const State_CONFIG = {
     start: interviewStart,
     recordReady: interviewRecordOff,
     recordOn: interviewRecordOn,
@@ -33,15 +42,32 @@ const Interview = () => {
     next: interviewNext,
   };
 
-  const goBack = () => {};
-  const goNext = () => {};
+  const goBack = () => {
+    if (State === 'start') navigate(-1);
+    else if (State === 'selectStyle') setState('next');
+    else setState('start');
+  };
+
+  const goNext = () => {
+    setState('creating');
+  };
+
+  const SaveAlert = () => {
+    setAlert(true);
+    setAlertModal(false);
+  };
 
   return (
     <I.InterviewPage>
-      <PathNavbar left={false} right={false} goBack={() => goBack()} goNext={() => goNext()} />
+      {State === 'selectStyle' && selection ? (
+        <PathNavbar left={true} right={true} goBack={() => goBack()} goNext={() => goNext()} />
+      ) : (
+        <PathNavbar left={true} right={false} goBack={() => goBack()} />
+      )}
+
       {/* 페이지 콘텐츠 */}
       {/* 첫 화면 */}
-      {btnContent === 'start' && (
+      {State === 'start' && (
         <I.FirstInfo>
           <I.Text>입력하신 정보를 확인했어요.</I.Text>
           <I.Text style={{ marginBottom: '10px' }}>이제 회원님만의 스토리를 만들어볼까요?</I.Text>
@@ -49,13 +75,13 @@ const Interview = () => {
             <I.Span>녹음이 가능</I.Span>한 환경에서,
           </I.Text>
           <I.Text>
-            <I.Span>아래 버튼</I.Span>을 눌러 <I.Span>인터뷰를 시작</I.Span>해보세요.
+            <I.Span>아래 버튼</I.Span>을 눌러 <I.Span>&nbsp;인터뷰를 시작</I.Span>해보세요.
           </I.Text>
         </I.FirstInfo>
       )}
 
       {/* 녹음 준비 화면 - 스켈레톤 화면 */}
-      {btnContent === 'recordReady' && (
+      {State === 'recordReady' && (
         <I.ReadyPage>
           <ToastMessage text={'준비 중...'} />
 
@@ -69,7 +95,7 @@ const Interview = () => {
       )}
 
       {/* 질문 화면 */}
-      {btnContent === 'recordOn' && (
+      {State === 'recordOn' && (
         <I.QuestPage>
           <ToastMessage text={'질문 중...'} />
           <I.MainPage>
@@ -82,7 +108,7 @@ const Interview = () => {
       )}
 
       {/* 답변 중 화면 */}
-      {btnContent === 'stopOn' && (
+      {State === 'stopOn' && (
         <I.AnswerPage>
           <ToastMessage text={'답변 중...'} />
           <I.MainPage>
@@ -98,7 +124,7 @@ const Interview = () => {
       )}
 
       {/* 답변 리스트 + 수정 */}
-      {btnContent === 'next' && (
+      {State === 'next' && (
         <I.ListPage>
           <I.QuestionBox>
             이 사진이 찍힐 때 설렘과 기대가 느껴졌다고 했어요. 어떤 일이 있었던 날이었는지 떠오르시나요?
@@ -140,14 +166,14 @@ const Interview = () => {
       )}
 
       {/* 스타일 선택 */}
-      {btnContent === 'selectStyle' && (
+      {State === 'selectStyle' && (
         <I.SelectPage>
           <I.SelectInfo>
             <I.MainInfo>
-              아래 제시된<I.Span>스토리 스타일을 선택</I.Span>하거나,
+              아래 제시된<I.Span>&nbsp;스토리 스타일을 선택</I.Span>하거나,
             </I.MainInfo>
             <I.MainInfo>
-              원하는 스타일이 있다면 <I.Span>직접 입력</I.Span>해보세요.
+              원하는 스타일이 있다면 <I.Span>&nbsp;직접 입력</I.Span>해보세요.
             </I.MainInfo>
 
             <I.SubInfo style={{ marginTop: '8px' }}>스토리 스타일과 일러스트 스타일 모두</I.SubInfo>
@@ -241,19 +267,118 @@ const Interview = () => {
           </I.StyleContainer>
         </I.SelectPage>
       )}
+      {/* 스토리 생성 중 페이지 */}
+      {State === 'creating' && (
+        <I.SelectPage>
+          <I.InfoContainer>
+            <I.MainInfo>인터뷰 내용을 바탕으로</I.MainInfo>
+            <I.MainInfo>사진 속 스토리를 생성 중입니다.</I.MainInfo>
+          </I.InfoContainer>
+
+          <I.InfoContainer style={{ marginTop: '17px' }}>
+            <I.MainInfo>스토리 생성에</I.MainInfo>
+            <I.MainInfo>
+              약 <I.Time>&nbsp;10&nbsp;</I.Time>분 소요될 예정이에요.
+            </I.MainInfo>
+          </I.InfoContainer>
+
+          <I.AlertBox>
+            <I.InfoContainer style={{ margin: '0' }}>
+              <I.MainInfo>
+                스토리 생성이 <I.Span>&nbsp;완료</I.Span>되면,
+              </I.MainInfo>
+              <I.MainInfo>
+                <I.Span>알림</I.Span>을 받아보시겠어요?
+              </I.MainInfo>
+            </I.InfoContainer>
+            <I.CheckingAlert>
+              <I.AlertIcon>
+                <img src={notifications} style={{ width: '20px', marginRight: '2px' }} />
+                <I.AnswerText>알림 수신 동의</I.AnswerText>
+              </I.AlertIcon>
+              {alert ? (
+                <img
+                  src={checkOn}
+                  style={{ width: '24px' }}
+                  onClick={() => {
+                    setAlert(false);
+                  }}
+                />
+              ) : (
+                <img
+                  src={checkOff}
+                  style={{ width: '24px' }}
+                  onClick={() => {
+                    setAlertModal(true);
+                  }}
+                />
+              )}
+            </I.CheckingAlert>
+          </I.AlertBox>
+
+          <I.GoHome
+            onClick={() => {
+              navigate('/');
+            }}>
+            홈으로
+          </I.GoHome>
+
+          {alertModal && (
+            <>
+              <I.Overlay onClick={() => setAlertModal(false)} />
+              <I.Modal>
+                <I.AlertBox>
+                  <I.InfoContainer style={{ margin: '0' }}>
+                    <I.MainInfo>
+                      스토리 생성이 <I.Span>&nbsp;완료</I.Span>되면,
+                    </I.MainInfo>
+                    <I.MainInfo>
+                      <I.Span>알림</I.Span>을 받아보시겠어요?
+                    </I.MainInfo>
+                  </I.InfoContainer>
+                  <I.CheckingAlert>
+                    <I.AlertIcon>
+                      <img src={notifications} style={{ width: '20px', marginRight: '2px' }} />
+                      <I.AnswerText>알림 수신 동의</I.AnswerText>
+                    </I.AlertIcon>
+                    {modalChecking ? (
+                      <img
+                        src={checkOn}
+                        style={{ width: '24px' }}
+                        onClick={() => {
+                          setModalChecking(false);
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src={checkOff}
+                        style={{ width: '24px' }}
+                        onClick={() => {
+                          setModalChecking(true);
+                        }}
+                      />
+                    )}
+                  </I.CheckingAlert>
+                  <I.SaveAlert onClick={() => SaveAlert()}>저장</I.SaveAlert>
+                </I.AlertBox>
+              </I.Modal>
+            </>
+          )}
+        </I.SelectPage>
+      )}
 
       {/* 하단 버튼 */}
-      {btnContent !== 'selectStyle' && (
+      {!['selectStyle', 'creating'].includes(State) && (
         <I.BottomContainer>
           <I.BottomBtn>
             <I.Button
-              src={BtnContent_CONFIG[btnContent]}
+              src={State_CONFIG[State]}
               onClick={() => {
-                if (btnContent === 'start') setBtnContent('recordReady');
-                else if (btnContent === 'recordReady') setBtnContent('recordOn');
-                else if (btnContent === 'recordOn') setBtnContent('stopOn');
-                else if (btnContent === 'stopOn') setBtnContent('next');
-                else if (btnContent === 'next') setBtnContent('selectStyle');
+                if (State === 'start') setState('recordReady');
+                else if (State === 'recordReady') setState('recordOn');
+                else if (State === 'recordOn') setState('stopOn');
+                else if (State === 'stopOn') setState('next');
+                else if (State === 'next') setState('selectStyle');
               }}
             />
             <I.BtnBottom src={interviewBottom} />
