@@ -2,8 +2,7 @@ import * as N from '@components/common/Navbar/NavbarStyle';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import Profile from '@assets/profile.svg';
-import Back from '@assets/back-black.svg';
-import Next from '@assets/next-black.svg';
+import logo from '@assets/logo.svg';
 
 /* 
     페이지마다 헤더 다르게 띄우기
@@ -28,20 +27,8 @@ const Navbar = () => {
   else if (profilePaths.includes(pathname)) {
     return (
       <N.Nav>
-        <N.Logo onClick={() => navigate('/')}></N.Logo>
+        <N.Logo src={logo} onClick={() => navigate('/')} />
         <N.Img32 src={Profile} alt="마이페이지" onClick={() => navigate('/mypage')} />
-      </N.Nav>
-    );
-  }
-  // 경로 헤더
-  else {
-    return (
-      <N.Nav>
-        <N.Img24 src={Back} alt="뒤로 가기" />
-        {/* onClick={goBack} */}
-        <N.Logo onClick={() => navigate('/')}></N.Logo>
-        <N.Img24 src={Next} alt="다음" />
-        {/* onClick={goNext}  */}
       </N.Nav>
     );
   }
