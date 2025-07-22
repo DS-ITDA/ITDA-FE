@@ -232,3 +232,177 @@ export const Back = styled.div`
 export const Bubble = styled.div`
   margin-top: 20px;
 `;
+
+export const Created = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+export const CreatedBookWrapper = styled.div`
+  width: 30px;
+  position: relative;
+`;
+
+export const CreatedBook = styled.div`
+  border-radius: 3px;
+  border: 5px solid ${palette.main.ivory};
+  padding: 5px 8px;
+
+  width: ${({ height }) => `${height}px`};
+  height: 35px;
+  background-color: ${({ color }) => color};
+
+  display: flex;
+  align-items: center;
+
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.2px;
+  color: ${palette.grayscale.black};
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  flex-shrink: 0;
+  display: inline-block;
+
+  cursor: pointer;
+
+  transform: rotate(-90deg);
+  transform-origin: center;
+
+  margin-top: 93px;
+
+  position: absolute;
+  left: -105px;
+`;
+
+export const CreatedCover = styled.div`
+  width: 150px;
+  height: 210px;
+  border-radius: 3px;
+  border: 5px solid ${palette.main.ivory};
+
+  position: relative;
+  top: 5px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left;
+  }
+`;
+
+export const Board = styled.div`
+  max-width: 400px;
+  width: 100%;
+
+  padding: 0 30px;
+
+  div {
+    height: 15px;
+    border-radius: 27px;
+    background-color: ${palette.main.brown};
+  }
+`;
+
+export const CreatedWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const CreatedEdit = styled(Edit)`
+  width: 100%;
+  text-align: end;
+  padding-right: 30px;
+
+  margin: 13px 0;
+`;
+
+export const ResultWrapper = styled.div`
+  width: 100%;
+  padding: 0 30px;
+`;
+
+export const Result = styled.div`
+  width: 100%;
+  border-radius: 17px;
+  background-color: ${palette.grayscale.white};
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.05);
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  padding: 15px;
+  p {
+    margin: 0;
+    color: ${palette.grayscale.black};
+
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 140%;
+    letter-spacing: -0.28px;
+  }
+`;
+
+export const StarWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+export const MenuWrapper = styled.div`
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+`;
+
+export const Menu = styled.div`
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: ${palette.grayscale.black};
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+
+  border-radius: 10px;
+  border: 1px solid ${palette.main.beige};
+  background-color: ${palette.main.ivory};
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+
+  cursor: pointer;
+
+  p {
+    margin: 0;
+    white-space: nowrap;
+  }
+`;
+
+export const ButtonP = styled.p`
+  margin: 0;
+  color: ${palette.grayscale.black};
+
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.64px;
+`;
+
+export const StoryBook = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  height: calc(100dvh - 55px);
+  padding-bottom: 15px;
+`;
