@@ -62,9 +62,9 @@ const ReadStory = () => {
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: '공유',
-        text: 'share',
-        url: '.com',
+        title: '잇다: 사진을 이야기로 잇다',
+        text: '잇다를 통해 생성된 이야기입니다.',
+        url: 'https://example.com',
       });
     } else {
       alert('공유가 지원되지 않는 디바이스입니다.');
