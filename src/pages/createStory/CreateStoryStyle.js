@@ -2,7 +2,8 @@ import styled from 'styled-components';
 import palette from '@styles/theme';
 
 export const CreatePage = styled.div`
-  width: 100%;
+  width: calc(100% - 20px);
+  margin: 0 10px;
 `;
 
 export const InfoText = styled.div`
@@ -15,9 +16,9 @@ export const InfoText = styled.div`
 `;
 
 export const ContentBox = styled.div`
-  width: calc(100% - 40px);
+  width: calc(100% - 20px);
   padding: 13px 15px 20px;
-  margin: 0 20px;
+  margin: 0 10px;
 
   display: flex;
   flex-direction: column;
@@ -43,7 +44,7 @@ export const Content = styled.div`
 `;
 
 export const InputBox = styled.div`
-  width: calc(100% - 20px);
+  width: calc(100% - 40px);
   padding: 6px 6px 6px 20px;
   border-radius: 25px;
   border: 1px solid ${palette.main.ivory};
@@ -97,4 +98,28 @@ export const textarea = styled.textarea`
   outline: none;
   border: none;
   resize: none;
+`;
+
+export const Span = styled.span`
+  font-weight: 600;
+`;
+
+export const SelectNar = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+export const Selection = styled.div`
+  width: 100%;
+  height: 52px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+
+  border-radius: 17px;
+  border: 1px solid ${palette.main.beige};
+  background: ${palette.grayscale.white};
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
 `;
