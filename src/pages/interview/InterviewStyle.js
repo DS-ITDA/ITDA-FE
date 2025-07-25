@@ -359,7 +359,7 @@ export const GoHome = styled.div`
   letter-spacing: -0.32px;
   color: ${palette.grayscale.black};
 
-  width: calc(100% - 40px);
+  width: 353px;
   padding: 14px 88px;
   display: flex;
   justify-content: center;
@@ -371,6 +371,10 @@ export const GoHome = styled.div`
 
   position: fixed;
   bottom: 15px;
+
+  @media (max-width: 767px) {
+    width: calc(100% - 40px);
+  }
 `;
 
 //알림 모달창
@@ -389,8 +393,12 @@ export const Modal = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 90%;
+  width: 353px;
   z-index: 1000;
+
+  @media (max-width: 767px) {
+    width: 90%;
+  }
 `;
 
 export const SaveAlert = styled.div`
@@ -421,6 +429,7 @@ export const BottomContainer = styled.div`
   background-color: ${palette.main.ivory};
 
   @media (max-width: 767px) {
+    right: 0;
     width: 100vw;
   }
 `;
@@ -440,8 +449,8 @@ export const Button = styled.img`
   bottom: 45px;
 
   @media (max-width: 767px) {
-    width: 27vw;
-    height: 27vw;
+    width: 25vw;
+    height: 25vw;
     bottom: 12vw;
   }
 `;
