@@ -2,8 +2,9 @@ import styled, { keyframes } from 'styled-components';
 import palette from '@styles/theme';
 
 export const InterviewPage = styled.div`
-  width: 100%;
+  width: calc(100% - 20px);
   height: calc(100% - 90px);
+  margin: 0 10px;
 `;
 
 //첫 화면
@@ -306,7 +307,7 @@ export const StyleExample = styled.div`
 
 //스토리 생성 중 화면
 export const InfoContainer = styled.div`
-  margin-left: 25px;
+  margin-left: 15px;
 `;
 
 export const Time = styled.div`
@@ -317,9 +318,9 @@ export const Time = styled.div`
   color: ${palette.grayscale.black};
 `;
 export const AlertBox = styled.div`
-  width: calc(100% - 40px);
+  width: calc(100% - 20px);
   padding: 20px;
-  margin: 20px;
+  margin: 10px;
 
   display: flex;
   flex-direction: column;
@@ -358,7 +359,7 @@ export const GoHome = styled.div`
   letter-spacing: -0.32px;
   color: ${palette.grayscale.black};
 
-  width: calc(100% - 20px);
+  width: calc(100% - 40px);
   padding: 14px 88px;
   display: flex;
   justify-content: center;
