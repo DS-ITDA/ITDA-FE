@@ -130,3 +130,36 @@ export const Menu = styled.div`
     background-color: #e5e4e2;
   }
 `;
+
+export const ModalWrapper = styled.div`
+  position: fixed;
+  inset: 0;
+
+  background-color: ${palette.grayscale.black20};
+
+  z-index: 10;
+
+  margin-top: -55px;
+  height: 110vh;
+`;
+
+export const ModalImgWrapper = styled.div`
+  display: flex;
+  margin: -10px;
+`;
+
+export const ModalImg = styled.div`
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.05);
+
+  margin: -10px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
