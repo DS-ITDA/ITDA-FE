@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import * as R from '@readStory/ReadStoryStyle';
 import StorySplash from '@components/StorySplash/StorySplash';
@@ -33,6 +34,10 @@ const ReadStory = () => {
   const [showBubble, setShowBubble] = useState(false);
   const [level, setLevel] = useState(0);
   const [stars, setStars] = useState([EmptyStar, EmptyStar, EmptyStar, EmptyStar, EmptyStar]);
+
+  const navigate = useNavigate();
+
+  const { id } = useParams();
 
   const handleGetNextPage = () => {
     if (currentPage < book.length - 1) {
@@ -69,6 +74,14 @@ const ReadStory = () => {
     } else {
       alert('공유가 지원되지 않는 디바이스입니다.');
     }
+  };
+
+  const handleReRead = () => {
+    setLevel(0);
+  };
+
+  const handleGoHome = () => {
+    navigate('/');
   };
 
   useEffect(() => {
@@ -240,8 +253,8 @@ const ReadStory = () => {
           <div>
             <Button
               selection={2}
-              content={[<p>다시 읽기</p>, <p>홈으로</p>]}
-              onClick={[() => {}, () => {}]}
+              content={[<p style={{ cursor: 'pointer' }}>다시 읽기</p>, <p style={{ cursor: 'pointer' }}>홈으로</p>]}
+              onClick={[handleReRead, handleGoHome]}
               type="button"
             />
           </div>
