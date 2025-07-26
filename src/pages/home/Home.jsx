@@ -117,7 +117,7 @@ const Home = () => {
                   </H.BookInfo>
 
                   <H.ArrowWrapper>
-                    <H.ArrowDiv $width={'24px'} onClick={() => navigate('')}>
+                    <H.ArrowDiv $width={'24px'} onClick={() => navigate(`readStory/${book.id}`)}>
                       <img src={Arrow20} alt="책 상세 보기" />
                     </H.ArrowDiv>
                   </H.ArrowWrapper>

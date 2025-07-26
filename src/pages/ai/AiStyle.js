@@ -54,7 +54,8 @@ export const WhiteDivWrapper = styled.div`
 export const WhiteDiv = styled.div`
   width: 100%;
   /* height: 100%; */
-  padding: ${({ $padding }) => ($padding && `20px ${$padding}px`) || '20px 17px'};
+  padding: ${({ $padding, $paddingTop }) =>
+    ($padding && $paddingTop && `${$paddingTop}px ${$padding}px`) || ($padding && `20px ${$padding}px`) || '20px 17px'};
 
   display: flex;
   flex-direction: column;
