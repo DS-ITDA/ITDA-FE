@@ -14,6 +14,8 @@ const wobble2 = keyframes`
 export const Flex = styled.div`
   display: flex;
   gap: 6px;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const ColFlex = styled.div`
@@ -39,6 +41,8 @@ export const People = styled.div`
 
   border-radius: 5px;
   overflow: hidden;
+
+  cursor: pointer;
 
   img {
     width: 100%;
@@ -173,4 +177,94 @@ export const DeleteImg = styled.img`
 
   width: 30px !important;
   height: 30px !important;
+`;
+
+export const PersonWrarpper = styled.div`
+  display: flex;
+  gap: 17px;
+`;
+
+export const PersonDiv = styled.div`
+  width: 60px;
+  height: 60px;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.05);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+export const InfoDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+export const Name = styled.p`
+  margin: 0;
+  margin-right: 5px;
+
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.32px;
+`;
+
+export const InfoWrapper = styled.div`
+  display: flex;
+`;
+
+export const Info = styled.p`
+  margin: 0;
+
+  color: ${palette.grayscale.gray};
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+
+  cursor: pointer;
+
+  span {
+    color: ${palette.grayscale.grayDeep};
+  }
+`;
+
+export const Cover = styled.div`
+  width: ${({ $width }) => ($width ? `${$width}px` : '100px')};
+  height: ${({ $height }) => ($height ? `${$height}px` : '150px')};
+  border-radius: 3px;
+  border: 1px solid ${palette.main.beige};
+  flex-shrink: 0;
+
+  position: relative;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+  }
+`;
+
+export const ListDiv = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+export const CloseDiv = styled.div`
+  position: absolute;
+  top: -15px;
+  right: -15px;
+`;
+
+export const GridDiv = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  place-items: center;
+  gap: 20px;
 `;

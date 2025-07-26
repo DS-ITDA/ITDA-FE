@@ -48,7 +48,7 @@ export const Detail = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: ${({ $justify }) => ($justify ? 'flex-start' : 'flex-end')};
 
   width: 100%;
   padding: 10px 10px 15px 10px;
@@ -99,6 +99,7 @@ export const DetailText = styled.div`
 
 export const Arrow = styled.div`
   position: absolute;
-  top: 10px;
+  top: ${({ $bottom }) => $bottom !== 10 && '10px'};
+  bottom: ${({ $bottom }) => ($bottom ? `${$bottom}px` : '0px')};
   right: 10px;
 `;
