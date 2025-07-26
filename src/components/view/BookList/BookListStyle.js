@@ -16,6 +16,8 @@ export const CoverDiv = styled.div`
   background: lightgray -0.018px 0px / 225% 100% no-repeat;
   overflow: hidden;
 
+  cursor: pointer;
+
   img {
     width: 100%;
     height: 100%;
