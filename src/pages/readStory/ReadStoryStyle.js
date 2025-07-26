@@ -22,7 +22,7 @@ export const Cover = styled.div`
   width: 50px;
   height: 75px;
   border-radius: 3px;
-  background-color: ${palette.bookCover.green};
+  background-color: ${({ color }) => color};
 
   position: relative;
 `;

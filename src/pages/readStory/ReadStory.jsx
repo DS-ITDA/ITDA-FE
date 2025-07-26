@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import * as R from '@readStory/ReadStoryStyle';
+import palette from '@styles/theme';
+
 import StorySplash from '@components/StorySplash/StorySplash';
 import PathNavbar from '@components/common/Navbar/PathNavbar';
 import StoryToggle from '@components/StoryToggle/StoryToggle';
 import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
+import Button from '@components/common/Button/Button';
 
 import BookCover from '@assets/ai-exampleImage.jpg';
 import BookImg from '@assets/storybook/book-image.jpg';
@@ -18,18 +21,20 @@ import Share from '@assets/storybook/share-20.svg';
 import Opinion from '@assets/storybook/opinion-20.svg';
 
 import book from '@data/book.json';
-import Button from '../../components/common/Button/Button';
 
 const BOOK = {
   id: 2,
   title: '귀여운 나',
-  color: '#C4DDB7',
-  cover: 'exampleImage2.jpg',
+  color: palette.bookCover.green,
+  cover: BookCover,
   date: '25.02.23',
 };
 
 const ReadStory = () => {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    const hasVisited = sessionStorage.getItem('visited');
+    return !hasVisited;
+  });
   const [currentPage, setCurrentPage] = useState(0);
   const [showBubble, setShowBubble] = useState(false);
   const [level, setLevel] = useState(0);
@@ -84,6 +89,10 @@ const ReadStory = () => {
     navigate('/');
   };
 
+  const handleEditPage = () => {
+    navigate(`/editStory/${id}`, { state: { BOOK, level } });
+  };
+
   useEffect(() => {
     if (currentPage === book.length - 1) {
       const timer = setTimeout(() => {
@@ -95,6 +104,12 @@ const ReadStory = () => {
       setShowBubble(false);
     }
   }, [currentPage]);
+
+  useState(() => {
+    if (showSplash) {
+      sessionStorage.setItem('visited', true);
+    }
+  }, [showSplash]);
 
   const guide = [
     {
@@ -125,9 +140,9 @@ const ReadStory = () => {
           <R.ReadStory>
             <R.Container>
               <div>
-                <R.Cover>
+                <R.Cover color={BOOK.color}>
                   <R.Book>
-                    <img src={BookCover} alt="책 표지" />
+                    <img src={BOOK.cover} alt="책 표지" />
                   </R.Book>
                 </R.Cover>
               </div>
@@ -135,11 +150,11 @@ const ReadStory = () => {
               <R.InfoWrapper>
                 <R.TopWrpper>
                   <R.TextWrapper>
-                    <R.Title>귀여운 나</R.Title>
-                    <R.Date>25.05.23</R.Date>
+                    <R.Title>{BOOK.title}</R.Title>
+                    <R.Date>{BOOK.date}</R.Date>
                   </R.TextWrapper>
 
-                  <R.Edit>수정 {'>'}</R.Edit>
+                  <R.Edit onClick={handleEditPage}>수정 {'>'}</R.Edit>
                 </R.TopWrpper>
 
                 <R.ToggleWrapper>
@@ -216,7 +231,7 @@ const ReadStory = () => {
               <R.Board>
                 <div></div>
               </R.Board>
-              <R.CreatedEdit>수정 {'>'}</R.CreatedEdit>
+              <R.CreatedEdit onClick={handleEditPage}>수정 {'>'}</R.CreatedEdit>
             </R.CreatedWrapper>
 
             <R.ResultWrapper>
