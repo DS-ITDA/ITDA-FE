@@ -5,6 +5,7 @@ import Girl4 from '@assets/view/people/girl-4.jpeg';
 import Man1 from '@assets/view/people/man-1.jpeg';
 import Man2 from '@assets/view/people/man-2.jpeg';
 import Merge from '@assets/view/merge.svg';
+import Delete from '@assets/view/delete.svg';
 
 import * as P from './PeopleListStyle';
 import SpeechBubble from '../../common/SpeechBubble/SpeechBubble';
@@ -20,6 +21,7 @@ const PeopleList = ({ flat }) => {
   const pressTimer = useRef(null);
   const [selectedPerson, setSelectedPerson] = useState([]);
   const [showMergeModal, setShowMergeModal] = useState(false);
+  const [showDelModal, setShowDelModal] = useState(false);
 
   const handlePressStart = () => {
     pressTimer.current = setTimeout(() => {
@@ -41,7 +43,9 @@ const PeopleList = ({ flat }) => {
     setShowMergeModal(true);
   };
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    setShowDelModal(true);
+  };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -85,7 +89,34 @@ const PeopleList = ({ flat }) => {
             }}
             onClick={() => {
               setShowMergeModal(false);
-              setEditing(false);
+              setEditing((prev) => !prev);
+            }}
+          />
+        </P.ModalWrapper>
+      )}
+      {showDelModal && (
+        <P.ModalWrapper>
+          <Modal
+            content={
+              <P.ModalImgWrapper>
+                <P.ModalImg $margin={6}>
+                  <img src={Girl1} alt="인물" />
+                  <P.DeleteImg src={Delete} alt="삭제하기" style={{ zIndex: 20 }} />
+                </P.ModalImg>
+                <P.ModalImg $margin={6}>
+                  <img src={Man1} alt="인물" />
+                  <P.DeleteImg src={Delete} alt="삭제하기" style={{ zIndex: 20 }} />
+                </P.ModalImg>
+              </P.ModalImgWrapper>
+            }
+            info={'선택한 인물들을 삭제할까요?'}
+            btnText={'삭제하기'}
+            onClose={() => {
+              setShowDelModal(false);
+            }}
+            onClick={() => {
+              setShowDelModal(false);
+              setEditing((prev) => !prev);
             }}
           />
         </P.ModalWrapper>

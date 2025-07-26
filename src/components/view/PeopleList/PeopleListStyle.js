@@ -155,11 +155,22 @@ export const ModalImg = styled.div`
   overflow: hidden;
   box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.05);
 
-  margin: -10px;
+  margin: ${({ $margin }) => ($margin ? `${$margin}px` : '-10px')};
+
+  position: relative;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+`;
+
+export const DeleteImg = styled.img`
+  position: absolute;
+  top: 25%;
+  left: 25%;
+
+  width: 30px !important;
+  height: 30px !important;
 `;
