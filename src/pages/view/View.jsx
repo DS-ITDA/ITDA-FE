@@ -11,6 +11,7 @@ import Tab_People from '@assets/view/people-selected-24.svg';
 import Tab_People_Not from '@assets/view/people-nonselected-24.svg';
 import BookList from '@components/view/BookList/BookList';
 import PeopleList from '@components/view/PeopleList/PeopleList';
+import { useRef } from 'react';
 
 const View = () => {
   const [selectedBookId, setSelectedBookId] = useState(null);
@@ -19,15 +20,25 @@ const View = () => {
   const [firstVisited, setFirstVisited] = useState(true);
 
   const [selectedIdx, setSelectedIdx] = useState(null);
+
+  const [flat, setFlat] = useState(false);
+  const wrapperRef = useRef();
+
   const handleBookcoverClick = (id) => {
     setSelectedBookId(id);
     setSelectedIdx(id);
     if (firstVisited) setFirstVisited(false);
   };
 
+  const handleDrag = (_, info) => {
+    setFlat(info.point.y < window.innerHeight - 600);
+  };
+
   return (
     <V.View>
-      <PathNavbar left={true} right={false} goBack={() => {}} goNext={() => {}} />
+      <div>
+        <PathNavbar left={true} right={false} goBack={() => {}} goNext={() => {}} />
+      </div>
 
       <V.BooksWrapper>
         <Books
@@ -38,7 +49,7 @@ const View = () => {
         />
       </V.BooksWrapper>
 
-      <V.Wrapper>
+      <V.Wrapper ref={wrapperRef} $flat={flat} drag="y" dragConstraints={{ top: -230, bottom: 0 }} onDrag={handleDrag}>
         <V.Ul>
           {tabs.map((item) => (
             <M.li key={item} onClick={() => setSelectedTab(item)}>
