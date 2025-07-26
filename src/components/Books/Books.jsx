@@ -5,14 +5,13 @@ import * as B from '@components/Books/BooksStyle';
 import books from '@data/books.json';
 import palette from '@styles/theme';
 
-const Books = ({ selectedBookId, onSelectBook, $height = 15 }) => {
+const Books = ({ selectedBookId, onSelectBook, $height = 15, firstVisited }) => {
   const MIN_HEIGHT = 100;
   const MAX_HEIGHT = 160;
   const MAX_TITLE_LENGTH = 20;
 
   const divRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [firstVisited, setFirstVisited] = useState(true);
 
   const navigate = useNavigate();
 
@@ -53,7 +52,6 @@ const Books = ({ selectedBookId, onSelectBook, $height = 15 }) => {
   };
 
   const handleSelectedBook = (bookId) => {
-    if (firstVisited) setFirstVisited(false);
     onSelectBook(bookId);
   };
 

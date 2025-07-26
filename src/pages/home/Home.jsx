@@ -20,6 +20,7 @@ const Home = () => {
   const [selectedIdx, setSelectedIdx] = useState(null);
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [booksArr, setBooksArr] = useState(() => (length > 3 ? books.concat(books) : books));
+  const [firstVisited, setFirstVisited] = useState(true);
 
   const sliderRef = useRef(null);
   const inputRef = useRef(null);
@@ -27,6 +28,8 @@ const Home = () => {
   const { selectedImg, setSelectedImg, handleUpload } = useImgUpload();
 
   const handleBookcoverClick = (id) => {
+    if (firstVisited) setFirstVisited(false);
+
     const idx = booksArr.findIndex((book) => book.id === id);
 
     if (idx === -1) return;
@@ -88,7 +91,7 @@ const Home = () => {
               <img src={Arrow20} alt="이미지 생성하러 가기" />
             </H.ArrowDiv>
           </H.Title>
-          <Books selectedBookId={selectedBookId} onSelectBook={handleBookcoverClick} />
+          <Books selectedBookId={selectedBookId} onSelectBook={handleBookcoverClick} firstVisited={firstVisited} />
         </H.User>
       </H.UserContainer>
 

@@ -24,3 +24,16 @@ export const CoverDiv = styled.div`
     object-fit: cover;
   }
 `;
+
+export const SelectedCoverDiv = styled(CoverDiv)`
+  border: 1px solid ${palette.main.brown};
+
+  position: relative;
+
+  div {
+    position: absolute;
+    inset: 0;
+    background-color: ${palette.grayscale.black20};
+    backdrop-filter: blur(2px);
+  }
+`;
