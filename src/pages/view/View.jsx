@@ -31,7 +31,7 @@ const View = () => {
   };
 
   const handleDrag = (_, info) => {
-    setFlat(info.point.y < window.innerHeight - 600);
+    setFlat(info.point.y < window.innerHeight - 400);
   };
 
   return (
@@ -85,7 +85,7 @@ const View = () => {
             setSelectedIdx={setSelectedIdx}
           />
         )}
-        {selectedTab === 'people' && <PeopleList />}
+        {selectedTab === 'people' && <PeopleList flat={flat} />}
       </V.Wrapper>
     </V.View>
   );
