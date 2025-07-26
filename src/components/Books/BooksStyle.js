@@ -26,7 +26,7 @@ export const BookContainer = styled.div`
 
   flex-shrink: 0;
 
-  max-height: 267px;
+  max-height: 229px;
   overflow-y: scroll;
 
   align-items: flex-start;
