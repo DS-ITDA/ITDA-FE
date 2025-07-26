@@ -5,13 +5,14 @@ import * as B from '@components/Books/BooksStyle';
 import books from '@data/books.json';
 import palette from '@styles/theme';
 
-const Books = ({ selectedBookId, onSelectBook }) => {
+const Books = ({ selectedBookId, onSelectBook, $height = 15 }) => {
   const MIN_HEIGHT = 100;
   const MAX_HEIGHT = 160;
   const MAX_TITLE_LENGTH = 20;
 
   const divRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [firstVisited, setFirstVisited] = useState(true);
 
   const navigate = useNavigate();
 
@@ -51,20 +52,25 @@ const Books = ({ selectedBookId, onSelectBook }) => {
     }
   };
 
+  const handleSelectedBook = (bookId) => {
+    if (firstVisited) setFirstVisited(false);
+    onSelectBook(bookId);
+  };
+
   return (
     <B.Books $width={dimensions.width} $height={dimensions.height}>
       <B.Div ref={divRef}>
         <B.BookContainer>
           {books.map((book) => {
             const isSelected = book.id === selectedBookId;
-            const bookColor = isSelected ? book.color : palette.main.beige;
+            const bookColor = firstVisited ? book.color : isSelected ? book.color : palette.main.beige;
 
             return (
               <B.Book
                 key={book.id}
                 height={getBookHeight(book.title)}
                 color={bookColor}
-                onClick={() => onSelectBook(book.id)}>
+                onClick={() => handleSelectedBook(book.id)}>
                 {book.title}
               </B.Book>
             );
@@ -75,7 +81,7 @@ const Books = ({ selectedBookId, onSelectBook }) => {
             </B.Book>
           )}
         </B.BookContainer>
-        <B.Board $width={getBoardWidth()}></B.Board>
+        <B.Board $width={getBoardWidth()} $height={$height}></B.Board>
       </B.Div>
     </B.Books>
   );

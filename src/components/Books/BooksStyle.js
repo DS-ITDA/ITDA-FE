@@ -77,9 +77,10 @@ export const Plus = styled.span`
 
 export const Board = styled.div`
   height: ${({ $width }) => `${$width}px`};
-  width: 15px;
+  width: ${({ $height }) => `${$height}px`};
   border-radius: 27px;
   background-color: ${palette.main.brown};
+  margin-right: ${({ $height }) => $height === 35 && '-15px'};
 `;
 
 export const Char = styled.span`
