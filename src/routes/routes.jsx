@@ -10,4 +10,5 @@ export const lazyRoutes = {
   Mypage: React.lazy(() => import('../pages/mypage/Mypage')),
   ReadStory: React.lazy(() => import('../pages/readStory/ReadStory')),
   View: React.lazy(() => import('../pages/view/View')),
+  CreatedStory: React.lazy(() => import('../pages/CreatedStory/CreatedStory')),
 };

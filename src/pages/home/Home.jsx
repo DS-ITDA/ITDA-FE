@@ -11,6 +11,16 @@ import StoryIcon from '@assets/home/storybook-24.svg';
 import useImgUpload from '@hooks/useImgUpload';
 import CloseIcon from '@assets/home/x-24.svg';
 import ArrowRightIcon from '@assets/arrow-right.svg';
+import palette from '@styles/theme';
+import BookCover from '@assets/ai-exampleImage.jpg';
+
+const BOOK = {
+  id: 2,
+  title: '귀여운 나',
+  color: palette.bookCover.green,
+  cover: BookCover,
+  date: '25.02.23',
+};
 
 const Home = () => {
   const length = books.length;
@@ -20,6 +30,7 @@ const Home = () => {
   const [selectedIdx, setSelectedIdx] = useState(null);
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [booksArr, setBooksArr] = useState(() => (length > 3 ? books.concat(books) : books));
+  const [firstVisited, setFirstVisited] = useState(true);
 
   const sliderRef = useRef(null);
   const inputRef = useRef(null);
@@ -27,6 +38,8 @@ const Home = () => {
   const { selectedImg, setSelectedImg, handleUpload } = useImgUpload();
 
   const handleBookcoverClick = (id) => {
+    if (firstVisited) setFirstVisited(false);
+
     const idx = booksArr.findIndex((book) => book.id === id);
 
     if (idx === -1) return;
@@ -78,6 +91,16 @@ const Home = () => {
 
   return (
     <H.Home>
+      <H.BubbleWrapper onClick={() => navigate('/createdStory/10', { state: { BOOK } })}>
+        <SpeechBubble
+          selection="down"
+          content={
+            <H.BubbleDiv>
+              스토리북 생성이 <span>완료</span>되었어요.
+            </H.BubbleDiv>
+          }
+        />
+      </H.BubbleWrapper>
       <H.UserContainer>
         <H.User>
           <H.Title>
@@ -88,7 +111,7 @@ const Home = () => {
               <img src={Arrow20} alt="이미지 생성하러 가기" />
             </H.ArrowDiv>
           </H.Title>
-          <Books selectedBookId={selectedBookId} onSelectBook={handleBookcoverClick} />
+          <Books selectedBookId={selectedBookId} onSelectBook={handleBookcoverClick} firstVisited={firstVisited} />
         </H.User>
       </H.UserContainer>
 

@@ -13,6 +13,7 @@ const routes = [
       { path: 'ai', element: React.createElement(lazyRoutes.Ai) },
       { path: 'interview', element: React.createElement(lazyRoutes.Interview) },
       { path: 'createStory', element: React.createElement(lazyRoutes.CreateStory) },
+      { path: 'createdStory/:id', element: React.createElement(lazyRoutes.CreatedStory) },
       { path: 'readStory/:id', element: React.createElement(lazyRoutes.ReadStory) },
       { path: 'editStory/:id', element: React.createElement(lazyRoutes.EditStory) },
       { path: 'view', element: React.createElement(lazyRoutes.View) },

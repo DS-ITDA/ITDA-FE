@@ -226,3 +226,11 @@ export const CloseDiv = styled.div`
 
   cursor: pointer;
 `;
+
+export const BubbleWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: -10px;
+  margin-bottom: 20px;
+`;
