@@ -158,8 +158,10 @@ const PeopleList = ({ flat }) => {
             <P.People
               $width={222}
               onClick={() => {
+                if (!editing) {
+                  setLevel(1);
+                }
                 togglePerson('정서영');
-                setLevel(1);
               }}>
               <img src={Girl1} alt="인물이미지" />
               <P.Overlay $bg={true}>
@@ -176,8 +178,10 @@ const PeopleList = ({ flat }) => {
               <P.People
                 $width={108}
                 onClick={() => {
+                  if (!editing) {
+                    setLevel(1);
+                  }
                   togglePerson('송은지');
-                  setLevel(1);
                 }}>
                 <img src={Man1} alt="인물이미지" />
                 <P.Overlay $bg={true}>
@@ -193,8 +197,10 @@ const PeopleList = ({ flat }) => {
               <P.People
                 $width={108}
                 onClick={() => {
+                  if (!editing) {
+                    setLevel(1);
+                  }
                   togglePerson('여현정');
-                  setLevel(1);
                 }}>
                 <img src={Girl2} alt="인물이미지" />
                 <P.Overlay $bg={true}>
@@ -214,8 +220,10 @@ const PeopleList = ({ flat }) => {
               <P.People
                 $width={108}
                 onClick={() => {
+                  if (!editing) {
+                    setLevel(1);
+                  }
                   togglePerson('김진효');
-                  setLevel(1);
                 }}>
                 <img src={Girl3} alt="인물이미지" />
                 <P.Overlay $bg={true}>
@@ -231,8 +239,10 @@ const PeopleList = ({ flat }) => {
               <P.People
                 $width={108}
                 onClick={() => {
+                  if (!editing) {
+                    setLevel(1);
+                  }
                   togglePerson('girl4');
-                  setLevel(1);
                 }}>
                 <img src={Girl4} alt="인물이미지" />
                 <P.Overlay $bg={false}>
@@ -248,8 +258,10 @@ const PeopleList = ({ flat }) => {
             <P.People
               $width={222}
               onClick={() => {
+                if (!editing) {
+                  setLevel(1);
+                }
                 togglePerson('man2');
-                setLevel(1);
               }}>
               <img src={Man2} alt="인물이미지" />
               <P.Overlay $bg={false}>
