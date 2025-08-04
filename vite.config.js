@@ -1,11 +1,44 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
+import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
 export default defineConfig({
   base: '/',
-  plugins: [react(), svgr()],
+  plugins: [
+    react(),
+    svgr(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: [
+        'favicons/favicon.ico',
+        'favicons/apple-touch-icon.png',
+        'favicons/favicon-96x96.png',
+        'favicons/favicon.svg',
+      ],
+      manifest: {
+        name: '잇다: 사진을 이야기로 잇다',
+        short_name: '잇다',
+        description: '잇다: 사진을 이야기로 잇다',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
+        icons: [
+          {
+            src: 'favicons/web-app-manifest-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: 'favicons/web-app-manifest-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+        ],
+      },
+    }),
+  ],
   resolve: {
     alias: [
       { find: '@', replacement: '/src' },
