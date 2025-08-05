@@ -28,6 +28,22 @@ const Login = () => {
     }
   };
 
+  const naverLogin = async () => {
+    try {
+      window.location.href = `${VITE_API_URL}/oauth2/authorization/naver`;
+    } catch (error) {
+      console.error('Error during kakao login:', error);
+    }
+  };
+
+  const googleLogin = async () => {
+    try {
+      window.location.href = `${VITE_API_URL}/oauth2/authorization/google`;
+    } catch (error) {
+      console.error('Error during kakao login:', error);
+    }
+  };
+
   return (
     <>
       {splash ? (
@@ -42,11 +58,11 @@ const Login = () => {
               <L.SocialLogo src={kakao} />
               <L.SocialText>카카오로 시작하기</L.SocialText>
             </L.SocialLogin>
-            <L.SocialLogin style={{ backgroundColor: '#04C75B' }}>
+            <L.SocialLogin style={{ backgroundColor: '#04C75B' }} onClick={() => naverLogin()}>
               <L.SocialLogo src={naver} />
               <L.SocialText>네이버로 시작하기</L.SocialText>
             </L.SocialLogin>
-            <L.SocialLogin style={{ backgroundColor: '#FFF' }}>
+            <L.SocialLogin style={{ backgroundColor: '#FFF' }} onClick={() => googleLogin()}>
               <L.SocialLogo src={google} />
               <L.SocialText>구글 시작하기</L.SocialText>
             </L.SocialLogin>
