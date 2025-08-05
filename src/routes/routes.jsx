@@ -11,4 +11,5 @@ export const lazyRoutes = {
   ReadStory: React.lazy(() => import('../pages/readStory/ReadStory')),
   View: React.lazy(() => import('../pages/view/View')),
   CreatedStory: React.lazy(() => import('../pages/CreatedStory/CreatedStory')),
+  LoginSuccess: React.lazy(() => import('../pages/login/LoginSuccess')),
 };
