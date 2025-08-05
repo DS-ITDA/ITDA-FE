@@ -5,6 +5,9 @@ import kakao from '@assets/login/kakao.svg';
 import naver from '@assets/login/naver.svg';
 import google from '@assets/login/google.svg';
 import { useState, useEffect } from 'react';
+// import { axiosInstance } from '@apis/axios';
+
+const VITE_API_URL = import.meta.env.VITE_API_URL;
 
 const Login = () => {
   const [splash, setSplash] = useState(true);
@@ -17,6 +20,14 @@ const Login = () => {
     return () => clearTimeout(timer); // 컴포넌트 언마운트 시 타이머 제거
   }, []);
 
+  const kakaoLogin = async () => {
+    try {
+      window.location.href = `${VITE_API_URL}/oauth2/authorization/kakao`;
+    } catch (error) {
+      console.error('Error during kakao login:', error);
+    }
+  };
+
   return (
     <>
       {splash ? (
@@ -27,7 +38,7 @@ const Login = () => {
         <L.LoginPage>
           <L.Logo src={logo} />
           <L.Login>
-            <L.SocialLogin style={{ backgroundColor: '#FEE500' }}>
+            <L.SocialLogin style={{ backgroundColor: '#FEE500' }} onClick={() => kakaoLogin()}>
               <L.SocialLogo src={kakao} />
               <L.SocialText>카카오로 시작하기</L.SocialText>
             </L.SocialLogin>
