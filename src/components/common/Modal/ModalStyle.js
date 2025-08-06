@@ -6,8 +6,12 @@ export const ModalPage = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: calc(100% - 70px);
   z-index: 1000;
+  width: 323px;
+
+  @media (max-width: 767px) {
+    width: calc(100vw - 70px);
+  }
 `;
 
 export const Modal = styled.div`
