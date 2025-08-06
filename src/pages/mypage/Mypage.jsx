@@ -9,6 +9,7 @@ import divider from '@assets/mypage/divider.svg';
 import palette from '@styles/theme';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { axiosInstance } from '@apis/axios';
 
 const Mypage = () => {
   const navigate = useNavigate();
@@ -23,11 +24,11 @@ const Mypage = () => {
         logout();
       },
     },
-    withdraw: {
+    deleteUser: {
       info: '회원 탈퇴하시겠습니까?',
       btnText: '회원 탈퇴',
       onClick: () => {
-        console.log('탈퇴');
+        deleteUser();
       },
     },
   };
@@ -36,6 +37,22 @@ const Mypage = () => {
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('accessToken');
     navigate('/login');
+  };
+
+  const deleteUser = async () => {
+    const token = localStorage.getItem('accessToken');
+    try {
+      await axiosInstance.delete('/api/users', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      navigate('/login');
+    } catch (error) {
+      console.error('탈퇴 중 오류 발생', error);
+    }
   };
 
   return (
@@ -82,7 +99,7 @@ const Mypage = () => {
         </M.UserBtn>
         <M.UserBtn
           onClick={() => {
-            setModal('withdraw');
+            setModal('deleteUser');
           }}>
           회원 탈퇴
         </M.UserBtn>
