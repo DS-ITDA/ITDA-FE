@@ -20,7 +20,7 @@ const Mypage = () => {
       info: '로그아웃하시겠습니까?',
       btnText: '로그아웃',
       onClick: () => {
-        console.log('로그아웃');
+        logout();
       },
     },
     withdraw: {
@@ -30,6 +30,12 @@ const Mypage = () => {
         console.log('탈퇴');
       },
     },
+  };
+
+  const logout = () => {
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('accessToken');
+    navigate('/login');
   };
 
   return (
