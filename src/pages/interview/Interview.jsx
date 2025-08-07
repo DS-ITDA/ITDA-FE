@@ -1,5 +1,5 @@
 import * as I from '@interview/InterviewStyle';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import interviewBottom from '@assets/interview/interview-bottom.svg';
 import interviewStart from '@assets/interview/interview-start.svg';
@@ -21,6 +21,7 @@ import checkOn from '@assets/interview/check-filled-24.svg';
 import ToastMessage from '@components/common/ToastMessage/ToastMessage';
 import PathNavbar from '@components/common/Navbar/PathNavbar';
 import palette from '../../styles/theme';
+import { axiosInstance } from '@apis/axios';
 
 const Interview = () => {
   const navigate = useNavigate();
@@ -32,6 +33,15 @@ const Interview = () => {
   const [alert, setAlert] = useState(false);
   const [alertModal, setAlertModal] = useState(false);
   const [modalChecking, setModalChecking] = useState(false);
+  const [interviewData, setInterviewData] = useState({
+    questionId: 0,
+    question: '',
+    sessionId: '',
+  });
+
+  const mediaRecorderRef = useRef(null);
+  const recordedChunksRef = useRef([]);
+  const streamRef = useRef(null);
 
   const State_CONFIG = {
     start: interviewStart,
@@ -41,6 +51,8 @@ const Interview = () => {
     stopOn: interviewStopOn,
     next: interviewNext,
   };
+
+  const photoid = 1;
 
   const goBack = () => {
     if (State === 'start') navigate(-1);
@@ -55,6 +67,121 @@ const Interview = () => {
   const SaveAlert = () => {
     setAlert(true);
     setAlertModal(false);
+  };
+
+  const startInterview = async () => {
+    try {
+      const response = await axiosInstance.post(
+        '/api/interview/start',
+        {},
+        {
+          params: {
+            photoId: photoid,
+          },
+        },
+      );
+      console.log('응답 성공:', response.data);
+
+      const data = response.data.data;
+      setInterviewData({
+        questionId: data.questionId,
+        question: data.question,
+        sessionId: data.sessionId,
+      });
+
+      setState('recordOn');
+    } catch (error) {
+      console.error('인터뷰 시작 에러:', error);
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+
+      const options = { mimeType: 'audio/webm;codecs=opus' };
+      const recorder = new MediaRecorder(stream, options);
+
+      recordedChunksRef.current = [];
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
+        }
+      };
+
+      recorder.start(1000); // 1초마다 데이터 수집
+      mediaRecorderRef.current = recorder;
+
+      setState('stopOn');
+    } catch (error) {
+      console.error('마이크 오류:', error);
+      if (error.name === 'NotAllowedError') {
+        alert('마이크 권한을 허용해주세요.');
+      }
+    }
+  };
+
+  const stopRecording = async () => {
+    if (mediaRecorderRef.current?.state === 'recording') {
+      await new Promise((resolve) => {
+        mediaRecorderRef.current.onstop = resolve;
+        mediaRecorderRef.current.stop();
+      });
+
+      const finalChunks = [...recordedChunksRef.current];
+      if (finalChunks.length === 0) {
+        console.error('녹음된 데이터가 없습니다');
+        cleanupRecording();
+        setState('next');
+        return;
+      }
+
+      const blob = new Blob(finalChunks, { type: 'audio/webm' });
+
+      if (blob.size > 0) {
+        await sendVoiceToServer(blob);
+      } else {
+        console.error('데이터가 없습니다.');
+      }
+
+      cleanupRecording();
+      setState('next');
+    }
+  };
+
+  const cleanupRecording = () => {
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.onstop = null;
+      mediaRecorderRef.current.ondataavailable = null;
+      mediaRecorderRef.current = null;
+    }
+
+    recordedChunksRef.current = [];
+  };
+
+  const sendVoiceToServer = async (blob) => {
+    try {
+      const formData = new FormData();
+      formData.append('voice', blob, 'answer.webm'); // filename은 서버에서 쓰이는 이름으로
+
+      const response = await axiosInstance.post('/api/interview/answer', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        params: {
+          sessionId: interviewData.sessionId,
+        },
+      });
+
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -99,9 +226,7 @@ const Interview = () => {
         <I.QuestPage>
           <ToastMessage text={'질문 중...'} />
           <I.MainPage>
-            <I.MainText>
-              이 사진이 찍힐 때 설렘과 기대가 느껴졌다고 했어요. 어떤 일이 있었던 날이었는지 떠오르시나요?
-            </I.MainText>
+            <I.MainText>{interviewData.question}</I.MainText>
             <I.Divider />
           </I.MainPage>
         </I.QuestPage>
@@ -112,9 +237,7 @@ const Interview = () => {
         <I.AnswerPage>
           <ToastMessage text={'답변 중...'} />
           <I.MainPage>
-            <I.SubText>
-              이 사진이 찍힐 때 설렘과 기대가 느껴졌다고 했어요. 어떤 일이 있었던 날이었는지 떠오르시나요?
-            </I.SubText>
+            <I.SubText>{interviewData.question}</I.SubText>
             <I.SubDivider />
             <I.MainText>
               저는 이런 부분에서 설레고, 기대가 됐어요. 쇼타로와 함께 한 모든 시간들이 모두 좋았어요.
@@ -374,10 +497,10 @@ const Interview = () => {
             <I.Button
               src={State_CONFIG[State]}
               onClick={() => {
-                if (State === 'start') setState('recordReady');
+                if (State === 'start') startInterview();
                 else if (State === 'recordReady') setState('recordOn');
-                else if (State === 'recordOn') setState('stopOn');
-                else if (State === 'stopOn') setState('next');
+                else if (State === 'recordOn') startRecording();
+                else if (State === 'stopOn') stopRecording();
                 else if (State === 'next') setState('selectStyle');
               }}
             />
