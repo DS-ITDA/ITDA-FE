@@ -221,7 +221,9 @@ export const List = styled.ul`
   }
 `;
 
-export const SelectButton = styled.button`
+export const SelectButton = styled.div`
+  cursor: pointer;
+
   color: ${palette.grayscale.black};
   width: 100%;
 
@@ -254,7 +256,9 @@ export const Input = styled.input`
   }
 `;
 
-export const CustomButton = styled.button`
+export const CustomButton = styled.div`
+  cursor: pointer;
+
   color: ${palette.main.brown};
   width: 100%;
 

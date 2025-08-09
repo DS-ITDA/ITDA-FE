@@ -1,35 +1,29 @@
 import { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { getStoryBookData } from '../../apis/home/home';
+
 import * as H from '@home/HomeStyle';
 import Books from '@components/Books/Books';
 import Arrow20 from '@assets/home/arrow-up_right-20.svg';
-import books from '@data/books.json';
 import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
 import Button from '@components/common/Button/Button';
 import StoryIcon from '@assets/home/storybook-24.svg';
 import useImgUpload from '@hooks/useImgUpload';
 import CloseIcon from '@assets/home/x-24.svg';
 import ArrowRightIcon from '@assets/arrow-right.svg';
-import palette from '@styles/theme';
-import BookCover from '@assets/ai-exampleImage.jpg';
-
-const BOOK = {
-  id: 2,
-  title: '귀여운 나',
-  color: palette.bookCover.green,
-  cover: BookCover,
-  date: '25.02.23',
-};
 
 const Home = () => {
-  const length = books.length;
+  const [storyBooks, setStoryBooks] = useState([]);
+
+  const length = storyBooks.length;
 
   const navigate = useNavigate();
 
   const [selectedIdx, setSelectedIdx] = useState(null);
   const [selectedBookId, setSelectedBookId] = useState(null);
-  const [booksArr, setBooksArr] = useState(() => (length > 3 ? books.concat(books) : books));
+  const [booksArr, setBooksArr] = useState([]);
+
   const [firstVisited, setFirstVisited] = useState(true);
 
   const sliderRef = useRef(null);
@@ -40,13 +34,13 @@ const Home = () => {
   const handleBookcoverClick = (id) => {
     if (firstVisited) setFirstVisited(false);
 
-    const idx = booksArr.findIndex((book) => book.id === id);
+    const idx = booksArr.findIndex((book) => book.storybookId === id);
 
     if (idx === -1) return;
 
     const clickedBook = booksArr[idx];
 
-    if (selectedIdx === 0 && clickedBook.id === id) {
+    if (selectedIdx === 0 && clickedBook.storybookId === id) {
       setSelectedIdx(null);
       setSelectedBookId(null);
       return;
@@ -89,9 +83,31 @@ const Home = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getStoryBookData();
+        setStoryBooks(data.data);
+        console.log(data.data);
+      } catch (error) {
+        console.error('스토리북 데이터 불러오기 실패', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (storyBooks.length > 3) {
+      setBooksArr(storyBooks.concat(storyBooks));
+    } else {
+      setBooksArr(storyBooks);
+    }
+  }, [storyBooks]);
+
   return (
     <H.Home>
-      <H.BubbleWrapper onClick={() => navigate('/createdStory/10', { state: { BOOK } })}>
+      {/* <H.BubbleWrapper onClick={() => navigate('/createdStory/10', { state: { storyBooks } })}>
         <SpeechBubble
           selection="down"
           content={
@@ -100,7 +116,8 @@ const Home = () => {
             </H.BubbleDiv>
           }
         />
-      </H.BubbleWrapper>
+      </H.BubbleWrapper> */}
+
       <H.UserContainer>
         <H.User>
           <H.Title>
@@ -111,7 +128,13 @@ const Home = () => {
               <img src={Arrow20} alt="이미지 생성하러 가기" />
             </H.ArrowDiv>
           </H.Title>
-          <Books selectedBookId={selectedBookId} onSelectBook={handleBookcoverClick} firstVisited={firstVisited} />
+          <Books
+            storyBooks={storyBooks}
+            selectedBookId={selectedBookId}
+            onSelectBook={handleBookcoverClick}
+            firstVisited={firstVisited}
+            inputRef={inputRef}
+          />
         </H.User>
       </H.UserContainer>
 
@@ -126,30 +149,35 @@ const Home = () => {
         />
       )}
 
-      <H.SliderWrapper ref={sliderRef}>
-        <H.BookSlider $length={length} $paused={selectedIdx !== null}>
-          {booksArr.map((book, idx) => (
-            <H.BookCover onClick={() => handleBookcoverClick(book.id)} key={idx} data-book-id={book.id}>
-              <img src={`/images/${book.cover}`} alt={book.title} />
+      {length !== 0 && (
+        <H.SliderWrapper ref={sliderRef}>
+          <H.BookSlider $length={length} $paused={selectedIdx !== null}>
+            {booksArr.map((book, idx) => (
+              <H.BookCover
+                onClick={() => handleBookcoverClick(book.storybookId)}
+                key={idx}
+                data-book-id={book.storybookId}>
+                <img src={`${book.originalPhotoUrl}`} alt={book.title} />
 
-              {selectedBookId === book.id && idx === 0 && (
-                <H.BookOverlay>
-                  <H.BookInfo>
-                    <p>{book.title}</p>
-                    <span>{book.date}</span>
-                  </H.BookInfo>
+                {selectedBookId === book.storybookId && idx === 0 && (
+                  <H.BookOverlay>
+                    <H.BookInfo>
+                      <p>{book.title}</p>
+                      <span>{book.displayDate}</span>
+                    </H.BookInfo>
 
-                  <H.ArrowWrapper>
-                    <H.ArrowDiv $width={'24px'} onClick={() => navigate(`readStory/${book.id}`)}>
-                      <img src={Arrow20} alt="책 상세 보기" />
-                    </H.ArrowDiv>
-                  </H.ArrowWrapper>
-                </H.BookOverlay>
-              )}
-            </H.BookCover>
-          ))}
-        </H.BookSlider>
-      </H.SliderWrapper>
+                    <H.ArrowWrapper>
+                      <H.ArrowDiv $width={'24px'} onClick={() => navigate(`readStory/${book.storybookId}`)}>
+                        <img src={Arrow20} alt="책 상세 보기" />
+                      </H.ArrowDiv>
+                    </H.ArrowWrapper>
+                  </H.BookOverlay>
+                )}
+              </H.BookCover>
+            ))}
+          </H.BookSlider>
+        </H.SliderWrapper>
+      )}
 
       <H.ButtonWrapper>
         {selectedImg && (

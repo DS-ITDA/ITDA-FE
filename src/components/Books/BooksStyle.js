@@ -35,6 +35,7 @@ export const BookContainer = styled.div`
 export const Book = styled.div`
   border-radius: 3px;
   border: 2px solid ${palette.grayscale.white};
+  background-clip: padding-box;
   padding: 5px 8px;
 
   width: ${({ height }) => `${height}px`};

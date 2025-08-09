@@ -77,6 +77,8 @@ export const GridSkeleton = styled.div`
   gap: 6px;
   margin-top: 13px;
   flex: 1;
+
+  height: 100%;
 `;
 
 export const scanAnimation = keyframes`
