@@ -42,3 +42,22 @@ export const postPhotoAnalyze = async (originalPhotoId, selectedFaceIds) => {
     console.error('postPhotoAnalyze 에러 발생', error);
   }
 };
+
+// 주인공 선택 및 분석 정보 수정
+export const postPhotoUpdate = async (originalPhotoId, mainCharacterFaceId, place, relationship, emotion) => {
+  console.log(originalPhotoId, mainCharacterFaceId, place, relationship, emotion);
+
+  try {
+    const response = await axiosInstance.post('/api/photo/update', {
+      originalPhotoId,
+      mainCharacterFaceId,
+      place,
+      relationship,
+      emotion,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('postPhotoUpdate 에러 발생', error);
+  }
+};

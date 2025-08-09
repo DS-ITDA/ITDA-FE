@@ -14,7 +14,7 @@ import toggleIcon from '@assets/Ai/toggle.png';
 import toggleUpIcon from '@assets/Ai/toggle-up.png';
 import CancleIcon from '@assets/Ai/x-512.png';
 import PlusIcon from '@assets/Ai/add-24.svg';
-import { postPhotoAnalyze, postPhotoUpload } from '../../apis/home/home';
+import { postPhotoAnalyze, postPhotoUpdate, postPhotoUpload } from '../../apis/home/home';
 
 const Ai = () => {
   const [showSkeleton, setShowSkeleton] = useState(false);
@@ -129,6 +129,20 @@ const Ai = () => {
       setFeelings((prev) => [feelingsInput.trim(), ...prev]);
       setFeelingsInput('');
       setFeelingsType('');
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      await postPhotoUpdate(
+        originalPhotoId,
+        isMain,
+        place.length === 1 ? place[0] : place.join(','),
+        relationshipList.length === 1 ? relationshipList[0] : relationshipList.join(','),
+        feelings.length === 1 ? feelings[0] : feelings.join(','),
+      );
+    } catch (error) {
+      console.log('저장 실패', error);
     }
   };
 
@@ -398,6 +412,7 @@ const Ai = () => {
               content={<img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }}></img>}
               onClick={() => {
                 if (level === 2) {
+                  handleSubmit();
                   navigate('/interview');
                 }
                 setLevel((prev) => prev + 1);
