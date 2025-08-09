@@ -27,17 +27,22 @@ const Interview = () => {
   const navigate = useNavigate();
   const [State, setState] = useState('start');
   const [isEditing, setIsEditing] = useState(false);
-  const [answerText, setAnswerText] = useState('쇼타롱');
   const [example, setExample] = useState('');
   const [selection, setSelection] = useState();
   const [alert, setAlert] = useState(false);
   const [alertModal, setAlertModal] = useState(false);
   const [modalChecking, setModalChecking] = useState(false);
-  const [interviewData, setInterviewData] = useState({
+  const [interviewStartData, setInterviewStartData] = useState({
     questionId: 0,
     question: '',
     sessionId: '',
   });
+  const [interviewData, setInterviewData] = useState({
+    answerText: '',
+    question: '',
+    questionId: 0,
+  });
+  const [allAnswers, setAllAnswers] = useState([]);
 
   const mediaRecorderRef = useRef(null);
   const recordedChunksRef = useRef([]);
@@ -52,7 +57,7 @@ const Interview = () => {
     next: interviewNext,
   };
 
-  const photoid = 1;
+  const photoid = 157;
 
   const goBack = () => {
     if (State === 'start') navigate(-1);
@@ -83,7 +88,7 @@ const Interview = () => {
       console.log('응답 성공:', response.data);
 
       const data = response.data.data;
-      setInterviewData({
+      setInterviewStartData({
         questionId: data.questionId,
         question: data.question,
         sessionId: data.sessionId,
@@ -167,30 +172,65 @@ const Interview = () => {
   const sendVoiceToServer = async (blob) => {
     try {
       const formData = new FormData();
-      formData.append('voice', blob, 'answer.webm'); // filename은 서버에서 쓰이는 이름으로
+      formData.append('voice', blob, 'answer.webm');
 
       const response = await axiosInstance.post('/api/interview/answer', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
         params: {
-          sessionId: interviewData.sessionId,
+          sessionId: interviewStartData.sessionId,
         },
       });
 
       console.log(response.data);
+      const data = response.data.data;
+      setInterviewData({
+        answerText: data.answerText,
+        questionId: data.questionId,
+        question: data.question,
+      });
+
+      if (interviewData.answerText) {
+        setAllAnswers((prev) => [...prev, interviewData]);
+      }
     } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const editAnswer = async () => {
+    console.log({
+      sessionId: interviewStartData.sessionId,
+      questionId: interviewData.questionId,
+      updatedAnswer: interviewData.answerText,
+    });
+    try {
+      const response = await axiosInstance.put('/api/interview/answer/update', {
+        sessionId: interviewStartData.sessionId,
+        questionId: interviewData.questionId - 1,
+        updatedAnswer: interviewData.answerText,
+      });
+      console.log(response.data);
+      interviewData.questionId + 1;
+      console.log(interviewData.questionId);
+    } catch (error) {
+      if (error.response) {
+        console.error('서버 응답 데이터:', error.response.data);
+      }
       console.error(error);
     }
   };
 
   return (
     <I.InterviewPage>
-      {State === 'selectStyle' && selection ? (
-        <PathNavbar left={true} right={true} goBack={() => goBack()} goNext={() => goNext()} />
-      ) : (
-        <PathNavbar left={true} right={false} goBack={() => goBack()} />
-      )}
+      <I.NavBar>
+        {State === 'selectStyle' && selection ? (
+          <PathNavbar left={true} right={true} goBack={() => goBack()} goNext={() => goNext()} />
+        ) : (
+          <PathNavbar left={true} right={false} goBack={() => goBack()} />
+        )}
+      </I.NavBar>
 
       {/* 페이지 콘텐츠 */}
       {/* 첫 화면 */}
@@ -226,7 +266,7 @@ const Interview = () => {
         <I.QuestPage>
           <ToastMessage text={'질문 중...'} />
           <I.MainPage>
-            <I.MainText>{interviewData.question}</I.MainText>
+            <I.MainText>{interviewStartData.question}</I.MainText>
             <I.Divider />
           </I.MainPage>
         </I.QuestPage>
@@ -237,10 +277,12 @@ const Interview = () => {
         <I.AnswerPage>
           <ToastMessage text={'답변 중...'} />
           <I.MainPage>
-            <I.SubText>{interviewData.question}</I.SubText>
+            <I.SubText>{interviewStartData.question}</I.SubText>
             <I.SubDivider />
             <I.MainText>
-              저는 이런 부분에서 설레고, 기대가 됐어요. 쇼타로와 함께 한 모든 시간들이 모두 좋았어요.
+              <I.Skeleton $width={70} $height={20} style={{ marginBottom: '2px' }} />
+              <I.Skeleton $width={100} $height={20} style={{ marginBottom: '2px' }} />
+              <I.Skeleton $width={100} $height={20} style={{ marginBottom: '2px' }} />
             </I.MainText>
           </I.MainPage>
         </I.AnswerPage>
@@ -249,9 +291,18 @@ const Interview = () => {
       {/* 답변 리스트 + 수정 */}
       {State === 'next' && (
         <I.ListPage>
-          <I.QuestionBox>
-            이 사진이 찍힐 때 설렘과 기대가 느껴졌다고 했어요. 어떤 일이 있었던 날이었는지 떠오르시나요?
-          </I.QuestionBox>
+          {/* 이전 답변들 (수정 불가) */}
+          {allAnswers.map((answer, index) => (
+            <I.ListPageTop key={index}>
+              <I.QuestionBox>{answer.question}</I.QuestionBox>
+              <I.AnswerBox>
+                <I.AnswerText>{answer.answerText}</I.AnswerText>
+              </I.AnswerBox>
+            </I.ListPageTop>
+          ))}
+
+          {/* 현재 (최신) 답변 (수정 가능) */}
+          <I.QuestionBox>{interviewData.question}</I.QuestionBox>
           <I.AnswerBox>
             <I.EditBox>
               {isEditing ? (
@@ -261,7 +312,13 @@ const Interview = () => {
                   }}>
                   <img src={editBrown} style={{ marginRight: '2px' }} />
                   내용을 수정해보세요
-                  <img src={x} />
+                  <img
+                    src={x}
+                    onClick={(e) => {
+                      e.stopPropagation(); // 부모 클릭 이벤트 방지
+                      editAnswer();
+                    }}
+                  />
                 </I.Editing>
               ) : (
                 <img
@@ -272,17 +329,15 @@ const Interview = () => {
                   }}
                 />
               )}
-              <img src={redo} alt="재답변하기" />
+              <img src={redo} alt="재답변하기" onClick={() => startRecording()} />
             </I.EditBox>
             {isEditing ? (
               <I.textarea
-                value={answerText}
-                onChange={(e) => {
-                  setAnswerText(e.target.value);
-                }}
+                value={interviewData.answerText}
+                onChange={(e) => setInterviewData((prev) => ({ ...prev, answerText: e.target.value }))}
               />
             ) : (
-              <I.AnswerText>{answerText}</I.AnswerText>
+              <I.AnswerText>{interviewData.answerText}</I.AnswerText>
             )}
           </I.AnswerBox>
         </I.ListPage>
@@ -501,7 +556,10 @@ const Interview = () => {
                 else if (State === 'recordReady') setState('recordOn');
                 else if (State === 'recordOn') startRecording();
                 else if (State === 'stopOn') stopRecording();
-                else if (State === 'next') setState('selectStyle');
+                else if (State === 'next') {
+                  if (interviewData.questionId === null) setState('selectStyle');
+                  else setState('recordOn');
+                }
               }}
             />
             <I.BtnBottom src={interviewBottom} />

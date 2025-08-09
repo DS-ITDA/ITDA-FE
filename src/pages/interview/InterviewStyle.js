@@ -3,8 +3,16 @@ import palette from '@styles/theme';
 
 export const InterviewPage = styled.div`
   width: calc(100% - 20px);
-  height: calc(100% - 90px);
-  margin: 0 10px;
+  height: calc(100% - 80px);
+  margin: 60px 10px;
+`;
+
+export const NavBar = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 `;
 
 //첫 화면
@@ -142,12 +150,21 @@ export const Divider = styled.div`
 //답변 리스트 + 수정 화면
 export const ListPage = styled.div`
   width: 100%;
-  height: 100%;
+  height: calc(100% - 130px);
+  overflow: scroll;
 
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 20px;
+  margin-bottom: 20px;
+`;
+
+export const ListPageTop = styled.div`
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
 export const QuestionBox = styled.div`
