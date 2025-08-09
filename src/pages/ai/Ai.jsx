@@ -447,7 +447,7 @@ const Ai = () => {
               onClick={() => {
                 if (level === 2) {
                   handleSubmit();
-                  navigate('/interview');
+                  navigate('/interview', { state: { originalPhotoId } });
                 }
                 setLevel((prev) => prev + 1);
               }}

@@ -1,6 +1,6 @@
 import * as I from '@interview/InterviewStyle';
 import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import interviewBottom from '@assets/interview/interview-bottom.svg';
 import interviewStart from '@assets/interview/interview-start.svg';
 import interviewRecordOff from '@assets/interview/interview-record-off-90.svg';
@@ -57,7 +57,8 @@ const Interview = () => {
     next: interviewNext,
   };
 
-  const photoid = 157;
+  const location = useLocation();
+  const photoid = location.state?.originalPhotoId;
 
   const goBack = () => {
     if (State === 'start') navigate(-1);
@@ -75,6 +76,7 @@ const Interview = () => {
   };
 
   const startInterview = async () => {
+    console.log(photoid);
     try {
       const response = await axiosInstance.post(
         '/api/interview/start',
@@ -196,6 +198,7 @@ const Interview = () => {
       }
     } catch (error) {
       console.error(error);
+      console.error('서버 응답 데이터:', error.response.data);
     }
   };
 
