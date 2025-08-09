@@ -1,19 +1,15 @@
 import { useRef, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import * as B from '@components/Books/BooksStyle';
-import books from '@data/books.json';
 import palette from '@styles/theme';
 
-const Books = ({ selectedBookId, onSelectBook, $height = 15, firstVisited }) => {
+const Books = ({ storyBooks, selectedBookId, onSelectBook, $height = 15, firstVisited, inputRef }) => {
   const MIN_HEIGHT = 100;
   const MAX_HEIGHT = 160;
   const MAX_TITLE_LENGTH = 20;
 
   const divRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!divRef.current) return;
@@ -41,9 +37,9 @@ const Books = ({ selectedBookId, onSelectBook, $height = 15, firstVisited }) => 
   const widthOfBoard = [180, 200, 220, 240, 260, 280];
 
   const getBoardWidth = () => {
-    const numOfBooks = books.length;
+    const numOfBooks = storyBooks.length;
 
-    if (numOfBooks === 0) return;
+    if (numOfBooks === 0) return 180;
     if (numOfBooks < 6) {
       return widthOfBoard[numOfBooks - 1];
     } else {
@@ -59,22 +55,33 @@ const Books = ({ selectedBookId, onSelectBook, $height = 15, firstVisited }) => 
     <B.Books $width={dimensions.width} $height={dimensions.height}>
       <B.Div ref={divRef}>
         <B.BookContainer>
-          {books.map((book) => {
-            const isSelected = book.id === selectedBookId;
-            const bookColor = firstVisited ? book.color : isSelected ? book.color : palette.main.beige;
+          {storyBooks.map((book) => {
+            const isSelected = book.storybookId === selectedBookId;
+            const bookColor = firstVisited
+              ? `#${book.spineColor}`
+              : isSelected
+                ? `#${book.spineColor}`
+                : palette.main.beige;
 
             return (
               <B.Book
-                key={book.id}
+                key={book.storybookId}
                 height={getBookHeight(book.title)}
                 color={bookColor}
-                onClick={() => handleSelectedBook(book.id)}>
+                onClick={() => handleSelectedBook(book.storybookId)}>
                 {book.title}
               </B.Book>
             );
           })}
-          {books.length < 3 && (
-            <B.Book height="100" color={palette.main.beige} onClick={() => navigate}>
+          {storyBooks.length < 3 && (
+            <B.Book
+              height="100"
+              color={palette.main.beige}
+              onClick={() => {
+                if (inputRef?.current) {
+                  inputRef.current.click();
+                }
+              }}>
               <B.Plus>+</B.Plus>
             </B.Book>
           )}

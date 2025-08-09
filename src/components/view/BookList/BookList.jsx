@@ -1,17 +1,21 @@
 import { useNavigate } from 'react-router-dom';
 
 import * as B from './BookListStyle';
-import books from '@data/books.json';
+// import books from '@data/books.json';
 import Arrow from '@assets/view/arrow-up_right-30.svg';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import { getStoryBookData } from '../../../apis/home/home';
 
 const BookList = ({ handleBookcoverClick, selectedIdx }) => {
   const navigate = useNavigate();
+  const [storyBooks, setStoryBooks] = useState([]);
 
   const renderBooks = () => {
     const results = [];
 
-    for (let i = 0; i < books.length; i += 3) {
-      const rowBooks = books.slice(i, i + 3);
+    for (let i = 0; i < storyBooks.length; i += 3) {
+      const rowBooks = storyBooks.slice(i, i + 3);
 
       const selectedBookInRow = rowBooks.find((book) => book.id === selectedIdx);
 
@@ -62,6 +66,31 @@ const BookList = ({ handleBookcoverClick, selectedIdx }) => {
 
     return results;
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getStoryBookData();
+        setStoryBooks(data.data);
+      } catch (error) {
+        console.error('스토리북 데이터 불러오기 실패', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getStoryBookData();
+        setStoryBooks(data.data);
+      } catch (error) {
+        console.error('스토리북 데이터 불러오기 실패', error);
+      }
+    };
+
+    fetchData();
+  }, []);
   return <B.BookList>{renderBooks()}</B.BookList>;
 };
 
