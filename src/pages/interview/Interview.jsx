@@ -46,7 +46,7 @@ const Interview = () => {
 
   const State_CONFIG = {
     start: interviewStart,
-    recordReady: interviewRecordOff,
+    loading: interviewRecordOff,
     recordOn: interviewRecordOn,
     stopOff: interviewStopOff,
     stopOn: interviewStopOn,
@@ -72,7 +72,7 @@ const Interview = () => {
   };
 
   const startInterview = async () => {
-    console.log(photoid);
+    setState('loading');
     try {
       const response = await axiosInstance.post(
         '/api/interview/start',
@@ -152,7 +152,6 @@ const Interview = () => {
       }
 
       cleanupRecording();
-      setState('next');
     }
   };
 
@@ -170,6 +169,8 @@ const Interview = () => {
   };
 
   const sendVoiceToServer = async (blob) => {
+    setState('loading');
+
     try {
       const formData = new FormData();
       formData.append('voice', blob, 'answer.webm');
@@ -186,18 +187,18 @@ const Interview = () => {
       console.log(response.data);
       const data = response.data.data;
 
-      // 이전 질문-답변 쌍을 allAnswers에 추가
       setAllAnswers((prev) => [
         ...prev,
         { question: interviewData.question, answerText: data.prevAnswerText || data.answerText },
       ]);
 
-      // 다음 질문 준비
       setInterviewData({
         answerText: '',
         questionId: data.questionId,
         question: data.question,
       });
+
+      setState('next');
     } catch (error) {
       console.error(error);
       console.error('서버 응답 데이터:', error.response.data);
@@ -246,10 +247,10 @@ const Interview = () => {
         </I.FirstInfo>
       )}
 
-      {/* 녹음 준비 화면 - 스켈레톤 화면 */}
-      {State === 'recordReady' && (
+      {/* 준비 화면 - 스켈레톤 화면 */}
+      {State === 'loading' && (
         <I.ReadyPage>
-          <ToastMessage text={'준비 중...'} />
+          <ToastMessage text={'로딩 중...'} />
 
           <I.MainPage>
             <I.Skeleton $width={70} $height={20} />
