@@ -406,3 +406,9 @@ export const StoryBook = styled.div`
   height: calc(100dvh - 55px);
   padding-bottom: 15px;
 `;
+
+export const SkeletonWrapper = styled.div`
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+`;

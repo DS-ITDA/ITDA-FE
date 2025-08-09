@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import * as R from '@readStory/ReadStoryStyle';
+import * as S from '@components/SkeletonUi/SkeletonUiStyle';
 
 import StorySplash from '@components/StorySplash/StorySplash';
 import PathNavbar from '@components/common/Navbar/PathNavbar';
@@ -9,7 +10,6 @@ import StoryToggle from '@components/StoryToggle/StoryToggle';
 import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
 import Button from '@components/common/Button/Button';
 
-import BookCover from '@assets/ai-exampleImage.jpg';
 import SingAlong from '@assets/storybook/sing_along-white-16.svg?react';
 import TextOnly from '@assets/storybook/text_only-white-16.svg?react';
 import Bgm from '@assets/storybook/bgm-white-16.svg?react';
@@ -18,7 +18,6 @@ import Star from '@assets/storybook/star-filled-32.svg';
 import Share from '@assets/storybook/share-20.svg';
 import Opinion from '@assets/storybook/opinion-20.svg';
 
-import book from '@data/book.json';
 import { getStoryBook } from '../../apis/storybook/storybook';
 
 const ReadStory = () => {
@@ -33,6 +32,7 @@ const ReadStory = () => {
 
   const [bookData, setBookData] = useState();
   const [content, setContent] = useState();
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -77,6 +77,7 @@ const ReadStory = () => {
 
   const handleReRead = () => {
     setLevel(0);
+    setCurrentPage(0);
   };
 
   const handleGoHome = () => {
@@ -99,7 +100,7 @@ const ReadStory = () => {
     }
   }, [currentPage]);
 
-  useState(() => {
+  useEffect(() => {
     if (showSplash) {
       sessionStorage.setItem('visited', true);
     }
@@ -107,6 +108,7 @@ const ReadStory = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await getStoryBook(id);
         setBookData(response.data);
@@ -119,6 +121,8 @@ const ReadStory = () => {
         setContent(['', ...sentences]);
       } catch (error) {
         console.log('책 내용 조회 실패'), error;
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -153,18 +157,24 @@ const ReadStory = () => {
           <R.ReadStory>
             <R.Container>
               <div>
-                <R.Cover color={`#${bookData?.spineColor}`}>
-                  <R.Book>
-                    <img src={bookData?.illustration.imageUrl} alt="책 표지" />
-                  </R.Book>
-                </R.Cover>
+                {loading && <S.Skeleton $width={60} $height={75} />}
+                {!loading && (
+                  <R.Cover color={`#${bookData?.spineColor}`}>
+                    <R.Book>
+                      <img src={bookData?.illustration.imageUrl} alt="책 표지" />
+                    </R.Book>
+                  </R.Cover>
+                )}
               </div>
 
               <R.InfoWrapper>
                 <R.TopWrpper>
                   <R.TextWrapper>
-                    <R.Title>{bookData?.title}</R.Title>
-                    <R.Date>{bookData?.displayDate}</R.Date>
+                    {loading && <S.Skeleton $width={70} $height={19.6} />}
+                    {!loading && <R.Title>{bookData?.title}</R.Title>}
+
+                    {loading && <S.Skeleton $width={60} $height={19.6} />}
+                    {!loading && <R.Date>{bookData?.displayDate}</R.Date>}
                   </R.TextWrapper>
 
                   <R.Edit onClick={handleEditPage}>수정 {'>'}</R.Edit>
@@ -180,40 +190,48 @@ const ReadStory = () => {
           </R.ReadStory>
 
           <R.PaperWrapper>
-            <>
-              {content?.map((sentence, idx) => (
-                <R.Paper
-                  key={idx}
-                  style={{
-                    zIndex: content.length - idx,
-                    transform: idx < currentPage ? 'rotateY(-180deg)' : 'rotateY(0deg)',
-                    transformOrigin: 'left center',
-                    transition: 'transform 1s ease-in-out',
-                    position: 'absolute',
-                  }}
-                  $isEnd={content.length - 1 === idx}>
-                  <R.BookCover>
-                    <img src={bookData?.illustration.imageUrl} alt="책 표지" />
-                  </R.BookCover>
+            {loading && (
+              <R.SkeletonWrapper>
+                <S.Skeleton $height={500} />
+              </R.SkeletonWrapper>
+            )}
 
-                  {idx === 0 && (
-                    <R.BookInfo>
-                      <R.BookTitle>{bookData?.title}</R.BookTitle>
-                      <R.BookDate>{bookData?.displayDate}</R.BookDate>
-                    </R.BookInfo>
-                  )}
+            {!loading && (
+              <>
+                {content?.map((sentence, idx) => (
+                  <R.Paper
+                    key={idx}
+                    style={{
+                      zIndex: content.length - idx,
+                      transform: idx < currentPage ? 'rotateY(-180deg)' : 'rotateY(0deg)',
+                      transformOrigin: 'left center',
+                      transition: 'transform 1s ease-in-out',
+                      position: 'absolute',
+                    }}
+                    $isEnd={content.length - 1 === idx}>
+                    <R.BookCover>
+                      <img src={bookData?.illustration.imageUrl} alt="책 표지" />
+                    </R.BookCover>
 
-                  {idx !== 0 && (
-                    <R.BookInfo>
-                      <R.BookContent>{sentence}</R.BookContent>
-                    </R.BookInfo>
-                  )}
+                    {idx === 0 && (
+                      <R.BookInfo>
+                        <R.BookTitle>{bookData?.title}</R.BookTitle>
+                        <R.BookDate>{bookData?.displayDate}</R.BookDate>
+                      </R.BookInfo>
+                    )}
 
-                  <R.Next onClick={handleGetNextPage}></R.Next>
-                  <R.Back onClick={handleGetPrevPage}></R.Back>
-                </R.Paper>
-              ))}
-            </>
+                    {idx !== 0 && (
+                      <R.BookInfo>
+                        <R.BookContent>{sentence}</R.BookContent>
+                      </R.BookInfo>
+                    )}
+
+                    <R.Next onClick={handleGetNextPage}></R.Next>
+                    <R.Back onClick={handleGetPrevPage}></R.Back>
+                  </R.Paper>
+                ))}
+              </>
+            )}
           </R.PaperWrapper>
           <R.Bubble>{showBubble && <SpeechBubble selection="up" content={<div>마지막 페이지에요!</div>} />}</R.Bubble>
         </>
@@ -225,13 +243,13 @@ const ReadStory = () => {
             <R.CreatedWrapper>
               <R.Created>
                 <R.CreatedBookWrapper>
-                  <R.CreatedBook height={210} color={bookData?.spineColor}>
+                  <R.CreatedBook height={210} color={`#${bookData?.spineColor}`}>
                     {bookData?.title}
                   </R.CreatedBook>
                 </R.CreatedBookWrapper>
 
                 <R.CreatedCover>
-                  <img src={BookCover} alt="책 표지" />
+                  <img src={bookData?.illustration.imageUrl} alt="책 표지" />
                 </R.CreatedCover>
               </R.Created>
               <R.Board>
