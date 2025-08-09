@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 
 import * as A from '@ai/AiStyle';
 import * as H from '@home/HomeStyle';
+import * as S from '@components/SkeletonUi/SkeletonUiStyle';
 
 import SkeletonUi from '@components/SkeletonUi/SkeletonUi';
 import Button from '@components/common/Button/Button';
@@ -27,7 +28,7 @@ const Ai = () => {
   const [relationship, setRelationShip] = useState('');
   const [relationInput, setRelationInput] = useState('');
 
-  const [place, setPlace] = useState('');
+  const [place, setPlace] = useState([]);
   const [prevPlace, setPrevPlace] = useState('');
   const [placeInput, setPlaceInput] = useState('');
 
@@ -38,6 +39,8 @@ const Ai = () => {
   const [originalPhotoId, setOriginalPhotoId] = useState(null);
 
   const [relationshipList, setRelationShipList] = useState('');
+
+  const [loading, setLoading] = useState(false);
 
   const selectRef = useRef(null);
 
@@ -85,10 +88,10 @@ const Ai = () => {
       setPlace(
         analyzeRes.place.includes(',') ? analyzeRes.place.split(',').map((p) => p.trim()) : [analyzeRes.place.trim()],
       );
-
-      console.log('분석 결과', analyzeRes);
     } catch (error) {
       console.error('분석 실패', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -137,7 +140,7 @@ const Ai = () => {
       await postPhotoUpdate(
         originalPhotoId,
         isMain,
-        place.length === 1 ? place[0] : place.join(','),
+        Array.isArray(place) ? (place.length === 1 ? place[0] : place.join(',')) : place,
         relationshipList.length === 1 ? relationshipList[0] : relationshipList.join(','),
         feelings.length === 1 ? feelings[0] : feelings.join(','),
       );
@@ -237,8 +240,9 @@ const Ai = () => {
               selection={1}
               content={<img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }}></img>}
               onClick={async () => {
-                await handleAnalyze();
+                setLoading(true);
                 setLevel((prev) => prev + 1);
+                handleAnalyze();
               }}
               type="button"
             />
@@ -263,22 +267,41 @@ const Ai = () => {
                 <p>주인공</p>
               </A.Result>
 
-              <A.Grid>
-                {selectedPeople.map((person, idx) => (
-                  <A.ImgDiv
-                    key={idx}
-                    onClick={() => {
-                      handleMainChat(person.faceId);
-                    }}>
-                    <img src={person.faceImageUrl} alt="결과 이미지" />
-                    {isMain === person.faceId && (
-                      <A.ImgOverlay>
-                        <img src={CheckIcon} alt="선택됨" />
-                      </A.ImgOverlay>
-                    )}
-                  </A.ImgDiv>
-                ))}
-              </A.Grid>
+              {isSelected.length === 1 && loading && (
+                <div style={{ width: '100%', height: '150px' }}>
+                  <S.GridSkeleton>
+                    <S.Skeleton />
+                  </S.GridSkeleton>
+                </div>
+              )}
+
+              {isSelected.length === 2 && loading && (
+                <div style={{ width: '100%', height: '150px' }}>
+                  <S.GridSkeleton>
+                    <S.Skeleton />
+                    <S.Skeleton />
+                  </S.GridSkeleton>
+                </div>
+              )}
+
+              {!loading && (
+                <A.Grid>
+                  {selectedPeople.map((person, idx) => (
+                    <A.ImgDiv
+                      key={idx}
+                      onClick={() => {
+                        handleMainChat(person.faceId);
+                      }}>
+                      <img src={person.faceImageUrl} alt="결과 이미지" />
+                      {isMain === person.faceId && (
+                        <A.ImgOverlay>
+                          <img src={CheckIcon} alt="선택됨" />
+                        </A.ImgOverlay>
+                      )}
+                    </A.ImgDiv>
+                  ))}
+                </A.Grid>
+              )}
             </A.WhiteDiv>
 
             <A.WhiteDiv $padding={20}>
@@ -286,53 +309,56 @@ const Ai = () => {
                 <p>인물 관계</p>
 
                 <A.SelectWrapper ref={selectRef}>
-                  <A.SelectBtn>
-                    {relationship !== 'custom' && relationship}
-                    {relationship === 'custom' && (
-                      <A.Input
-                        placeholder="[직접 입력]"
-                        value={relationInput}
-                        onChange={(e) => setRelationInput(e.target.value)}
-                        onKeyDown={handleInputSubmit}
-                      />
-                    )}
-                    {!showSelect && (
-                      <A.ToggleImg onClick={() => setShowSelect((prev) => !prev)}>
-                        <img src={toggleIcon} alt="toggle" />
-                      </A.ToggleImg>
-                    )}
+                  {loading && <S.Skeleton $width={184} $height={40} />}
+                  {!loading && (
+                    <A.SelectBtn>
+                      {relationship !== 'custom' && relationship}
+                      {relationship === 'custom' && (
+                        <A.Input
+                          placeholder="[직접 입력]"
+                          value={relationInput}
+                          onChange={(e) => setRelationInput(e.target.value)}
+                          onKeyDown={handleInputSubmit}
+                        />
+                      )}
+                      {!showSelect && (
+                        <A.ToggleImg onClick={() => setShowSelect((prev) => !prev)}>
+                          <img src={toggleIcon} alt="toggle" />
+                        </A.ToggleImg>
+                      )}
 
-                    {showSelect && (
-                      <A.ToggleImg onClick={() => setShowSelect((prev) => !prev)}>
-                        <img src={toggleUpIcon} alt="toggle" />
-                      </A.ToggleImg>
-                    )}
+                      {showSelect && (
+                        <A.ToggleImg onClick={() => setShowSelect((prev) => !prev)}>
+                          <img src={toggleUpIcon} alt="toggle" />
+                        </A.ToggleImg>
+                      )}
 
-                    {showSelect && (
-                      <A.List>
-                        {relationshipList.map((relationship) => (
-                          <li key={relationship}>
-                            <A.SelectButton
+                      {showSelect && (
+                        <A.List>
+                          {relationshipList.map((relationship) => (
+                            <li key={relationship}>
+                              <A.SelectButton
+                                onClick={() => {
+                                  setRelationShip(relationship);
+                                  setShowSelect(false);
+                                }}>
+                                {relationship}
+                              </A.SelectButton>
+                            </li>
+                          ))}
+                          <li>
+                            <A.CustomButton
                               onClick={() => {
-                                setRelationShip(relationship);
+                                setRelationShip('custom');
                                 setShowSelect(false);
                               }}>
-                              {relationship}
-                            </A.SelectButton>
+                              [직접 입력]
+                            </A.CustomButton>
                           </li>
-                        ))}
-                        <li>
-                          <A.CustomButton
-                            onClick={() => {
-                              setRelationShip('custom');
-                              setShowSelect(false);
-                            }}>
-                            [직접 입력]
-                          </A.CustomButton>
-                        </li>
-                      </A.List>
-                    )}
-                  </A.SelectBtn>
+                        </A.List>
+                      )}
+                    </A.SelectBtn>
+                  )}
                 </A.SelectWrapper>
               </A.SelectDiv>
             </A.WhiteDiv>
@@ -340,20 +366,26 @@ const Ai = () => {
             <A.WhiteDiv $padding={20}>
               <A.SelectDiv>
                 <p>장소</p>
-                <A.PlaceButton>
-                  {place !== 'custom' && place}
-                  {place === 'custom' && (
-                    <A.Input
-                      placeholder="[직접 입력]"
-                      value={placeInput}
-                      onChange={(e) => setPlaceInput(e.target.value)}
-                      onKeyDown={handlePlaceSubmit}
-                    />
-                  )}
-                  <A.ToggleImg onClick={handleSetPlace}>
-                    <img src={CancleIcon} alt="취소" />
-                  </A.ToggleImg>
-                </A.PlaceButton>
+                {loading && <S.Skeleton $width={184} $height={40} />}
+
+                {!loading && (
+                  <A.PlaceButton>
+                    {place !== 'custom' && place}
+                    {place === 'custom' && (
+                      <A.Input
+                        placeholder="[직접 입력]"
+                        value={placeInput}
+                        onChange={(e) => setPlaceInput(e.target.value)}
+                        onKeyDown={handlePlaceSubmit}
+                      />
+                    )}
+                    {!loading && (
+                      <A.ToggleImg onClick={handleSetPlace}>
+                        <img src={CancleIcon} alt="취소" />
+                      </A.ToggleImg>
+                    )}
+                  </A.PlaceButton>
+                )}
               </A.SelectDiv>
             </A.WhiteDiv>
 
@@ -361,7 +393,9 @@ const Ai = () => {
               <A.SelectDiv>
                 <p>감정</p>
                 <A.FeelingsDiv>
-                  {feelings.length < 3 && feelingsType !== 'custom' && (
+                  {loading && <S.Skeleton $width={184} $height={40} />}
+
+                  {!loading && feelings.length < 3 && feelingsType !== 'custom' && (
                     <A.PlusBtn onClick={() => setFeelingsType('custom')}>
                       <img src={PlusIcon} alt="추가" />
                     </A.PlusBtn>
