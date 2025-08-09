@@ -32,11 +32,7 @@ const Interview = () => {
   const [alert, setAlert] = useState(false);
   const [alertModal, setAlertModal] = useState(false);
   const [modalChecking, setModalChecking] = useState(false);
-  const [interviewStartData, setInterviewStartData] = useState({
-    questionId: 0,
-    question: '',
-    sessionId: '',
-  });
+  const [sessionId, setSessionId] = useState('');
   const [interviewData, setInterviewData] = useState({
     answerText: '',
     question: '',
@@ -90,10 +86,12 @@ const Interview = () => {
       console.log('응답 성공:', response.data);
 
       const data = response.data.data;
-      setInterviewStartData({
+      setSessionId(data.sessionId);
+
+      setInterviewData({
+        answerText: '',
         questionId: data.questionId,
         question: data.question,
-        sessionId: data.sessionId,
       });
 
       setState('recordOn');
@@ -181,21 +179,25 @@ const Interview = () => {
           'Content-Type': 'multipart/form-data',
         },
         params: {
-          sessionId: interviewStartData.sessionId,
+          sessionId: sessionId,
         },
       });
 
       console.log(response.data);
       const data = response.data.data;
+
+      // 이전 질문-답변 쌍을 allAnswers에 추가
+      setAllAnswers((prev) => [
+        ...prev,
+        { question: interviewData.question, answerText: data.prevAnswerText || data.answerText },
+      ]);
+
+      // 다음 질문 준비
       setInterviewData({
-        answerText: data.answerText,
+        answerText: '',
         questionId: data.questionId,
         question: data.question,
       });
-
-      if (interviewData.answerText) {
-        setAllAnswers((prev) => [...prev, interviewData]);
-      }
     } catch (error) {
       console.error(error);
       console.error('서버 응답 데이터:', error.response.data);
@@ -203,25 +205,13 @@ const Interview = () => {
   };
 
   const editAnswer = async () => {
-    const questionIdToSend = interviewData.questionId === null ? 3 : interviewData.questionId - 1;
-
-    console.log({
-      sessionId: interviewStartData.sessionId,
-      questionId: interviewData.questionId,
-      updatedAnswer: interviewData.answerText,
-    });
     try {
       const response = await axiosInstance.put('/api/interview/answer/update', {
-        sessionId: interviewStartData.sessionId,
-        questionId: questionIdToSend,
+        sessionId: sessionId,
+        questionId: interviewData.questionId,
         updatedAnswer: interviewData.answerText,
       });
       console.log(response.data);
-      if (interviewData.questionId === null) {
-        interviewData.questionId = null;
-      } else {
-        interviewData.questionId = interviewData.questionId + 1;
-      }
       console.log(interviewData.questionId);
     } catch (error) {
       if (error.response) {
@@ -275,7 +265,7 @@ const Interview = () => {
         <I.QuestPage>
           <ToastMessage text={'질문 중...'} />
           <I.MainPage>
-            <I.MainText>{interviewStartData.question}</I.MainText>
+            <I.MainText>{interviewData.question}</I.MainText>
             <I.Divider />
           </I.MainPage>
         </I.QuestPage>
@@ -286,7 +276,7 @@ const Interview = () => {
         <I.AnswerPage>
           <ToastMessage text={'답변 중...'} />
           <I.MainPage>
-            <I.SubText>{interviewStartData.question}</I.SubText>
+            <I.SubText>{interviewData.question}</I.SubText>
             <I.SubDivider />
             <I.MainText>
               <I.Skeleton $width={70} $height={20} style={{ marginBottom: '2px' }} />
@@ -301,7 +291,7 @@ const Interview = () => {
       {State === 'next' && (
         <I.ListPage>
           {/* 이전 답변들 (수정 불가) */}
-          {allAnswers.map((answer, index) => (
+          {allAnswers.slice(0, -1).map((answer, index) => (
             <I.ListPageTop key={index}>
               <I.QuestionBox>{answer.question}</I.QuestionBox>
               <I.AnswerBox>
@@ -311,7 +301,7 @@ const Interview = () => {
           ))}
 
           {/* 현재 (최신) 답변 (수정 가능) */}
-          <I.QuestionBox>{interviewData.question}</I.QuestionBox>
+          <I.QuestionBox>{allAnswers[allAnswers.length - 1].question}</I.QuestionBox>
           <I.AnswerBox>
             <I.EditBox>
               {isEditing ? (
@@ -342,11 +332,11 @@ const Interview = () => {
             </I.EditBox>
             {isEditing ? (
               <I.textarea
-                value={interviewData.answerText}
+                value={allAnswers[allAnswers.length - 1]?.answerText}
                 onChange={(e) => setInterviewData((prev) => ({ ...prev, answerText: e.target.value }))}
               />
             ) : (
-              <I.AnswerText>{interviewData.answerText}</I.AnswerText>
+              <I.AnswerText>{allAnswers[allAnswers.length - 1]?.answerText}</I.AnswerText>
             )}
           </I.AnswerBox>
         </I.ListPage>
@@ -566,7 +556,7 @@ const Interview = () => {
                 else if (State === 'recordOn') startRecording();
                 else if (State === 'stopOn') stopRecording();
                 else if (State === 'next') {
-                  if (interviewData.questionId === null) setState('selectStyle');
+                  if (interviewData.questionId === 4) setState('selectStyle');
                   else setState('recordOn');
                 }
               }}
