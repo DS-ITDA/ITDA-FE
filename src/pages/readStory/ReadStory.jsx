@@ -34,6 +34,8 @@ const ReadStory = () => {
   const [content, setContent] = useState();
   const [loading, setLoading] = useState(false);
 
+  const [toggleClicked, setToggleClicked] = useState(false);
+
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -182,10 +184,21 @@ const ReadStory = () => {
 
                 <R.ToggleWrapper>
                   {guide.map((g, idx) => (
-                    <StoryToggle key={g.id} Icon={g.icon} id={g.id + idx} checked={false} />
+                    <StoryToggle
+                      key={g.id}
+                      Icon={g.icon}
+                      id={g.id + idx}
+                      checked={false}
+                      onClick={() => setToggleClicked((prev) => !prev)}
+                    />
                   ))}
                 </R.ToggleWrapper>
               </R.InfoWrapper>
+              {toggleClicked && (
+                <R.BubbleWrapper>
+                  <SpeechBubble selection={'up'} content={<div>현재 개발 중인 기능입니다.</div>} />
+                </R.BubbleWrapper>
+              )}
             </R.Container>
           </R.ReadStory>
 
