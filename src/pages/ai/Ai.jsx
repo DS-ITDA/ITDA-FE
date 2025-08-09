@@ -16,6 +16,7 @@ import toggleIcon from '@assets/Ai/toggle.png';
 import toggleUpIcon from '@assets/Ai/toggle-up.png';
 import CancleIcon from '@assets/Ai/x-512.png';
 import PlusIcon from '@assets/Ai/add-24.svg';
+import { postPhotoUpload } from '../../apis/home/home';
 
 const Ai = () => {
   const [showSkeleton, setShowSkeleton] = useState(false);
@@ -39,16 +40,11 @@ const Ai = () => {
   const selectRef = useRef(null);
 
   const location = useLocation();
-  const selectedImg = location.state?.selectedImg.thumbnail;
+  const selectedImg = location.state?.selectedImg;
 
   const navigate = useNavigate();
 
-  const resultPeople = [
-    { id: 0, src: ExamImg },
-    { id: 1, src: ExamImg2 },
-    { id: 2, src: ExamImg2 },
-    { id: 3, src: ExamImg },
-  ];
+  const [resultPeople, setResultPeople] = useState([]);
 
   const relationshiptList = ['선생님과 학생', '삼촌과 딸', '할아버지와 손녀'];
 
@@ -107,16 +103,6 @@ const Ai = () => {
   };
 
   useEffect(() => {
-    setShowSkeleton(true);
-
-    const timer = setTimeout(() => {
-      setShowSkeleton(false);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, [selectedImg]);
-
-  useEffect(() => {
     const handleClickOutside = (e) => {
       if (selectRef.current && !selectRef.current.contains(e.target)) {
         setShowSelect(false);
@@ -129,13 +115,31 @@ const Ai = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!selectedImg) return;
+
+    const fetchData = async () => {
+      setShowSkeleton(true);
+      try {
+        const response = await postPhotoUpload(selectedImg.file);
+        setResultPeople(response?.faces);
+      } catch (error) {
+        console.error('사진 업로드 실패', error);
+      } finally {
+        setShowSkeleton(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedImg]);
+
   if (!selectedImg) return null;
 
   return (
     <A.Ai>
       <H.UploadDiv>
         <H.SelectedImg>
-          <img src={selectedImg} alt="사진 선택" />
+          <img src={selectedImg.thumbnail} alt="사진 선택" />
         </H.SelectedImg>
 
         {showSkeleton && <SkeletonUi selectedImg={selectedImg} />}
@@ -161,11 +165,11 @@ const Ai = () => {
               <A.Grid>
                 {resultPeople.map((person, idx) => (
                   <A.ImgDiv
-                    key={person.id}
+                    key={idx}
                     onClick={() => {
                       handleChoicePeople(idx);
                     }}>
-                    <img src={person.src} alt="결과 이미지" />
+                    <img src={person.faceImageUrl} alt="결과 이미지" />
                     {isSelected.includes(idx) && (
                       <A.ImgOverlay>
                         <img src={CheckIcon} alt="선택됨" />
