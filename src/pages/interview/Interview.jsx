@@ -200,6 +200,8 @@ const Interview = () => {
   };
 
   const editAnswer = async () => {
+    const questionIdToSend = interviewData.questionId === null ? 3 : interviewData.questionId - 1;
+
     console.log({
       sessionId: interviewStartData.sessionId,
       questionId: interviewData.questionId,
@@ -208,11 +210,15 @@ const Interview = () => {
     try {
       const response = await axiosInstance.put('/api/interview/answer/update', {
         sessionId: interviewStartData.sessionId,
-        questionId: interviewData.questionId - 1,
+        questionId: questionIdToSend,
         updatedAnswer: interviewData.answerText,
       });
       console.log(response.data);
-      interviewData.questionId + 1;
+      if (interviewData.questionId === null) {
+        interviewData.questionId = null;
+      } else {
+        interviewData.questionId = interviewData.questionId + 1;
+      }
       console.log(interviewData.questionId);
     } catch (error) {
       if (error.response) {
