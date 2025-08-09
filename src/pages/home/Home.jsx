@@ -22,7 +22,8 @@ const Home = () => {
 
   const [selectedIdx, setSelectedIdx] = useState(null);
   const [selectedBookId, setSelectedBookId] = useState(null);
-  const [booksArr, setBooksArr] = useState(() => (length > 3 ? storyBooks.concat(storyBooks) : storyBooks));
+  const [booksArr, setBooksArr] = useState([]);
+
   const [firstVisited, setFirstVisited] = useState(true);
 
   const sliderRef = useRef(null);
@@ -39,7 +40,7 @@ const Home = () => {
 
     const clickedBook = booksArr[idx];
 
-    if (selectedIdx === 0 && clickedBook.id === id) {
+    if (selectedIdx === 0 && clickedBook.storybookId === id) {
       setSelectedIdx(null);
       setSelectedBookId(null);
       return;
@@ -87,6 +88,7 @@ const Home = () => {
       try {
         const data = await getStoryBookData();
         setStoryBooks(data.data);
+        console.log(data.data);
       } catch (error) {
         console.error('스토리북 데이터 불러오기 실패', error);
       }
@@ -94,6 +96,14 @@ const Home = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (storyBooks.length > 3) {
+      setBooksArr(storyBooks.concat(storyBooks));
+    } else {
+      setBooksArr(storyBooks);
+    }
+  }, [storyBooks]);
 
   return (
     <H.Home>
@@ -147,9 +157,9 @@ const Home = () => {
                 onClick={() => handleBookcoverClick(book.storybookId)}
                 key={idx}
                 data-book-id={book.storybookId}>
-                <img src={`/images/${book.phoroUrl}`} alt={book.title} />
+                <img src={`${book.originalPhotoUrl}`} alt={book.title} />
 
-                {selectedBookId === book.id && idx === 0 && (
+                {selectedBookId === book.storybookId && idx === 0 && (
                   <H.BookOverlay>
                     <H.BookInfo>
                       <p>{book.title}</p>

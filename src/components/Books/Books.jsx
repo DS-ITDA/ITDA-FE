@@ -57,7 +57,11 @@ const Books = ({ storyBooks, selectedBookId, onSelectBook, $height = 15, firstVi
         <B.BookContainer>
           {storyBooks.map((book) => {
             const isSelected = book.storybookId === selectedBookId;
-            const bookColor = firstVisited ? book.spineColor : isSelected ? book.spineColor : palette.main.beige;
+            const bookColor = firstVisited
+              ? `#${book.spineColor}`
+              : isSelected
+                ? `#${book.spineColor}`
+                : palette.main.beige;
 
             return (
               <B.Book
