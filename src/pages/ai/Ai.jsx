@@ -8,15 +8,13 @@ import SkeletonUi from '@components/SkeletonUi/SkeletonUi';
 import Button from '@components/common/Button/Button';
 
 import PeopleIcon from '@assets/Ai/people_scan-24.svg';
-import ExamImg from '@assets/ai-person.png';
-import ExamImg2 from '@assets/ai-exampleImage.jpg';
 import ArrowRightIcon from '@assets/arrow-right.svg';
 import CheckIcon from '@assets/Ai/check-40.svg';
 import toggleIcon from '@assets/Ai/toggle.png';
 import toggleUpIcon from '@assets/Ai/toggle-up.png';
 import CancleIcon from '@assets/Ai/x-512.png';
 import PlusIcon from '@assets/Ai/add-24.svg';
-import { postPhotoUpload } from '../../apis/home/home';
+import { postPhotoAnalyze, postPhotoUpload } from '../../apis/home/home';
 
 const Ai = () => {
   const [showSkeleton, setShowSkeleton] = useState(false);
@@ -26,16 +24,20 @@ const Ai = () => {
   const [isMain, setIsMain] = useState(null);
   const [showSelect, setShowSelect] = useState(false);
 
-  const [relationship, setRelationShip] = useState('아빠와 딸');
+  const [relationship, setRelationShip] = useState('');
   const [relationInput, setRelationInput] = useState('');
 
-  const [place, setPlace] = useState('집 거실');
+  const [place, setPlace] = useState('');
   const [prevPlace, setPrevPlace] = useState('');
   const [placeInput, setPlaceInput] = useState('');
 
-  const [feelings, setFeelings] = useState(['기대', '행복', '설렘']);
+  const [feelings, setFeelings] = useState([]);
   const [feelingsType, setFeelingsType] = useState('');
   const [feelingsInput, setFeelingsInput] = useState('');
+
+  const [originalPhotoId, setOriginalPhotoId] = useState(null);
+
+  const [relationshipList, setRelationShipList] = useState('');
 
   const selectRef = useRef(null);
 
@@ -45,8 +47,6 @@ const Ai = () => {
   const navigate = useNavigate();
 
   const [resultPeople, setResultPeople] = useState([]);
-
-  const relationshiptList = ['선생님과 학생', '삼촌과 딸', '할아버지와 손녀'];
 
   const selectedPeople = resultPeople.filter((_, idx) => isSelected.includes(idx));
 
@@ -61,6 +61,35 @@ const Ai = () => {
       }
       return [...prev, idx];
     });
+  };
+
+  const handleAnalyze = async () => {
+    if (!originalPhotoId || isSelected.length === 0) return;
+
+    const selectedFaceIds = isSelected.map((idx) => resultPeople[idx].faceId);
+
+    try {
+      const analyzeRes = await postPhotoAnalyze(originalPhotoId, selectedFaceIds);
+      setRelationShipList(
+        analyzeRes.relationship.includes(',')
+          ? analyzeRes.relationship.split(',').map((r) => r.trim())
+          : [analyzeRes.relationship.trim()],
+      );
+
+      setFeelings(
+        analyzeRes.emotion.includes(',')
+          ? analyzeRes.emotion.split(',').map((e) => e.trim())
+          : [analyzeRes.emotion.trim()],
+      );
+
+      setPlace(
+        analyzeRes.place.includes(',') ? analyzeRes.place.split(',').map((p) => p.trim()) : [analyzeRes.place.trim()],
+      );
+
+      console.log('분석 결과', analyzeRes);
+    } catch (error) {
+      console.error('분석 실패', error);
+    }
   };
 
   const handleMainChat = (id) => {
@@ -81,6 +110,7 @@ const Ai = () => {
     } else {
       setPlace('custom');
       setPrevPlace(place);
+      setPlaceInput('');
     }
   };
 
@@ -123,6 +153,7 @@ const Ai = () => {
       try {
         const response = await postPhotoUpload(selectedImg.file);
         setResultPeople(response?.faces);
+        setOriginalPhotoId(response.originalPhotoId);
       } catch (error) {
         console.error('사진 업로드 실패', error);
       } finally {
@@ -132,6 +163,12 @@ const Ai = () => {
 
     fetchData();
   }, [selectedImg]);
+
+  useEffect(() => {
+    if (relationshipList.length > 0) {
+      setRelationShip(relationshipList[0]);
+    }
+  }, [relationshipList]);
 
   if (!selectedImg) return null;
 
@@ -185,7 +222,8 @@ const Ai = () => {
             <Button
               selection={1}
               content={<img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }}></img>}
-              onClick={() => {
+              onClick={async () => {
+                await handleAnalyze();
                 setLevel((prev) => prev + 1);
               }}
               type="button"
@@ -212,14 +250,14 @@ const Ai = () => {
               </A.Result>
 
               <A.Grid>
-                {selectedPeople.map((person) => (
+                {selectedPeople.map((person, idx) => (
                   <A.ImgDiv
-                    key={person.id}
+                    key={idx}
                     onClick={() => {
-                      handleMainChat(person.id);
+                      handleMainChat(person.faceId);
                     }}>
-                    <img src={person.src} alt="결과 이미지" />
-                    {isMain === person.id && (
+                    <img src={person.faceImageUrl} alt="결과 이미지" />
+                    {isMain === person.faceId && (
                       <A.ImgOverlay>
                         <img src={CheckIcon} alt="선택됨" />
                       </A.ImgOverlay>
@@ -258,7 +296,7 @@ const Ai = () => {
 
                     {showSelect && (
                       <A.List>
-                        {relationshiptList.map((relationship) => (
+                        {relationshipList.map((relationship) => (
                           <li key={relationship}>
                             <A.SelectButton
                               onClick={() => {
