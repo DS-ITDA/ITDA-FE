@@ -399,10 +399,10 @@ const Interview = () => {
               <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
                 <I.MainInfo>
                   <img src={check} style={{ marginRight: '3px' }} />
-                  <I.Span style={{ color: palette.grayscale.white }}>동화</I.Span>
+                  <I.Span style={{ color: palette.grayscale.white }}>웹툰 (애니메이션)</I.Span>
                 </I.MainInfo>
                 <I.StyleExample style={{ color: palette.grayscale.white }}>
-                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+                  “아빠, 이번에 진짜 마지막으로.. 로봇 하나만 사줘.”
                 </I.StyleExample>
               </I.StyleBox>
             ) : (
@@ -411,11 +411,9 @@ const Interview = () => {
                   setSelection(2);
                 }}>
                 <I.MainInfo>
-                  <I.Span>동화</I.Span>
+                  <I.Span>웹툰 (애니메이션)</I.Span>
                 </I.MainInfo>
-                <I.StyleExample>
-                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
-                </I.StyleExample>
+                <I.StyleExample>“아빠, 이번에 진짜 마지막으로.. 로봇 하나만 사줘.”</I.StyleExample>
               </I.StyleBox>
             )}
 
@@ -423,10 +421,11 @@ const Interview = () => {
               <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
                 <I.MainInfo>
                   <img src={check} style={{ marginRight: '3px' }} />
-                  <I.Span style={{ color: palette.grayscale.white }}>동화</I.Span>
+                  <I.Span style={{ color: palette.grayscale.white }}>다큐멘터리</I.Span>
                 </I.MainInfo>
                 <I.StyleExample style={{ color: palette.grayscale.white }}>
-                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+                  2000년대 초, 그는 어린 나이에 처음으로 로봇 장난감을 갖고 싶다는 강한 열망을 표현했다. 그날,
+                  아버지에게 간절하게 손을 뻗으며 여러 번 요청했다는 기억은 지금까지도 생생하다
                 </I.StyleExample>
               </I.StyleBox>
             ) : (
@@ -435,10 +434,11 @@ const Interview = () => {
                   setSelection(3);
                 }}>
                 <I.MainInfo>
-                  <I.Span>동화</I.Span>
+                  <I.Span>다큐멘터리</I.Span>
                 </I.MainInfo>
                 <I.StyleExample>
-                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+                  2000년대 초, 그는 어린 나이에 처음으로 로봇 장난감을 갖고 싶다는 강한 열망을 표현했다. 그날,
+                  아버지에게 간절하게 손을 뻗으며 여러 번 요청했다는 기억은 지금까지도 생생하다
                 </I.StyleExample>
               </I.StyleBox>
             )}

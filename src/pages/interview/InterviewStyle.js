@@ -320,6 +320,11 @@ export const StyleExample = styled.div`
   font-weight: 400;
   line-height: 140%;
   letter-spacing: -0.28px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* 2줄까지만 표시 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
 
 //스토리 생성 중 화면
