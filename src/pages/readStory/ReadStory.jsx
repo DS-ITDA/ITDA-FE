@@ -115,6 +115,8 @@ const ReadStory = () => {
         const response = await getStoryBook(id);
         setBookData(response.data);
 
+        console.log(response.data);
+
         const sentences = response.data.story.content
           .split(/[\n]+|(?<=\.)|(?<=\?)/)
           .map((s) => s.trim())
@@ -163,7 +165,7 @@ const ReadStory = () => {
                 {!loading && (
                   <R.Cover color={`#${bookData?.spineColor}`}>
                     <R.Book>
-                      <img src={bookData?.illustration.imageUrl} alt="책 표지" />
+                      <img src={bookData?.photo.photoUrl} alt="책 표지" />
                     </R.Book>
                   </R.Cover>
                 )}
@@ -222,21 +224,27 @@ const ReadStory = () => {
                       position: 'absolute',
                     }}
                     $isEnd={content.length - 1 === idx}>
-                    <R.BookCover>
-                      <img src={bookData?.illustration.imageUrl} alt="책 표지" />
-                    </R.BookCover>
-
                     {idx === 0 && (
-                      <R.BookInfo>
-                        <R.BookTitle>{bookData?.title}</R.BookTitle>
-                        <R.BookDate>{bookData?.displayDate}</R.BookDate>
-                      </R.BookInfo>
+                      <>
+                        <R.BookCover>
+                          <img src={bookData?.photo.photoUrl} alt="책 표지" />
+                        </R.BookCover>
+                        <R.BookInfo>
+                          <R.BookTitle>{bookData?.title}</R.BookTitle>
+                          <R.BookDate>{bookData?.displayDate}</R.BookDate>
+                        </R.BookInfo>
+                      </>
                     )}
 
                     {idx !== 0 && (
-                      <R.BookInfo>
-                        <R.BookContent>{sentence}</R.BookContent>
-                      </R.BookInfo>
+                      <>
+                        <R.BookCover>
+                          <img src={bookData?.illustration.imageUrl} alt="책 표지" />
+                        </R.BookCover>
+                        <R.BookInfo>
+                          <R.BookContent>{sentence}</R.BookContent>
+                        </R.BookInfo>
+                      </>
                     )}
 
                     <R.Next onClick={handleGetNextPage}></R.Next>
