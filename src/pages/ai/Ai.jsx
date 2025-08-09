@@ -169,7 +169,7 @@ const Ai = () => {
       setShowSkeleton(true);
       try {
         const response = await postPhotoUpload(selectedImg.file);
-        setResultPeople(response?.faces);
+        setResultPeople(response?.faces || []);
         setOriginalPhotoId(response.originalPhotoId);
       } catch (error) {
         console.error('사진 업로드 실패', error);

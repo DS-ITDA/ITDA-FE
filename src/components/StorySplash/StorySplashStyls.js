@@ -33,6 +33,23 @@ export const Close = styled.div`
   }
 `;
 
+export const Title = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+`;
+
+export const SubTitle = styled.p`
+  margin: 0;
+
+  color: ${palette.grayscale.grayLight};
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+`;
+
 export const Heading = styled.p`
   font-size: 20px;
   font-weight: 600;

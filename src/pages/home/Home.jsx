@@ -88,7 +88,6 @@ const Home = () => {
       try {
         const data = await getStoryBookData();
         setStoryBooks(data.data);
-        console.log(data.data);
       } catch (error) {
         console.error('스토리북 데이터 불러오기 실패', error);
       }
