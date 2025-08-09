@@ -86,9 +86,9 @@ const ReadStory = () => {
     navigate('/');
   };
 
-  const handleEditPage = () => {
-    navigate(`/editStory/${id}`, { state: { bookData, level } });
-  };
+  // const handleEditPage = () => {
+  //   navigate(`/editStory/${id}`, { state: { bookData, level } });
+  // };
 
   useEffect(() => {
     if (currentPage === content?.length - 1) {
@@ -179,7 +179,7 @@ const ReadStory = () => {
                     {!loading && <R.Date>{bookData?.displayDate}</R.Date>}
                   </R.TextWrapper>
 
-                  <R.Edit onClick={handleEditPage}>수정 {'>'}</R.Edit>
+                  {/* <R.Edit onClick={handleEditPage}>수정 {'>'}</R.Edit> */}
                 </R.TopWrpper>
 
                 <R.ToggleWrapper>
@@ -268,7 +268,7 @@ const ReadStory = () => {
               <R.Board>
                 <div></div>
               </R.Board>
-              <R.CreatedEdit onClick={handleEditPage}>수정 {'>'}</R.CreatedEdit>
+              {/* <R.CreatedEdit onClick={handleEditPage}>수정 {'>'}</R.CreatedEdit> */}
             </R.CreatedWrapper>
 
             <R.ResultWrapper>
