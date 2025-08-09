@@ -14,9 +14,9 @@ import redo from '@assets/interview/redo-black-20.svg';
 import x from '@assets/interview/X.svg';
 import submit from '@assets/interview/submit.svg';
 import check from '@assets/interview/check.svg';
-import notifications from '@assets/interview/notifications-24.svg';
-import checkOff from '@assets/interview/check-24.svg';
-import checkOn from '@assets/interview/check-filled-24.svg';
+// import notifications from '@assets/interview/notifications-24.svg';
+// import checkOff from '@assets/interview/check-24.svg';
+// import checkOn from '@assets/interview/check-filled-24.svg';
 
 import ToastMessage from '@components/common/ToastMessage/ToastMessage';
 import PathNavbar from '@components/common/Navbar/PathNavbar';
@@ -28,10 +28,10 @@ const Interview = () => {
   const [State, setState] = useState('start');
   const [isEditing, setIsEditing] = useState(false);
   const [example, setExample] = useState('');
-  const [selection, setSelection] = useState();
-  const [alert, setAlert] = useState(false);
-  const [alertModal, setAlertModal] = useState(false);
-  const [modalChecking, setModalChecking] = useState(false);
+  const [selection, setSelection] = useState('');
+  // const [alert, setAlert] = useState(false);
+  // const [alertModal, setAlertModal] = useState(false);
+  // const [modalChecking, setModalChecking] = useState(false);
   const [sessionId, setSessionId] = useState('');
   const [interviewData, setInterviewData] = useState({
     answerText: '',
@@ -62,14 +62,20 @@ const Interview = () => {
     else setState('start');
   };
 
-  const goNext = () => {
+  const goNext = async () => {
     setState('creating');
+    try {
+      const response = await axiosInstance.post('/api/story/style', { selectedStyle: selection });
+      console.log('응답 성공:', response.data);
+    } catch (error) {
+      console.error('인터뷰 시작 에러:', error);
+    }
   };
 
-  const SaveAlert = () => {
-    setAlert(true);
-    setAlertModal(false);
-  };
+  // const SaveAlert = () => {
+  //   setAlert(true);
+  //   setAlertModal(false);
+  // };
 
   const startInterview = async () => {
     setState('loading');
@@ -371,7 +377,7 @@ const Interview = () => {
           </I.InputBox>
 
           <I.StyleContainer>
-            {selection === 1 ? (
+            {selection === '동화' ? (
               <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
                 <I.MainInfo>
                   <img src={check} style={{ marginRight: '3px' }} />
@@ -384,7 +390,7 @@ const Interview = () => {
             ) : (
               <I.StyleBox
                 onClick={() => {
-                  setSelection(1);
+                  setSelection('동화');
                 }}>
                 <I.MainInfo>
                   <I.Span>동화</I.Span>
@@ -395,7 +401,7 @@ const Interview = () => {
               </I.StyleBox>
             )}
 
-            {selection === 2 ? (
+            {selection === '웹툰' ? (
               <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
                 <I.MainInfo>
                   <img src={check} style={{ marginRight: '3px' }} />
@@ -408,7 +414,7 @@ const Interview = () => {
             ) : (
               <I.StyleBox
                 onClick={() => {
-                  setSelection(2);
+                  setSelection('웹툰');
                 }}>
                 <I.MainInfo>
                   <I.Span>웹툰 (애니메이션)</I.Span>
@@ -417,7 +423,7 @@ const Interview = () => {
               </I.StyleBox>
             )}
 
-            {selection === 3 ? (
+            {selection === '다큐멘터리' ? (
               <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
                 <I.MainInfo>
                   <img src={check} style={{ marginRight: '3px' }} />
@@ -431,7 +437,7 @@ const Interview = () => {
             ) : (
               <I.StyleBox
                 onClick={() => {
-                  setSelection(3);
+                  setSelection('다큐멘터리');
                 }}>
                 <I.MainInfo>
                   <I.Span>다큐멘터리</I.Span>
@@ -456,11 +462,11 @@ const Interview = () => {
           <I.InfoContainer style={{ marginTop: '17px' }}>
             <I.MainInfo>스토리 생성에</I.MainInfo>
             <I.MainInfo>
-              약 <I.Time>&nbsp;10&nbsp;</I.Time>분 소요될 예정이에요.
+              약 <I.Time>&nbsp;1&nbsp;</I.Time>분 소요될 예정이에요.
             </I.MainInfo>
           </I.InfoContainer>
 
-          <I.AlertBox>
+          {/* <I.AlertBox>
             <I.InfoContainer style={{ margin: '0' }}>
               <I.MainInfo>
                 스토리 생성이 <I.Span>&nbsp;완료</I.Span>되면,
@@ -492,7 +498,7 @@ const Interview = () => {
                 />
               )}
             </I.CheckingAlert>
-          </I.AlertBox>
+          </I.AlertBox> */}
 
           <I.GoHome
             onClick={() => {
@@ -501,7 +507,7 @@ const Interview = () => {
             홈으로
           </I.GoHome>
 
-          {alertModal && (
+          {/* {alertModal && (
             <>
               <I.Overlay onClick={() => setAlertModal(false)} />
               <I.Modal>
@@ -541,7 +547,7 @@ const Interview = () => {
                 </I.AlertBox>
               </I.Modal>
             </>
-          )}
+          )} */}
         </I.SelectPage>
       )}
 
