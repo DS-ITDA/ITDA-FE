@@ -12,6 +12,8 @@ import Tab_People_Not from '@assets/view/people-nonselected-24.svg';
 import BookList from '@components/view/BookList/BookList';
 import PeopleList from '@components/view/PeopleList/PeopleList';
 import { useRef } from 'react';
+import { useEffect } from 'react';
+import { getStoryBookData } from '../../apis/home/home';
 
 const View = () => {
   const [selectedBookId, setSelectedBookId] = useState(null);
@@ -21,18 +23,40 @@ const View = () => {
 
   const [selectedIdx, setSelectedIdx] = useState(null);
 
+  const [storyBooks, setStoryBooks] = useState([]);
+
   const [flat, setFlat] = useState(false);
   const wrapperRef = useRef();
 
   const handleBookcoverClick = (id) => {
-    setSelectedBookId(id);
-    setSelectedIdx(id);
+    if (selectedIdx === id) {
+      setSelectedIdx(null);
+      setSelectedBookId(null);
+    } else {
+      setSelectedIdx(id);
+      setSelectedBookId(id);
+    }
+
     if (firstVisited) setFirstVisited(false);
   };
 
   const handleDrag = (_, info) => {
     setFlat(info.point.y < window.innerHeight - 400);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getStoryBookData();
+        setStoryBooks(data.data);
+        console.log(data.data);
+      } catch (error) {
+        console.error('스토리북 데이터 불러오기 실패', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <V.View>
@@ -42,6 +66,7 @@ const View = () => {
 
       <V.BooksWrapper>
         <Books
+          storyBooks={storyBooks}
           $height={35}
           selectedBookId={selectedBookId}
           onSelectBook={handleBookcoverClick}
@@ -49,7 +74,13 @@ const View = () => {
         />
       </V.BooksWrapper>
 
-      <V.Wrapper ref={wrapperRef} $flat={flat} drag="y" dragConstraints={{ top: -230, bottom: 0 }} onDrag={handleDrag}>
+      <V.Wrapper
+        ref={wrapperRef}
+        $flat={flat}
+        drag="y"
+        dragConstraints={{ top: -190, bottom: 0 }}
+        dragElastic={0.2}
+        onDrag={handleDrag}>
         <V.Ul>
           {tabs.map((item) => (
             <M.li key={item} onClick={() => setSelectedTab(item)}>
@@ -80,6 +111,7 @@ const View = () => {
 
         {selectedTab === 'books' && (
           <BookList
+            storyBooks={storyBooks}
             handleBookcoverClick={handleBookcoverClick}
             selectedIdx={selectedIdx}
             setSelectedIdx={setSelectedIdx}

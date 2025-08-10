@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import * as B from '@components/Books/BooksStyle';
 import palette from '@styles/theme';
@@ -10,6 +11,8 @@ const Books = ({ storyBooks, selectedBookId, onSelectBook, $height = 15, firstVi
 
   const divRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!divRef.current) return;
@@ -55,7 +58,7 @@ const Books = ({ storyBooks, selectedBookId, onSelectBook, $height = 15, firstVi
     <B.Books $width={dimensions.width} $height={dimensions.height}>
       <B.Div ref={divRef}>
         <B.BookContainer>
-          {storyBooks.map((book) => {
+          {storyBooks?.map((book) => {
             const isSelected = book.storybookId === selectedBookId;
             const bookColor = firstVisited
               ? `#${book.spineColor}`
@@ -73,11 +76,12 @@ const Books = ({ storyBooks, selectedBookId, onSelectBook, $height = 15, firstVi
               </B.Book>
             );
           })}
-          {storyBooks.length < 3 && (
+          {storyBooks?.length < 3 && (
             <B.Book
               height="100"
               color={palette.main.beige}
               onClick={() => {
+                navigate('/');
                 if (inputRef?.current) {
                   inputRef.current.click();
                 }

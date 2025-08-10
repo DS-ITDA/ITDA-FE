@@ -7,7 +7,7 @@ export const View = styled.div`
   display: flex;
   flex-direction: column;
 
-  overflow: hidden;
+  overflow: scroll;
 `;
 
 export const BooksWrapper = styled.div`
@@ -31,6 +31,9 @@ export const Wrapper = styled(motion.div)`
   flex: 1;
 
   margin-top: 3vh;
+
+  min-height: 100dvh;
+  overflow-y: auto;
 `;
 
 export const Ul = styled.ul`
