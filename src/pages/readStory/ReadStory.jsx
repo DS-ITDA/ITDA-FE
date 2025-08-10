@@ -221,7 +221,7 @@ const ReadStory = () => {
                       transition: 'transform 1s ease-in-out',
                       position: 'absolute',
                     }}
-                    $isEnd={content.length - 1 === idx}>
+                    $isEnd={idx !== 0}>
                     {idx === 0 && (
                       <>
                         <R.BookCover>
