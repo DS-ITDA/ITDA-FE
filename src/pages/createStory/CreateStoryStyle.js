@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import palette from '@styles/theme';
 
 export const CreatePage = styled.div`
@@ -122,4 +122,70 @@ export const Selection = styled.div`
   border: 1px solid ${palette.main.beige};
   background: ${palette.grayscale.white};
   box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
+`;
+
+export const PromptList = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 15px 20px;
+  gap: 10px;
+`;
+
+export const Text = styled.div`
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+  color: ${palette.grayscale.gray};
+  padding: 15px 25px;
+  border-radius: 17px;
+  background: ${palette.grayscale.white};
+`;
+
+const drawAnimation = keyframes`
+  0% {
+    stroke-dasharray: 0, 1000;
+  }
+  100% {
+    stroke-dasharray: 1000, 1000;
+  }
+`;
+
+export const SVGBorder = styled.svg`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+
+  rect {
+    fill: none;
+    stroke: ${palette.main.brown};
+    stroke-width: 2;
+    animation: ${drawAnimation} 2s linear infinite;
+    shape-rendering: geometricPrecision;
+  }
+`;
+
+export const CurrentText = styled.div`
+  position: relative;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+  color: ${palette.main.brown};
+  padding: 15px 25px;
+  border-radius: 17px;
+  background: ${palette.grayscale.white};
+`;
+
+export const AiInfo = styled.div`
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+  color: ${palette.grayscale.graydeep};
+
+  margin-left: 24px;
 `;

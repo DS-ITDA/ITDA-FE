@@ -2,7 +2,7 @@ import * as C from '@createStory/CreateStoryStyle';
 import * as I from '@interview/InterviewStyle';
 import palette from '@styles/theme';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import PathNavbar from '@components/common/Navbar/PathNavbar';
 import editGray from '@assets/createStory/edit-gray.svg';
@@ -17,22 +17,31 @@ import narration from '@assets/createStory/narration-animation.svg';
 import play from '@assets/createStory/play-24.svg';
 import stop from '@assets/createStory/stop-24.svg';
 import check from '@assets/createStory/select-check.svg';
+import divider from '@assets/createStory/divider.svg';
 
 import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
+import { axiosInstance } from '@apis/axios';
 
 const CreateStory = () => {
+  const location = useLocation();
+  const { story } = location.state || {};
+
   const navigate = useNavigate();
   const [state, setState] = useState('start');
   const [prompt, setPrompt] = useState('');
+  const [promptList, setPromptList] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
 
   const [alert, setAlert] = useState(false);
   const [alertModal, setAlertModal] = useState(false);
   const [modalChecking, setModalChecking] = useState(false);
 
-  const [answerText, setAnswerText] = useState('아빠 이 로봇은 꼭 가져야해요');
+  const [loading, setLoading] = useState(false);
+  const [editable, setEditable] = useState(false);
+  const [editStory, setEditStory] = useState(story);
   const [playing, setPlaying] = useState();
   const [selection, setSelection] = useState();
+  const [currentEditCount, setCurrentEditCount] = useState(0);
 
   const goBack = () => {
     setState('start');
@@ -46,6 +55,27 @@ const CreateStory = () => {
   const SaveAlert = () => {
     setAlert(true);
     setAlertModal(false);
+  };
+
+  const EditHandler = async () => {
+    setLoading(true);
+    setPromptList((prev) => [...prev, prompt]);
+    setPrompt('');
+    try {
+      const response = await axiosInstance.put('/api/story/edit/ai', {
+        originalStory: editStory,
+        instruction: prompt,
+        currentAiEditCount: currentEditCount,
+      });
+      console.log(response.data);
+      const data = response.data.data;
+      setCurrentEditCount(data.aiEditCount);
+      if (currentEditCount > 3) setEditable(false);
+      setEditStory(data.editedStory);
+      setLoading(false);
+    } catch (error) {
+      console.error('스토리 수정 에러:', error);
+    }
   };
 
   return (
@@ -87,17 +117,17 @@ const CreateStory = () => {
             </C.ContentHeader>
             {isEditing ? (
               <C.textarea
-                value={answerText}
+                value={editStory}
                 onChange={(e) => {
-                  setAnswerText(e.target.value);
+                  setEditStory(e.target.value);
                 }}
               />
             ) : (
-              <C.Content>{answerText}</C.Content>
+              <C.Content>{editStory}</C.Content>
             )}
           </C.ContentBox>
 
-          {(answerText.length < 100 || answerText.length > 800) && (
+          {(editStory.length < 100 || editStory.length > 800) && (
             <SpeechBubble
               selection="up"
               content={
@@ -107,6 +137,31 @@ const CreateStory = () => {
               }
             />
           )}
+
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', margin: '15px 0' }}>
+            <img src={divider} />
+          </div>
+
+          <C.AiInfo>
+            AI 수정은 <C.Span>최대 3회</C.Span>까지 이용하실 수 있어요.
+          </C.AiInfo>
+
+          <C.PromptList>
+            {promptList.slice(0, -1).map((text, index) => (
+              <C.Text key={index}>{text}</C.Text>
+            ))}
+            {promptList.length > 0 &&
+              (loading ? (
+                <C.CurrentText>
+                  <C.SVGBorder>
+                    <rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="16" />
+                  </C.SVGBorder>
+                  {promptList[promptList.length - 1]}
+                </C.CurrentText>
+              ) : (
+                <C.Text>{promptList[promptList.length - 1]}</C.Text>
+              ))}
+          </C.PromptList>
 
           <C.InputBox>
             <C.StyleInput
@@ -121,7 +176,7 @@ const CreateStory = () => {
               src={submit}
               style={{ width: '40px' }}
               onClick={() => {
-                setState('ordering');
+                EditHandler();
               }}
             />
           </C.InputBox>
