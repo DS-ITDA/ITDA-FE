@@ -10,6 +10,7 @@ import Button from '@components/common/Button/Button';
 
 import PeopleIcon from '@assets/Ai/people_scan-24.svg';
 import ArrowRightIcon from '@assets/arrow-right.svg';
+import ArrowRightGrayIcon from '@assets/arrow-right-gray.svg';
 import CheckIcon from '@assets/Ai/check-40.svg';
 import toggleIcon from '@assets/Ai/toggle.png';
 import toggleUpIcon from '@assets/Ai/toggle-up.png';
@@ -48,14 +49,14 @@ const Ai = () => {
   const [characterInput, setCharacterInput] = useState('');
   const [mainCharacterInput, setMainCharacterInput] = useState('나');
 
+  const [resultPeople, setResultPeople] = useState([]);
+
   const selectRef = useRef(null);
 
   const location = useLocation();
   const selectedImg = location.state?.selectedImg;
 
   const navigate = useNavigate();
-
-  const [resultPeople, setResultPeople] = useState([]);
 
   const selectedPeople = resultPeople.filter((_, idx) => isSelected.includes(idx));
 
@@ -70,38 +71,6 @@ const Ai = () => {
       }
       return [...prev, idx];
     });
-  };
-
-  const handleAnalyze = async () => {
-    if (!originalPhotoId || isSelected.length === 0) return;
-
-    const selectedFaceIds = isSelected.map((idx) => resultPeople[idx].faceId);
-
-    try {
-      const analyzeRes = await postPhotoAnalyze(originalPhotoId, selectedFaceIds);
-
-      setTimes(analyzeRes.times);
-
-      setRelationShipList(
-        analyzeRes.relationship.includes(',')
-          ? analyzeRes.relationship.split(',').map((r) => r.trim())
-          : [analyzeRes.relationship.trim()],
-      );
-
-      setFeelings(
-        analyzeRes.emotion.includes(',')
-          ? analyzeRes.emotion.split(',').map((e) => e.trim())
-          : [analyzeRes.emotion.trim()],
-      );
-
-      setPlace(
-        analyzeRes.place.includes(',') ? analyzeRes.place.split(',').map((p) => p.trim()) : [analyzeRes.place.trim()],
-      );
-    } catch (error) {
-      console.error('분석 실패', error);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleMainChat = (id) => {
@@ -141,6 +110,38 @@ const Ai = () => {
       setFeelings((prev) => [feelingsInput.trim(), ...prev]);
       setFeelingsInput('');
       setFeelingsType('');
+    }
+  };
+
+  const handleAnalyze = async () => {
+    if (!originalPhotoId || isSelected.length === 0) return;
+
+    const selectedFaceIds = isSelected.map((idx) => resultPeople[idx].faceId);
+
+    try {
+      const analyzeRes = await postPhotoAnalyze(originalPhotoId, selectedFaceIds);
+
+      setTimes(analyzeRes.times);
+
+      setRelationShipList(
+        analyzeRes.relationship.includes(',')
+          ? analyzeRes.relationship.split(',').map((r) => r.trim())
+          : [analyzeRes.relationship.trim()],
+      );
+
+      setFeelings(
+        analyzeRes.emotion.includes(',')
+          ? analyzeRes.emotion.split(',').map((e) => e.trim())
+          : [analyzeRes.emotion.trim()],
+      );
+
+      setPlace(
+        analyzeRes.place.includes(',') ? analyzeRes.place.split(',').map((p) => p.trim()) : [analyzeRes.place.trim()],
+      );
+    } catch (error) {
+      console.error('분석 실패', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -200,8 +201,6 @@ const Ai = () => {
     setCharacterInput('');
   }, [isMain]);
 
-  if (!selectedImg) return null;
-
   return (
     <A.Ai>
       <H.UploadDiv>
@@ -217,8 +216,9 @@ const Ai = () => {
           <A.TextDiv>
             <p>사진에서 인식된 인물은 다음과 같아요.</p>
             <div>
-              <p>스토리북에 등장시킬 인물을</p>
-              <span>최소 1명, 최대 2명 골라주세요.</span>
+              <p>
+                스토리북에 등장시킬 인물을 <span>2명 골라주세요.</span>
+              </p>
             </div>
           </A.TextDiv>
 
@@ -229,36 +229,82 @@ const Ai = () => {
                 <p>인물 인식 결과</p>
               </A.Result>
 
-              <A.Grid>
-                {resultPeople.map((person, idx) => (
-                  <A.ImgDiv
-                    key={idx}
-                    onClick={() => {
-                      handleChoicePeople(idx);
-                    }}>
-                    <img src={person.faceImageUrl} alt="결과 이미지" />
-                    {isSelected.includes(idx) && (
-                      <A.ImgOverlay>
-                        <img src={CheckIcon} alt="선택됨" />
-                      </A.ImgOverlay>
-                    )}
-                  </A.ImgDiv>
-                ))}
-              </A.Grid>
+              {resultPeople.length === 0 && (
+                <A.NoResult>
+                  <p>인식된 인물이 없어요.</p>
+                  <p>다른 사진으로 시도해주세요.</p>
+                </A.NoResult>
+              )}
+
+              {resultPeople.length > 0 && (
+                <>
+                  <A.Grid>
+                    {resultPeople.map((person, idx) => (
+                      <A.ImgDiv
+                        key={idx}
+                        onClick={() => {
+                          if (resultPeople.length > 1) {
+                            handleChoicePeople(idx);
+                          }
+                        }}>
+                        <img src={person.faceImageUrl} alt="결과 이미지" />
+                        {isSelected.includes(idx) && (
+                          <A.ImgOverlay>
+                            <img src={CheckIcon} alt="선택됨" />
+                          </A.ImgOverlay>
+                        )}
+                      </A.ImgDiv>
+                    ))}
+                  </A.Grid>
+
+                  {resultPeople.length === 1 && (
+                    <A.NoResult>
+                      <p>
+                        원활한 스토리 구성을 위해
+                        <br />
+                        <span>최소 2명 이상</span>의 인물이 필요해요.
+                        <br />
+                        다른 사진으로 시도해주세요.
+                      </p>
+                    </A.NoResult>
+                  )}
+                </>
+              )}
             </A.WhiteDiv>
           </A.WhiteDivWrapper>
 
           <A.ButtonDiv>
-            <Button
-              selection={1}
-              content={<img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }}></img>}
-              onClick={async () => {
-                setLoading(true);
-                setLevel((prev) => prev + 1);
-                handleAnalyze();
-              }}
-              type="button"
-            />
+            {resultPeople.length < 2 && (
+              <Button
+                selection={1}
+                content={<div style={{ cursor: 'pointer' }}>홈으로</div>}
+                onClick={() => {
+                  navigate('/');
+                }}
+                type="button"
+              />
+            )}
+            {resultPeople.length > 1 && (
+              <Button
+                selection={1}
+                content={
+                  <>
+                    {isSelected.length !== 2 && (
+                      <img src={ArrowRightGrayIcon} alt="다음" style={{ cursor: 'not-allowed' }} />
+                    )}
+                    {isSelected.length >= 2 && <img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }} />}
+                  </>
+                }
+                onClick={async () => {
+                  if (isSelected.length >= 2) {
+                    setLoading(true);
+                    setLevel((prev) => prev + 1);
+                    handleAnalyze();
+                  }
+                }}
+                type="button"
+              />
+            )}
           </A.ButtonDiv>
         </A.Section>
       )}
@@ -300,9 +346,8 @@ const Ai = () => {
               {!loading && (
                 <A.Grid>
                   {selectedPeople.map((person, idx) => (
-                    <div>
+                    <div key={idx}>
                       <A.ImgDiv
-                        key={idx}
                         onClick={() => {
                           handleMainChat(person.faceId);
                         }}>
@@ -463,7 +508,7 @@ const Ai = () => {
 
                   {feelings.map((feeling, idx) => {
                     return (
-                      <A.FeelingsBtn key={feeling} onClick={() => handleDeleteFeelings(idx)}>
+                      <A.FeelingsBtn key={(feeling, idx)} onClick={() => handleDeleteFeelings(idx)}>
                         {feeling}
                         <A.CancleImg>
                           <img src={CancleIcon} alt="삭제" />
@@ -479,9 +524,18 @@ const Ai = () => {
           <A.ButtonDiv>
             <Button
               selection={1}
-              content={<img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }}></img>}
+              content={
+                <>
+                  {isMain !== null && characterInput !== '' && (
+                    <img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }} />
+                  )}
+                  {(isMain === null || characterInput === '') && (
+                    <img src={ArrowRightGrayIcon} alt="다음" style={{ cursor: 'not-allowed' }} />
+                  )}
+                </>
+              }
               onClick={() => {
-                if (level === 2) {
+                if (level === 2 && isMain !== null && characterInput !== '') {
                   handleSubmit();
                   navigate('/interview', {
                     state: {
@@ -495,7 +549,9 @@ const Ai = () => {
                     },
                   });
                 }
-                setLevel((prev) => prev + 1);
+                if (isMain !== null && characterInput !== '') {
+                  setLevel((prev) => prev + 1);
+                }
               }}
               type="button"
             />
