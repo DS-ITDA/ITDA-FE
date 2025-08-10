@@ -26,8 +26,7 @@ import { axiosInstance } from '@apis/axios';
 
 const Interview = () => {
   const navigate = useNavigate();
-  const [State, setState] = useState('creating');
-  // start
+  const [State, setState] = useState('start');
   const [isEditing, setIsEditing] = useState(false);
   const [example, setExample] = useState('');
   const [selection, setSelection] = useState('');
@@ -204,6 +203,7 @@ const Interview = () => {
         answerText: '',
         questionId: data.questionId,
         question: data.question,
+        currentId: data.currentQuestionId,
       });
 
       setState('next');
@@ -217,11 +217,20 @@ const Interview = () => {
     try {
       const response = await axiosInstance.put('/api/interview/answer/update', {
         sessionId: sessionId,
-        questionId: interviewData.questionId,
+        questionId: interviewData.questionId - 1,
         updatedAnswer: interviewData.answerText,
       });
       console.log(response.data);
       console.log(interviewData.questionId);
+      setAllAnswers((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = {
+          ...updated[updated.length - 1],
+          answerText: interviewData.answerText,
+        };
+        return updated;
+      });
+      setIsEditing(false);
     } catch (error) {
       if (error.response) {
         console.error('서버 응답 데이터:', error.response.data);
@@ -316,16 +325,13 @@ const Interview = () => {
           <I.AnswerBox>
             <I.EditBox>
               {isEditing ? (
-                <I.Editing
-                  onClick={() => {
-                    setIsEditing(false);
-                  }}>
+                <I.Editing>
                   <img src={editBrown} style={{ marginRight: '2px' }} />
                   내용을 수정해보세요
                   <img
                     src={x}
                     onClick={(e) => {
-                      e.stopPropagation(); // 부모 클릭 이벤트 방지
+                      e.stopPropagation();
                       editAnswer();
                     }}
                   />
@@ -336,6 +342,10 @@ const Interview = () => {
                   alt="수정하기"
                   onClick={() => {
                     setIsEditing(true);
+                    setInterviewData((prev) => ({
+                      ...prev,
+                      answerText: allAnswers[allAnswers.length - 1]?.answerText || '',
+                    }));
                   }}
                 />
               )}
@@ -343,7 +353,7 @@ const Interview = () => {
             </I.EditBox>
             {isEditing ? (
               <I.textarea
-                value={allAnswers[allAnswers.length - 1]?.answerText}
+                value={interviewData.answerText}
                 onChange={(e) => setInterviewData((prev) => ({ ...prev, answerText: e.target.value }))}
               />
             ) : (
