@@ -524,9 +524,18 @@ const Ai = () => {
           <A.ButtonDiv>
             <Button
               selection={1}
-              content={<img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }}></img>}
+              content={
+                <>
+                  {isMain !== null && characterInput !== '' && (
+                    <img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }} />
+                  )}
+                  {(isMain === null || characterInput === '') && (
+                    <img src={ArrowRightGrayIcon} alt="다음" style={{ cursor: 'not-allowed' }} />
+                  )}
+                </>
+              }
               onClick={() => {
-                if (level === 2) {
+                if (level === 2 && isMain !== null && characterInput !== '') {
                   handleSubmit();
                   navigate('/interview', {
                     state: {
@@ -540,7 +549,9 @@ const Ai = () => {
                     },
                   });
                 }
-                setLevel((prev) => prev + 1);
+                if (isMain !== null && characterInput !== '') {
+                  setLevel((prev) => prev + 1);
+                }
               }}
               type="button"
             />
