@@ -14,6 +14,7 @@ import redo from '@assets/interview/redo-black-20.svg';
 import x from '@assets/interview/X.svg';
 import submit from '@assets/interview/submit.svg';
 import check from '@assets/interview/check.svg';
+import loading from '@assets/interview/loading.gif';
 // import notifications from '@assets/interview/notifications-24.svg';
 // import checkOff from '@assets/interview/check-24.svg';
 // import checkOn from '@assets/interview/check-filled-24.svg';
@@ -25,7 +26,8 @@ import { axiosInstance } from '@apis/axios';
 
 const Interview = () => {
   const navigate = useNavigate();
-  const [State, setState] = useState('start');
+  const [State, setState] = useState('creating');
+  // start
   const [isEditing, setIsEditing] = useState(false);
   const [example, setExample] = useState('');
   const [selection, setSelection] = useState('');
@@ -122,7 +124,7 @@ const Interview = () => {
         }
       };
 
-      recorder.start(1000); // 1초마다 데이터 수집
+      recorder.start(1000);
       mediaRecorderRef.current = recorder;
 
       setState('stopOn');
@@ -232,9 +234,11 @@ const Interview = () => {
     <I.InterviewPage>
       <I.NavBar>
         {State === 'selectStyle' && selection ? (
-          <PathNavbar left={true} right={true} goBack={() => goBack()} goNext={() => goNext()} />
+          <PathNavbar left={true} right={true} goBack={goBack} goNext={goNext} />
+        ) : State === 'creating' ? (
+          <PathNavbar left={false} right={false} />
         ) : (
-          <PathNavbar left={true} right={false} goBack={() => goBack()} />
+          <PathNavbar left={true} right={false} goBack={goBack} />
         )}
       </I.NavBar>
 
@@ -465,6 +469,11 @@ const Interview = () => {
               약 <I.Time>&nbsp;1&nbsp;</I.Time>분 소요될 예정이에요.
             </I.MainInfo>
           </I.InfoContainer>
+
+          <div
+            style={{ width: '100%', height: '70%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <img src={loading} style={{ width: '10rem' }} />
+          </div>
 
           {/* <I.AlertBox>
             <I.InfoContainer style={{ margin: '0' }}>
