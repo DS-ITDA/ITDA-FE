@@ -29,7 +29,7 @@ const Interview = () => {
   const [State, setState] = useState('start');
   const [isEditing, setIsEditing] = useState(false);
   const [example, setExample] = useState('');
-  const [selection, setSelection] = useState('');
+  const [style, setStyle] = useState('');
   // const [alert, setAlert] = useState(false);
   // const [alertModal, setAlertModal] = useState(false);
   // const [modalChecking, setModalChecking] = useState(false);
@@ -40,8 +40,8 @@ const Interview = () => {
     questionId: 0,
   });
   const [allAnswers, setAllAnswers] = useState([]);
-  const [transcript, setTranscript] = useState('');
-
+  const [emotion, setEmotion] = useState('');
+  const [keywords, setkeywords] = useState([]);
   const mediaRecorderRef = useRef(null);
   const recordedChunksRef = useRef([]);
   const streamRef = useRef(null);
@@ -64,16 +64,6 @@ const Interview = () => {
     else setState('start');
   };
 
-  const goNext = async () => {
-    setState('creating');
-    try {
-      const response = await axiosInstance.post('/api/story/style', { selectedStyle: selection });
-      console.log('응답 성공:', response.data);
-    } catch (error) {
-      console.error('인터뷰 시작 에러:', error);
-    }
-  };
-
   // const SaveAlert = () => {
   //   setAlert(true);
   //   setAlertModal(false);
@@ -81,7 +71,6 @@ const Interview = () => {
 
   const startInterview = async () => {
     setState('loading');
-    console.log(originalPhotoId, character1, character2, place, relationship, era, facialEmotion);
     try {
       const response = await axiosInstance.post(
         '/api/interview/start',
@@ -92,17 +81,13 @@ const Interview = () => {
           },
         },
       );
-      console.log('응답 성공:', response.data);
-
       const data = response.data.data;
       setSessionId(data.sessionId);
-
       setInterviewData({
         answerText: '',
         questionId: data.questionId,
         question: data.question,
       });
-
       setState('recordOn');
     } catch (error) {
       console.error('인터뷰 시작 에러:', error);
@@ -153,13 +138,11 @@ const Interview = () => {
       }
 
       const blob = new Blob(finalChunks, { type: 'audio/webm' });
-
       if (blob.size > 0) {
         await sendVoiceToServer(blob);
       } else {
         console.error('데이터가 없습니다.');
       }
-
       cleanupRecording();
     }
   };
@@ -179,7 +162,6 @@ const Interview = () => {
 
   const sendVoiceToServer = async (blob) => {
     setState('loading');
-
     try {
       const formData = new FormData();
       formData.append('voice', blob, 'answer.webm');
@@ -192,10 +174,7 @@ const Interview = () => {
           sessionId: sessionId,
         },
       });
-
-      console.log(response.data);
       const data = response.data.data;
-
       setAllAnswers((prev) => [
         ...prev,
         { question: interviewData.question, answerText: data.prevAnswerText || data.answerText },
@@ -217,13 +196,11 @@ const Interview = () => {
 
   const editAnswer = async () => {
     try {
-      const response = await axiosInstance.put('/api/interview/answer/update', {
+      await axiosInstance.put('/api/interview/answer/update', {
         sessionId: sessionId,
         questionId: interviewData.questionId - 1,
         updatedAnswer: interviewData.answerText,
       });
-      console.log(response.data);
-      console.log(interviewData.questionId);
       setAllAnswers((prev) => {
         const updated = [...prev];
         updated[updated.length - 1] = {
@@ -234,9 +211,6 @@ const Interview = () => {
       });
       setIsEditing(false);
     } catch (error) {
-      if (error.response) {
-        console.error('서버 응답 데이터:', error.response.data);
-      }
       console.error(error);
     }
   };
@@ -248,39 +222,62 @@ const Interview = () => {
           photoId: originalPhotoId,
         },
       });
-      console.log('응답 성공:', response.data);
-      const data = response.data.data.data;
-      setTranscript(data);
-
-      handleKeyword();
+      const data = response.data.data;
+      handleKeyword(data);
     } catch (error) {
-      if (error.response) {
-        console.error('확인용 서버 응답 데이터:', error.response.data);
-      }
       console.error(error);
     }
   };
 
-  const handleKeyword = async () => {
+  const handleKeyword = async (transcriptData) => {
     try {
       const response = await axiosInstance.post('/api/interview/keyword', {
-        transcript: transcript,
+        transcript: transcriptData,
       });
-      console.log('응답 성공:', response.data);
       const data = response.data.data;
-      console.log(data);
+      setEmotion(data.emotion);
+      setkeywords(data.keywords);
     } catch (error) {
-      if (error.response) {
-        console.error('서버 응답 데이터:', error.response.data);
-      }
       console.error(error);
+    }
+  };
+
+  const goNext = async () => {
+    setState('creating');
+    try {
+      await axiosInstance.post('/api/story/style', { selectedStyle: style });
+      createStory();
+    } catch (error) {
+      console.error('스타일 선택 에러:', error);
+    }
+  };
+
+  const createStory = async () => {
+    setState('creating');
+    try {
+      const response = await axiosInstance.post('/api/story', {
+        emotion: emotion,
+        keywords: keywords,
+        style: style,
+        character1: character1,
+        character2: character2,
+        place: Array.isArray(place) ? place.join(', ') : place,
+        relationship: relationship,
+        era: era,
+        facialEmotion: facialEmotion,
+      });
+      const story = response.data.data.story;
+      console.log(story);
+      navigate('/createStory', { state: { story } });
+    } catch (error) {
+      console.error('스토리 생성 에러:', error);
     }
   };
 
   return (
     <I.InterviewPage>
       <I.NavBar>
-        {State === 'selectStyle' && selection ? (
+        {State === 'selectStyle' && style ? (
           <PathNavbar left={true} right={true} goBack={goBack} goNext={goNext} />
         ) : State === 'creating' ? (
           <PathNavbar left={false} right={false} />
@@ -429,7 +426,7 @@ const Interview = () => {
           </I.InputBox>
 
           <I.StyleContainer>
-            {selection === '동화' ? (
+            {style === '동화' ? (
               <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
                 <I.MainInfo>
                   <img src={check} style={{ marginRight: '3px' }} />
@@ -442,7 +439,7 @@ const Interview = () => {
             ) : (
               <I.StyleBox
                 onClick={() => {
-                  setSelection('동화');
+                  setStyle('동화');
                 }}>
                 <I.MainInfo>
                   <I.Span>동화</I.Span>
@@ -453,7 +450,7 @@ const Interview = () => {
               </I.StyleBox>
             )}
 
-            {selection === '웹툰' ? (
+            {style === '웹툰' ? (
               <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
                 <I.MainInfo>
                   <img src={check} style={{ marginRight: '3px' }} />
@@ -466,7 +463,7 @@ const Interview = () => {
             ) : (
               <I.StyleBox
                 onClick={() => {
-                  setSelection('웹툰');
+                  setStyle('웹툰');
                 }}>
                 <I.MainInfo>
                   <I.Span>웹툰 (애니메이션)</I.Span>
@@ -475,7 +472,7 @@ const Interview = () => {
               </I.StyleBox>
             )}
 
-            {selection === '다큐멘터리' ? (
+            {style === '다큐멘터리' ? (
               <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
                 <I.MainInfo>
                   <img src={check} style={{ marginRight: '3px' }} />
@@ -489,7 +486,7 @@ const Interview = () => {
             ) : (
               <I.StyleBox
                 onClick={() => {
-                  setSelection('다큐멘터리');
+                  setStyle('다큐멘터리');
                 }}>
                 <I.MainInfo>
                   <I.Span>다큐멘터리</I.Span>
