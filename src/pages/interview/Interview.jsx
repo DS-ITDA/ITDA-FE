@@ -239,6 +239,22 @@ const Interview = () => {
     }
   };
 
+  const InterviewfinalCheck = async () => {
+    try {
+      const response = await axiosInstance.get('/api/interview/transcript', {
+        params: {
+          photoId: photoid,
+        },
+      });
+      console.log('응답 성공:', response.data);
+    } catch (error) {
+      if (error.response) {
+        console.error('확인용 서버 응답 데이터:', error.response.data);
+      }
+      console.error(error);
+    }
+  };
+
   return (
     <I.InterviewPage>
       <I.NavBar>
@@ -582,8 +598,10 @@ const Interview = () => {
                 else if (State === 'recordOn') startRecording();
                 else if (State === 'stopOn') stopRecording();
                 else if (State === 'next') {
-                  if (interviewData.questionId === 4) setState('selectStyle');
-                  else setState('recordOn');
+                  if (interviewData.questionId === 4) {
+                    setState('selectStyle');
+                    InterviewfinalCheck();
+                  } else setState('recordOn');
                 }
               }}
             />
