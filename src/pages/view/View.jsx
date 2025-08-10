@@ -25,6 +25,9 @@ const View = () => {
   const [selectedIdx, setSelectedIdx] = useState(null);
 
   const [storyBooks, setStoryBooks] = useState([]);
+  const [peopleList, setPeopleList] = useState([]);
+
+  const [level, setLevel] = useState(0);
 
   const [flat, setFlat] = useState(false);
   const wrapperRef = useRef();
@@ -62,7 +65,7 @@ const View = () => {
     const fetchPeopleData = async () => {
       try {
         const response = await getPeople();
-        console.log(response);
+        setPeopleList(response);
       } catch (error) {
         console.error('인물뷰 가져오기 실패', error);
       }
@@ -96,7 +99,12 @@ const View = () => {
         onDrag={handleDrag}>
         <V.Ul>
           {tabs.map((item) => (
-            <M.li key={item} onClick={() => setSelectedTab(item)}>
+            <M.li
+              key={item}
+              onClick={() => {
+                setSelectedTab(item);
+                if (item === 'people') setLevel(0);
+              }}>
               {item === 'books' && <img src={selectedTab === 'books' ? Tab_Book : Tab_Book_Not} alt="book" />}
               {item === 'people' && <img src={selectedTab === 'people' ? Tab_People : Tab_People_Not} alt="people" />}
 
@@ -130,7 +138,15 @@ const View = () => {
             setSelectedIdx={setSelectedIdx}
           />
         )}
-        {selectedTab === 'people' && <PeopleList flat={flat} />}
+        {selectedTab === 'people' && (
+          <PeopleList
+            flat={flat}
+            peopleList={peopleList}
+            setPeopleList={setPeopleList}
+            level={level}
+            setLevel={setLevel}
+          />
+        )}
       </V.Wrapper>
     </V.View>
   );

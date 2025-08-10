@@ -10,3 +10,18 @@ export const getPeople = async () => {
     console.error('getPeople 에러 발생', error);
   }
 };
+
+// 특정 인물 이름 수정
+export const putName = async (faceId, name) => {
+  console.log(faceId, name);
+
+  try {
+    const response = await axiosInstance.put(`/api/mypage/people/${faceId}/name`, {
+      name,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('patchName 에러 발생', error);
+  }
+};
