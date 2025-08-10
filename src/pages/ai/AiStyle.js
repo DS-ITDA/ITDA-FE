@@ -373,4 +373,8 @@ export const NoResult = styled.div`
   p {
     margin: 0;
   }
+
+  span {
+    font-weight: 600;
+  }
 `;

@@ -10,6 +10,7 @@ import Button from '@components/common/Button/Button';
 
 import PeopleIcon from '@assets/Ai/people_scan-24.svg';
 import ArrowRightIcon from '@assets/arrow-right.svg';
+import ArrowRightGrayIcon from '@assets/arrow-right-gray.svg';
 import CheckIcon from '@assets/Ai/check-40.svg';
 import toggleIcon from '@assets/Ai/toggle.png';
 import toggleUpIcon from '@assets/Ai/toggle-up.png';
@@ -215,8 +216,9 @@ const Ai = () => {
           <A.TextDiv>
             <p>사진에서 인식된 인물은 다음과 같아요.</p>
             <div>
-              <p>스토리북에 등장시킬 인물을</p>
-              <span>최소 1명, 최대 2명 골라주세요.</span>
+              <p>
+                스토리북에 등장시킬 인물을 <span>2명 골라주세요.</span>
+              </p>
             </div>
           </A.TextDiv>
 
@@ -233,29 +235,46 @@ const Ai = () => {
                   <p>다른 사진으로 시도해주세요.</p>
                 </A.NoResult>
               )}
-              {resultPeople.length > 2 && (
-                <A.Grid>
-                  {resultPeople.map((person, idx) => (
-                    <A.ImgDiv
-                      key={idx}
-                      onClick={() => {
-                        handleChoicePeople(idx);
-                      }}>
-                      <img src={person.faceImageUrl} alt="결과 이미지" />
-                      {isSelected.includes(idx) && (
-                        <A.ImgOverlay>
-                          <img src={CheckIcon} alt="선택됨" />
-                        </A.ImgOverlay>
-                      )}
-                    </A.ImgDiv>
-                  ))}
-                </A.Grid>
+
+              {resultPeople.length > 0 && (
+                <>
+                  <A.Grid>
+                    {resultPeople.map((person, idx) => (
+                      <A.ImgDiv
+                        key={idx}
+                        onClick={() => {
+                          if (resultPeople.length > 1) {
+                            handleChoicePeople(idx);
+                          }
+                        }}>
+                        <img src={person.faceImageUrl} alt="결과 이미지" />
+                        {isSelected.includes(idx) && (
+                          <A.ImgOverlay>
+                            <img src={CheckIcon} alt="선택됨" />
+                          </A.ImgOverlay>
+                        )}
+                      </A.ImgDiv>
+                    ))}
+                  </A.Grid>
+
+                  {resultPeople.length === 1 && (
+                    <A.NoResult>
+                      <p>
+                        원활한 스토리 구성을 위해
+                        <br />
+                        <span>최소 2명 이상</span>의 인물이 필요해요.
+                        <br />
+                        다른 사진으로 시도해주세요.
+                      </p>
+                    </A.NoResult>
+                  )}
+                </>
               )}
             </A.WhiteDiv>
           </A.WhiteDivWrapper>
 
           <A.ButtonDiv>
-            {resultPeople.length === 0 && (
+            {resultPeople.length < 2 && (
               <Button
                 selection={1}
                 content={<div style={{ cursor: 'pointer' }}>홈으로</div>}
@@ -265,14 +284,23 @@ const Ai = () => {
                 type="button"
               />
             )}
-            {resultPeople.length > 2 && (
+            {resultPeople.length > 1 && (
               <Button
                 selection={1}
-                content={<img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }}></img>}
+                content={
+                  <>
+                    {isSelected.length !== 2 && (
+                      <img src={ArrowRightGrayIcon} alt="다음" style={{ cursor: 'not-allowed' }} />
+                    )}
+                    {isSelected.length >= 2 && <img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }} />}
+                  </>
+                }
                 onClick={async () => {
-                  setLoading(true);
-                  setLevel((prev) => prev + 1);
-                  handleAnalyze();
+                  if (isSelected.length >= 2) {
+                    setLoading(true);
+                    setLevel((prev) => prev + 1);
+                    handleAnalyze();
+                  }
                 }}
                 type="button"
               />
@@ -318,9 +346,8 @@ const Ai = () => {
               {!loading && (
                 <A.Grid>
                   {selectedPeople.map((person, idx) => (
-                    <div>
+                    <div key={idx}>
                       <A.ImgDiv
-                        key={idx}
                         onClick={() => {
                           handleMainChat(person.faceId);
                         }}>
@@ -481,7 +508,7 @@ const Ai = () => {
 
                   {feelings.map((feeling, idx) => {
                     return (
-                      <A.FeelingsBtn key={feeling} onClick={() => handleDeleteFeelings(idx)}>
+                      <A.FeelingsBtn key={(feeling, idx)} onClick={() => handleDeleteFeelings(idx)}>
                         {feeling}
                         <A.CancleImg>
                           <img src={CancleIcon} alt="삭제" />
