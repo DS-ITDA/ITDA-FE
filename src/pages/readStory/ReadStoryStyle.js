@@ -16,6 +16,8 @@ export const Container = styled.div`
 
   display: flex;
   margin-top: 30px;
+
+  position: relative;
 `;
 
 export const Cover = styled.div`
@@ -405,4 +407,24 @@ export const StoryBook = styled.div`
 
   height: calc(100dvh - 55px);
   padding-bottom: 15px;
+`;
+
+export const SkeletonWrapper = styled.div`
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+`;
+
+export const BubbleWrapper = styled.div`
+  width: 100%;
+
+  position: absolute;
+  top: 90px;
+  left: 0;
+  right: 0;
+
+  z-index: 999;
+
+  display: flex;
+  flex-direction: column;
 `;

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import * as R from '@readStory/ReadStoryStyle';
-import palette from '@styles/theme';
+import * as S from '@components/SkeletonUi/SkeletonUiStyle';
 
 import StorySplash from '@components/StorySplash/StorySplash';
 import PathNavbar from '@components/common/Navbar/PathNavbar';
@@ -10,8 +10,6 @@ import StoryToggle from '@components/StoryToggle/StoryToggle';
 import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
 import Button from '@components/common/Button/Button';
 
-import BookCover from '@assets/ai-exampleImage.jpg';
-import BookImg from '@assets/storybook/book-image.jpg';
 import SingAlong from '@assets/storybook/sing_along-white-16.svg?react';
 import TextOnly from '@assets/storybook/text_only-white-16.svg?react';
 import Bgm from '@assets/storybook/bgm-white-16.svg?react';
@@ -20,15 +18,7 @@ import Star from '@assets/storybook/star-filled-32.svg';
 import Share from '@assets/storybook/share-20.svg';
 import Opinion from '@assets/storybook/opinion-20.svg';
 
-import book from '@data/book.json';
-
-const BOOK = {
-  id: 2,
-  title: '귀여운 나',
-  color: palette.bookCover.green,
-  cover: BookCover,
-  date: '25.02.23',
-};
+import { getStoryBook } from '../../apis/storybook/storybook';
 
 const ReadStory = () => {
   const [showSplash, setShowSplash] = useState(() => {
@@ -40,12 +30,18 @@ const ReadStory = () => {
   const [level, setLevel] = useState(0);
   const [stars, setStars] = useState([EmptyStar, EmptyStar, EmptyStar, EmptyStar, EmptyStar]);
 
+  const [bookData, setBookData] = useState();
+  const [content, setContent] = useState();
+  const [loading, setLoading] = useState(false);
+
+  const [toggleClicked, setToggleClicked] = useState(false);
+
   const navigate = useNavigate();
 
   const { id } = useParams();
 
   const handleGetNextPage = () => {
-    if (currentPage < book.length - 1) {
+    if (currentPage < content?.length - 1) {
       setCurrentPage((prev) => prev + 1);
     }
   };
@@ -83,18 +79,19 @@ const ReadStory = () => {
 
   const handleReRead = () => {
     setLevel(0);
+    setCurrentPage(0);
   };
 
   const handleGoHome = () => {
     navigate('/');
   };
 
-  const handleEditPage = () => {
-    navigate(`/editStory/${id}`, { state: { BOOK, level } });
-  };
+  // const handleEditPage = () => {
+  //   navigate(`/editStory/${id}`, { state: { bookData, level } });
+  // };
 
   useEffect(() => {
-    if (currentPage === book.length - 1) {
+    if (currentPage === content?.length - 1) {
       const timer = setTimeout(() => {
         setShowBubble(true);
       }, 500);
@@ -105,11 +102,35 @@ const ReadStory = () => {
     }
   }, [currentPage]);
 
-  useState(() => {
+  useEffect(() => {
     if (showSplash) {
       sessionStorage.setItem('visited', true);
     }
   }, [showSplash]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await getStoryBook(id);
+        setBookData(response.data);
+
+        console.log(response.data);
+
+        const sentences = response.data.story.content
+          .split(/[\n]+|(?<=\.)|(?<=\?)/)
+          .map((s) => s.trim())
+          .filter((s) => s.length > 0);
+
+        setContent(['', ...sentences]);
+      } catch (error) {
+        console.log('책 내용 조회 실패'), error;
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const guide = [
     {
@@ -140,74 +161,98 @@ const ReadStory = () => {
           <R.ReadStory>
             <R.Container>
               <div>
-                <R.Cover color={BOOK.color}>
-                  <R.Book>
-                    <img src={BOOK.cover} alt="책 표지" />
-                  </R.Book>
-                </R.Cover>
+                {loading && <S.Skeleton $width={60} $height={75} />}
+                {!loading && (
+                  <R.Cover color={`#${bookData?.spineColor}`}>
+                    <R.Book>
+                      <img src={bookData?.photo.photoUrl} alt="책 표지" />
+                    </R.Book>
+                  </R.Cover>
+                )}
               </div>
 
               <R.InfoWrapper>
                 <R.TopWrpper>
                   <R.TextWrapper>
-                    <R.Title>{BOOK.title}</R.Title>
-                    <R.Date>{BOOK.date}</R.Date>
+                    {loading && <S.Skeleton $width={70} $height={19.6} />}
+                    {!loading && <R.Title>{bookData?.title}</R.Title>}
+
+                    {loading && <S.Skeleton $width={60} $height={19.6} />}
+                    {!loading && <R.Date>{bookData?.displayDate}</R.Date>}
                   </R.TextWrapper>
 
-                  <R.Edit onClick={handleEditPage}>수정 {'>'}</R.Edit>
+                  {/* <R.Edit onClick={handleEditPage}>수정 {'>'}</R.Edit> */}
                 </R.TopWrpper>
 
                 <R.ToggleWrapper>
                   {guide.map((g, idx) => (
-                    <StoryToggle key={g.id} Icon={g.icon} id={g.id + idx} checked={false} />
+                    <StoryToggle
+                      key={g.id}
+                      Icon={g.icon}
+                      id={g.id + idx}
+                      checked={false}
+                      onClick={() => setToggleClicked((prev) => !prev)}
+                    />
                   ))}
                 </R.ToggleWrapper>
               </R.InfoWrapper>
+              {toggleClicked && (
+                <R.BubbleWrapper>
+                  <SpeechBubble selection={'up'} content={<div>현재 개발 중인 기능입니다.</div>} />
+                </R.BubbleWrapper>
+              )}
             </R.Container>
           </R.ReadStory>
 
           <R.PaperWrapper>
-            {book.map((page, idx) => (
-              <R.Paper
-                key={idx}
-                style={{
-                  zIndex: book.length - idx,
-                  transform: idx < currentPage ? 'rotateY(-180deg)' : 'rotateY(0deg)',
-                  transformOrigin: 'left center',
-                  transition: 'transform 1s ease-in-out',
-                  position: 'absolute',
-                }}
-                $isEnd={book.length - 1 === idx}>
-                {page.type === 'cover' && (
-                  <>
-                    <R.BookCover>
-                      <img src={BookCover} alt="책 표지" />
-                    </R.BookCover>
+            {loading && (
+              <R.SkeletonWrapper>
+                <S.Skeleton $height={500} />
+              </R.SkeletonWrapper>
+            )}
 
-                    <R.BookInfo>
-                      <R.BookTitle>{page.title}</R.BookTitle>
-                      <R.BookDate>{page.date}</R.BookDate>
-                    </R.BookInfo>
-                  </>
-                )}
+            {!loading && (
+              <>
+                {content?.map((sentence, idx) => (
+                  <R.Paper
+                    key={idx}
+                    style={{
+                      zIndex: content.length - idx,
+                      transform: idx < currentPage ? 'rotateY(-180deg)' : 'rotateY(0deg)',
+                      transformOrigin: 'left center',
+                      transition: 'transform 1s ease-in-out',
+                      position: 'absolute',
+                    }}
+                    $isEnd={content.length - 1 === idx}>
+                    {idx === 0 && (
+                      <>
+                        <R.BookCover>
+                          <img src={bookData?.photo.photoUrl} alt="책 표지" />
+                        </R.BookCover>
+                        <R.BookInfo>
+                          <R.BookTitle>{bookData?.title}</R.BookTitle>
+                          <R.BookDate>{bookData?.displayDate}</R.BookDate>
+                        </R.BookInfo>
+                      </>
+                    )}
 
-                {page.type === 'text' && (
-                  <>
-                    <R.BookCover>
-                      {book.length - 1 !== idx && <img src={BookCover} alt="책 표지" />}
-                      {book.length - 1 === idx && <img src={BookImg} alt="책 표지" />}
-                    </R.BookCover>
+                    {idx !== 0 && (
+                      <>
+                        <R.BookCover>
+                          <img src={bookData?.illustration.imageUrl} alt="책 표지" />
+                        </R.BookCover>
+                        <R.BookInfo>
+                          <R.BookContent>{sentence}</R.BookContent>
+                        </R.BookInfo>
+                      </>
+                    )}
 
-                    <R.BookInfo>
-                      <R.BookContent>{page.content}</R.BookContent>
-                    </R.BookInfo>
-                  </>
-                )}
-
-                <R.Next onClick={handleGetNextPage}></R.Next>
-                <R.Back onClick={handleGetPrevPage}></R.Back>
-              </R.Paper>
-            ))}
+                    <R.Next onClick={handleGetNextPage}></R.Next>
+                    <R.Back onClick={handleGetPrevPage}></R.Back>
+                  </R.Paper>
+                ))}
+              </>
+            )}
           </R.PaperWrapper>
           <R.Bubble>{showBubble && <SpeechBubble selection="up" content={<div>마지막 페이지에요!</div>} />}</R.Bubble>
         </>
@@ -219,19 +264,19 @@ const ReadStory = () => {
             <R.CreatedWrapper>
               <R.Created>
                 <R.CreatedBookWrapper>
-                  <R.CreatedBook height={210} color={BOOK.color}>
-                    {BOOK.title}
+                  <R.CreatedBook height={210} color={`#${bookData?.spineColor}`}>
+                    {bookData?.title}
                   </R.CreatedBook>
                 </R.CreatedBookWrapper>
 
                 <R.CreatedCover>
-                  <img src={BookCover} alt="책 표지" />
+                  <img src={bookData?.illustration.imageUrl} alt="책 표지" />
                 </R.CreatedCover>
               </R.Created>
               <R.Board>
                 <div></div>
               </R.Board>
-              <R.CreatedEdit onClick={handleEditPage}>수정 {'>'}</R.CreatedEdit>
+              {/* <R.CreatedEdit onClick={handleEditPage}>수정 {'>'}</R.CreatedEdit> */}
             </R.CreatedWrapper>
 
             <R.ResultWrapper>

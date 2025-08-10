@@ -89,7 +89,8 @@ const StorySplash = ({ setShowSplash }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, ease: 'easeInOut' }}>
-            <div>
+            <S.Title>
+              <S.SubTitle>Coming Soon</S.SubTitle>
               <S.Heading>내 취향대로</S.Heading>
               <S.Heading>스토리북을 즐겨보세요</S.Heading>
 
@@ -98,7 +99,7 @@ const StorySplash = ({ setShowSplash }) => {
                   <StorySplashCard key={g.id} Icon={g.icon} id={g.id} title={g.title} text={g.text} />
                 ))}
               </S.ListWrapper>
-            </div>
+            </S.Title>
           </M.div>
         )}
 
