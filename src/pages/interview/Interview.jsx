@@ -40,6 +40,7 @@ const Interview = () => {
     questionId: 0,
   });
   const [allAnswers, setAllAnswers] = useState([]);
+  const [transcript, setTranscript] = useState('');
 
   const mediaRecorderRef = useRef(null);
   const recordedChunksRef = useRef([]);
@@ -247,9 +248,29 @@ const Interview = () => {
         },
       });
       console.log('응답 성공:', response.data);
+      const data = response.data.data.data;
+      setTranscript(data);
+
+      handleKeyword();
     } catch (error) {
       if (error.response) {
         console.error('확인용 서버 응답 데이터:', error.response.data);
+      }
+      console.error(error);
+    }
+  };
+
+  const handleKeyword = async () => {
+    try {
+      const response = await axiosInstance.post('/api/interview/keyword', {
+        transcript: transcript,
+      });
+      console.log('응답 성공:', response.data);
+      const data = response.data.data;
+      console.log(data);
+    } catch (error) {
+      if (error.response) {
+        console.error('서버 응답 데이터:', error.response.data);
       }
       console.error(error);
     }
