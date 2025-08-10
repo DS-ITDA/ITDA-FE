@@ -15,6 +15,7 @@ import toggleIcon from '@assets/Ai/toggle.png';
 import toggleUpIcon from '@assets/Ai/toggle-up.png';
 import CancleIcon from '@assets/Ai/x-512.png';
 import PlusIcon from '@assets/Ai/add-24.svg';
+
 import { postPhotoAnalyze, postPhotoUpdate, postPhotoUpload } from '../../apis/home/home';
 
 const Ai = () => {
@@ -41,6 +42,11 @@ const Ai = () => {
   const [relationshipList, setRelationShipList] = useState('');
 
   const [loading, setLoading] = useState(false);
+
+  const [times, setTimes] = useState('');
+
+  const [characterInput, setCharacterInput] = useState('');
+  const [mainCharacterInput, setMainCharacterInput] = useState('나');
 
   const selectRef = useRef(null);
 
@@ -73,6 +79,9 @@ const Ai = () => {
 
     try {
       const analyzeRes = await postPhotoAnalyze(originalPhotoId, selectedFaceIds);
+
+      setTimes(analyzeRes.times);
+
       setRelationShipList(
         analyzeRes.relationship.includes(',')
           ? analyzeRes.relationship.split(',').map((r) => r.trim())
@@ -187,6 +196,10 @@ const Ai = () => {
     }
   }, [relationshipList]);
 
+  useEffect(() => {
+    setCharacterInput('');
+  }, [isMain]);
+
   if (!selectedImg) return null;
 
   return (
@@ -287,18 +300,41 @@ const Ai = () => {
               {!loading && (
                 <A.Grid>
                   {selectedPeople.map((person, idx) => (
-                    <A.ImgDiv
-                      key={idx}
-                      onClick={() => {
-                        handleMainChat(person.faceId);
-                      }}>
-                      <img src={person.faceImageUrl} alt="결과 이미지" />
-                      {isMain === person.faceId && (
-                        <A.ImgOverlay>
-                          <img src={CheckIcon} alt="선택됨" />
-                        </A.ImgOverlay>
+                    <div>
+                      <A.ImgDiv
+                        key={idx}
+                        onClick={() => {
+                          handleMainChat(person.faceId);
+                        }}>
+                        <img src={person.faceImageUrl} alt="결과 이미지" />
+                        {isMain === person.faceId && (
+                          <A.ImgOverlay>
+                            <img src={CheckIcon} alt="선택됨" />
+                          </A.ImgOverlay>
+                        )}
+                      </A.ImgDiv>
+                      {isMain !== null && (
+                        <>
+                          {isMain === person.faceId && (
+                            <A.CharacterInput
+                              $isMain={true}
+                              value={mainCharacterInput}
+                              onChange={(e) => setMainCharacterInput(e.target.value)}
+                              placeholder="나"
+                              disabled
+                            />
+                          )}
+                          {isMain !== person.faceId && (
+                            <A.CharacterInput
+                              $isMain={false}
+                              value={characterInput}
+                              onChange={(e) => setCharacterInput(e.target.value)}
+                              placeholder="호칭을 입력해주세요"
+                            />
+                          )}
+                        </>
                       )}
-                    </A.ImgDiv>
+                    </div>
                   ))}
                 </A.Grid>
               )}
@@ -447,7 +483,17 @@ const Ai = () => {
               onClick={() => {
                 if (level === 2) {
                   handleSubmit();
-                  navigate('/interview');
+                  navigate('/interview', {
+                    state: {
+                      originalPhotoId,
+                      character1: mainCharacterInput,
+                      character2: characterInput,
+                      place,
+                      relationship,
+                      era: times,
+                      facialEmotion: feelings.length === 1 ? feelings[0] : feelings.join(','),
+                    },
+                  });
                 }
                 setLevel((prev) => prev + 1);
               }}
