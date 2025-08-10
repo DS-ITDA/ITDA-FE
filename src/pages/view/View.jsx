@@ -14,6 +14,7 @@ import PeopleList from '@components/view/PeopleList/PeopleList';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import { getStoryBookData } from '../../apis/home/home';
+import { getPeople } from '../../apis/view/view';
 
 const View = () => {
   const [selectedBookId, setSelectedBookId] = useState(null);
@@ -49,13 +50,25 @@ const View = () => {
       try {
         const data = await getStoryBookData();
         setStoryBooks(data.data);
-        console.log(data.data);
       } catch (error) {
         console.error('스토리북 데이터 불러오기 실패', error);
       }
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchPeopleData = async () => {
+      try {
+        const response = await getPeople();
+        console.log(response);
+      } catch (error) {
+        console.error('인물뷰 가져오기 실패', error);
+      }
+    };
+
+    fetchPeopleData();
   }, []);
 
   return (

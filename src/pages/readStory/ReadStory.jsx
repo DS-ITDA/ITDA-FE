@@ -115,8 +115,6 @@ const ReadStory = () => {
         const response = await getStoryBook(id);
         setBookData(response.data);
 
-        console.log(response.data);
-
         const sentences = response.data.story.content
           .split(/[\n]+|(?<=\.)|(?<=\?)/)
           .map((s) => s.trim())

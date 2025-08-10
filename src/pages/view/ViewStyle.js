@@ -7,7 +7,7 @@ export const View = styled.div`
   display: flex;
   flex-direction: column;
 
-  overflow: scroll;
+  overflow: hidden;
 `;
 
 export const BooksWrapper = styled.div`
