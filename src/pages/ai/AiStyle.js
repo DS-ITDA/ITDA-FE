@@ -332,3 +332,30 @@ export const FeelingsInput = styled(Input)`
   background-color: ${palette.main.ivory};
   border-radius: 10px;
 `;
+
+export const CharacterInput = styled.input`
+  width: 100%;
+  height: 40px;
+  padding: 8px 10px;
+
+  color: ${({ $isMain }) => ($isMain ? palette.grayscale.grayDeep : palette.grayscale.gray)};
+
+  border: none;
+  outline: none;
+
+  background: ${({ $isMain }) => ($isMain ? palette.main.beige : palette.main.ivory)};
+  border-radius: 10px;
+
+  margin-top: 12px;
+
+  color: ${palette.grayscale.grayDeep};
+
+  &::placeholder {
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 140%;
+    letter-spacing: -0.28px;
+  }
+`;
