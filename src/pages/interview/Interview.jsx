@@ -1,6 +1,6 @@
 import * as I from '@interview/InterviewStyle';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import interviewBottom from '@assets/interview/interview-bottom.svg';
 import interviewStart from '@assets/interview/interview-start.svg';
 import interviewRecordOff from '@assets/interview/interview-record-off-90.svg';
@@ -14,33 +14,49 @@ import redo from '@assets/interview/redo-black-20.svg';
 import x from '@assets/interview/X.svg';
 import submit from '@assets/interview/submit.svg';
 import check from '@assets/interview/check.svg';
-import notifications from '@assets/interview/notifications-24.svg';
-import checkOff from '@assets/interview/check-24.svg';
-import checkOn from '@assets/interview/check-filled-24.svg';
+import loading from '@assets/interview/loading.gif';
+// import notifications from '@assets/interview/notifications-24.svg';
+// import checkOff from '@assets/interview/check-24.svg';
+// import checkOn from '@assets/interview/check-filled-24.svg';
 
 import ToastMessage from '@components/common/ToastMessage/ToastMessage';
 import PathNavbar from '@components/common/Navbar/PathNavbar';
 import palette from '../../styles/theme';
+import { axiosInstance } from '@apis/axios';
 
 const Interview = () => {
   const navigate = useNavigate();
   const [State, setState] = useState('start');
   const [isEditing, setIsEditing] = useState(false);
-  const [answerText, setAnswerText] = useState('쇼타롱');
   const [example, setExample] = useState('');
-  const [selection, setSelection] = useState();
-  const [alert, setAlert] = useState(false);
-  const [alertModal, setAlertModal] = useState(false);
-  const [modalChecking, setModalChecking] = useState(false);
+  const [style, setStyle] = useState('');
+  // const [alert, setAlert] = useState(false);
+  // const [alertModal, setAlertModal] = useState(false);
+  // const [modalChecking, setModalChecking] = useState(false);
+  const [sessionId, setSessionId] = useState('');
+  const [interviewData, setInterviewData] = useState({
+    answerText: '',
+    question: '',
+    questionId: 0,
+  });
+  const [allAnswers, setAllAnswers] = useState([]);
+  const [emotion, setEmotion] = useState('');
+  const [keywords, setkeywords] = useState([]);
+  const mediaRecorderRef = useRef(null);
+  const recordedChunksRef = useRef([]);
+  const streamRef = useRef(null);
 
   const State_CONFIG = {
     start: interviewStart,
-    recordReady: interviewRecordOff,
+    loading: interviewRecordOff,
     recordOn: interviewRecordOn,
     stopOff: interviewStopOff,
     stopOn: interviewStopOn,
     next: interviewNext,
   };
+
+  const location = useLocation();
+  const { originalPhotoId, character1, character2, place, relationship, era, facialEmotion } = location.state || {};
 
   const goBack = () => {
     if (State === 'start') navigate(-1);
@@ -48,22 +64,227 @@ const Interview = () => {
     else setState('start');
   };
 
-  const goNext = () => {
-    setState('creating');
+  // const SaveAlert = () => {
+  //   setAlert(true);
+  //   setAlertModal(false);
+  // };
+
+  const startInterview = async () => {
+    setState('loading');
+    try {
+      const response = await axiosInstance.post(
+        '/api/interview/start',
+        {},
+        {
+          params: {
+            photoId: originalPhotoId,
+          },
+        },
+      );
+      const data = response.data.data;
+      setSessionId(data.sessionId);
+      setInterviewData({
+        answerText: '',
+        questionId: data.questionId,
+        question: data.question,
+      });
+      setState('recordOn');
+    } catch (error) {
+      console.error('인터뷰 시작 에러:', error);
+    }
   };
 
-  const SaveAlert = () => {
-    setAlert(true);
-    setAlertModal(false);
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+
+      const options = { mimeType: 'audio/webm;codecs=opus' };
+      const recorder = new MediaRecorder(stream, options);
+
+      recordedChunksRef.current = [];
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
+        }
+      };
+
+      recorder.start(1000);
+      mediaRecorderRef.current = recorder;
+
+      setState('stopOn');
+    } catch (error) {
+      console.error('마이크 오류:', error);
+      if (error.name === 'NotAllowedError') {
+        alert('마이크 권한을 허용해주세요.');
+      }
+    }
+  };
+
+  const stopRecording = async () => {
+    if (mediaRecorderRef.current?.state === 'recording') {
+      await new Promise((resolve) => {
+        mediaRecorderRef.current.onstop = resolve;
+        mediaRecorderRef.current.stop();
+      });
+
+      const finalChunks = [...recordedChunksRef.current];
+      if (finalChunks.length === 0) {
+        console.error('녹음된 데이터가 없습니다');
+        cleanupRecording();
+        setState('next');
+        return;
+      }
+
+      const blob = new Blob(finalChunks, { type: 'audio/webm' });
+      if (blob.size > 0) {
+        await sendVoiceToServer(blob);
+      } else {
+        console.error('데이터가 없습니다.');
+      }
+      cleanupRecording();
+    }
+  };
+
+  const cleanupRecording = () => {
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.onstop = null;
+      mediaRecorderRef.current.ondataavailable = null;
+      mediaRecorderRef.current = null;
+    }
+
+    recordedChunksRef.current = [];
+  };
+
+  const sendVoiceToServer = async (blob) => {
+    setState('loading');
+    try {
+      const formData = new FormData();
+      formData.append('voice', blob, 'answer.webm');
+
+      const response = await axiosInstance.post('/api/interview/answer', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        params: {
+          sessionId: sessionId,
+        },
+      });
+      const data = response.data.data;
+      setAllAnswers((prev) => [
+        ...prev,
+        { question: interviewData.question, answerText: data.prevAnswerText || data.answerText },
+      ]);
+
+      setInterviewData({
+        answerText: '',
+        questionId: data.questionId,
+        question: data.question,
+        currentId: data.currentQuestionId,
+      });
+
+      setState('next');
+    } catch (error) {
+      console.error(error);
+      console.error('서버 응답 데이터:', error.response.data);
+    }
+  };
+
+  const editAnswer = async () => {
+    try {
+      await axiosInstance.put('/api/interview/answer/update', {
+        sessionId: sessionId,
+        questionId: interviewData.questionId - 1,
+        updatedAnswer: interviewData.answerText,
+      });
+      setAllAnswers((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = {
+          ...updated[updated.length - 1],
+          answerText: interviewData.answerText,
+        };
+        return updated;
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const InterviewfinalCheck = async () => {
+    try {
+      const response = await axiosInstance.get('/api/interview/transcript', {
+        params: {
+          photoId: originalPhotoId,
+        },
+      });
+      const data = response.data.data;
+      handleKeyword(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleKeyword = async (transcriptData) => {
+    try {
+      const response = await axiosInstance.post('/api/interview/keyword', {
+        transcript: transcriptData,
+      });
+      const data = response.data.data;
+      setEmotion(data.emotion);
+      setkeywords(data.keywords);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const goNext = async () => {
+    setState('creating');
+    try {
+      await axiosInstance.post('/api/story/style', { selectedStyle: style });
+      createStory();
+    } catch (error) {
+      console.error('스타일 선택 에러:', error);
+    }
+  };
+
+  const createStory = async () => {
+    setState('creating');
+    try {
+      const response = await axiosInstance.post('/api/story', {
+        emotion: emotion,
+        keywords: keywords,
+        style: style,
+        character1: character1,
+        character2: character2,
+        place: Array.isArray(place) ? place.join(', ') : place,
+        relationship: relationship,
+        era: era,
+        facialEmotion: facialEmotion,
+      });
+      const story = response.data.data.story;
+      console.log(story);
+      navigate('/createStory', { state: { story } });
+    } catch (error) {
+      console.error('스토리 생성 에러:', error);
+    }
   };
 
   return (
     <I.InterviewPage>
-      {State === 'selectStyle' && selection ? (
-        <PathNavbar left={true} right={true} goBack={() => goBack()} goNext={() => goNext()} />
-      ) : (
-        <PathNavbar left={true} right={false} goBack={() => goBack()} />
-      )}
+      <I.NavBar>
+        {State === 'selectStyle' && style ? (
+          <PathNavbar left={true} right={true} goBack={goBack} goNext={goNext} />
+        ) : State === 'creating' ? (
+          <PathNavbar left={false} right={false} />
+        ) : (
+          <PathNavbar left={true} right={false} goBack={goBack} />
+        )}
+      </I.NavBar>
 
       {/* 페이지 콘텐츠 */}
       {/* 첫 화면 */}
@@ -80,10 +301,10 @@ const Interview = () => {
         </I.FirstInfo>
       )}
 
-      {/* 녹음 준비 화면 - 스켈레톤 화면 */}
-      {State === 'recordReady' && (
+      {/* 준비 화면 - 스켈레톤 화면 */}
+      {State === 'loading' && (
         <I.ReadyPage>
-          <ToastMessage text={'준비 중...'} />
+          <ToastMessage text={'로딩 중...'} />
 
           <I.MainPage>
             <I.Skeleton $width={70} $height={20} />
@@ -99,9 +320,7 @@ const Interview = () => {
         <I.QuestPage>
           <ToastMessage text={'질문 중...'} />
           <I.MainPage>
-            <I.MainText>
-              이 사진이 찍힐 때 설렘과 기대가 느껴졌다고 했어요. 어떤 일이 있었던 날이었는지 떠오르시나요?
-            </I.MainText>
+            <I.MainText>{interviewData.question}</I.MainText>
             <I.Divider />
           </I.MainPage>
         </I.QuestPage>
@@ -112,12 +331,12 @@ const Interview = () => {
         <I.AnswerPage>
           <ToastMessage text={'답변 중...'} />
           <I.MainPage>
-            <I.SubText>
-              이 사진이 찍힐 때 설렘과 기대가 느껴졌다고 했어요. 어떤 일이 있었던 날이었는지 떠오르시나요?
-            </I.SubText>
+            <I.SubText>{interviewData.question}</I.SubText>
             <I.SubDivider />
             <I.MainText>
-              저는 이런 부분에서 설레고, 기대가 됐어요. 쇼타로와 함께 한 모든 시간들이 모두 좋았어요.
+              <I.Skeleton $width={70} $height={20} style={{ marginBottom: '2px' }} />
+              <I.Skeleton $width={100} $height={20} style={{ marginBottom: '2px' }} />
+              <I.Skeleton $width={100} $height={20} style={{ marginBottom: '2px' }} />
             </I.MainText>
           </I.MainPage>
         </I.AnswerPage>
@@ -126,19 +345,31 @@ const Interview = () => {
       {/* 답변 리스트 + 수정 */}
       {State === 'next' && (
         <I.ListPage>
-          <I.QuestionBox>
-            이 사진이 찍힐 때 설렘과 기대가 느껴졌다고 했어요. 어떤 일이 있었던 날이었는지 떠오르시나요?
-          </I.QuestionBox>
+          {/* 이전 답변들 (수정 불가) */}
+          {allAnswers.slice(0, -1).map((answer, index) => (
+            <I.ListPageTop key={index}>
+              <I.QuestionBox>{answer.question}</I.QuestionBox>
+              <I.AnswerBox>
+                <I.AnswerText>{answer.answerText}</I.AnswerText>
+              </I.AnswerBox>
+            </I.ListPageTop>
+          ))}
+
+          {/* 현재 (최신) 답변 (수정 가능) */}
+          <I.QuestionBox>{allAnswers[allAnswers.length - 1].question}</I.QuestionBox>
           <I.AnswerBox>
             <I.EditBox>
               {isEditing ? (
-                <I.Editing
-                  onClick={() => {
-                    setIsEditing(false);
-                  }}>
+                <I.Editing>
                   <img src={editBrown} style={{ marginRight: '2px' }} />
                   내용을 수정해보세요
-                  <img src={x} />
+                  <img
+                    src={x}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      editAnswer();
+                    }}
+                  />
                 </I.Editing>
               ) : (
                 <img
@@ -146,20 +377,22 @@ const Interview = () => {
                   alt="수정하기"
                   onClick={() => {
                     setIsEditing(true);
+                    setInterviewData((prev) => ({
+                      ...prev,
+                      answerText: allAnswers[allAnswers.length - 1]?.answerText || '',
+                    }));
                   }}
                 />
               )}
-              <img src={redo} alt="재답변하기" />
+              <img src={redo} alt="재답변하기" onClick={() => startRecording()} />
             </I.EditBox>
             {isEditing ? (
               <I.textarea
-                value={answerText}
-                onChange={(e) => {
-                  setAnswerText(e.target.value);
-                }}
+                value={interviewData.answerText}
+                onChange={(e) => setInterviewData((prev) => ({ ...prev, answerText: e.target.value }))}
               />
             ) : (
-              <I.AnswerText>{answerText}</I.AnswerText>
+              <I.AnswerText>{allAnswers[allAnswers.length - 1]?.answerText}</I.AnswerText>
             )}
           </I.AnswerBox>
         </I.ListPage>
@@ -193,7 +426,7 @@ const Interview = () => {
           </I.InputBox>
 
           <I.StyleContainer>
-            {selection === 1 ? (
+            {style === '동화' ? (
               <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
                 <I.MainInfo>
                   <img src={check} style={{ marginRight: '3px' }} />
@@ -206,7 +439,7 @@ const Interview = () => {
             ) : (
               <I.StyleBox
                 onClick={() => {
-                  setSelection(1);
+                  setStyle('동화');
                 }}>
                 <I.MainInfo>
                   <I.Span>동화</I.Span>
@@ -217,50 +450,50 @@ const Interview = () => {
               </I.StyleBox>
             )}
 
-            {selection === 2 ? (
+            {style === '웹툰' ? (
               <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
                 <I.MainInfo>
                   <img src={check} style={{ marginRight: '3px' }} />
-                  <I.Span style={{ color: palette.grayscale.white }}>동화</I.Span>
+                  <I.Span style={{ color: palette.grayscale.white }}>웹툰 (애니메이션)</I.Span>
                 </I.MainInfo>
                 <I.StyleExample style={{ color: palette.grayscale.white }}>
-                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+                  “아빠, 이번에 진짜 마지막으로.. 로봇 하나만 사줘.”
                 </I.StyleExample>
               </I.StyleBox>
             ) : (
               <I.StyleBox
                 onClick={() => {
-                  setSelection(2);
+                  setStyle('웹툰');
                 }}>
                 <I.MainInfo>
-                  <I.Span>동화</I.Span>
+                  <I.Span>웹툰 (애니메이션)</I.Span>
                 </I.MainInfo>
-                <I.StyleExample>
-                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
-                </I.StyleExample>
+                <I.StyleExample>“아빠, 이번에 진짜 마지막으로.. 로봇 하나만 사줘.”</I.StyleExample>
               </I.StyleBox>
             )}
 
-            {selection === 3 ? (
+            {style === '다큐멘터리' ? (
               <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
                 <I.MainInfo>
                   <img src={check} style={{ marginRight: '3px' }} />
-                  <I.Span style={{ color: palette.grayscale.white }}>동화</I.Span>
+                  <I.Span style={{ color: palette.grayscale.white }}>다큐멘터리</I.Span>
                 </I.MainInfo>
                 <I.StyleExample style={{ color: palette.grayscale.white }}>
-                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+                  2000년대 초, 그는 어린 나이에 처음으로 로봇 장난감을 갖고 싶다는 강한 열망을 표현했다. 그날,
+                  아버지에게 간절하게 손을 뻗으며 여러 번 요청했다는 기억은 지금까지도 생생하다
                 </I.StyleExample>
               </I.StyleBox>
             ) : (
               <I.StyleBox
                 onClick={() => {
-                  setSelection(3);
+                  setStyle('다큐멘터리');
                 }}>
                 <I.MainInfo>
-                  <I.Span>동화</I.Span>
+                  <I.Span>다큐멘터리</I.Span>
                 </I.MainInfo>
                 <I.StyleExample>
-                  나는 말했어요. “아빠! 이 로봇은 꼭 가져야 해요. 이렇게 변신도 하고 말도 한다니까요?”
+                  2000년대 초, 그는 어린 나이에 처음으로 로봇 장난감을 갖고 싶다는 강한 열망을 표현했다. 그날,
+                  아버지에게 간절하게 손을 뻗으며 여러 번 요청했다는 기억은 지금까지도 생생하다
                 </I.StyleExample>
               </I.StyleBox>
             )}
@@ -278,11 +511,16 @@ const Interview = () => {
           <I.InfoContainer style={{ marginTop: '17px' }}>
             <I.MainInfo>스토리 생성에</I.MainInfo>
             <I.MainInfo>
-              약 <I.Time>&nbsp;10&nbsp;</I.Time>분 소요될 예정이에요.
+              약 <I.Time>&nbsp;1&nbsp;</I.Time>분 소요될 예정이에요.
             </I.MainInfo>
           </I.InfoContainer>
 
-          <I.AlertBox>
+          <div
+            style={{ width: '100%', height: '70%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <img src={loading} style={{ width: '10rem' }} />
+          </div>
+
+          {/* <I.AlertBox>
             <I.InfoContainer style={{ margin: '0' }}>
               <I.MainInfo>
                 스토리 생성이 <I.Span>&nbsp;완료</I.Span>되면,
@@ -314,7 +552,7 @@ const Interview = () => {
                 />
               )}
             </I.CheckingAlert>
-          </I.AlertBox>
+          </I.AlertBox> */}
 
           <I.GoHome
             onClick={() => {
@@ -323,7 +561,7 @@ const Interview = () => {
             홈으로
           </I.GoHome>
 
-          {alertModal && (
+          {/* {alertModal && (
             <>
               <I.Overlay onClick={() => setAlertModal(false)} />
               <I.Modal>
@@ -363,7 +601,7 @@ const Interview = () => {
                 </I.AlertBox>
               </I.Modal>
             </>
-          )}
+          )} */}
         </I.SelectPage>
       )}
 
@@ -374,11 +612,16 @@ const Interview = () => {
             <I.Button
               src={State_CONFIG[State]}
               onClick={() => {
-                if (State === 'start') setState('recordReady');
+                if (State === 'start') startInterview();
                 else if (State === 'recordReady') setState('recordOn');
-                else if (State === 'recordOn') setState('stopOn');
-                else if (State === 'stopOn') setState('next');
-                else if (State === 'next') setState('selectStyle');
+                else if (State === 'recordOn') startRecording();
+                else if (State === 'stopOn') stopRecording();
+                else if (State === 'next') {
+                  if (interviewData.questionId === 4) {
+                    setState('selectStyle');
+                    InterviewfinalCheck();
+                  } else setState('recordOn');
+                }
               }}
             />
             <I.BtnBottom src={interviewBottom} />
