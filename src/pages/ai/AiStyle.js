@@ -359,3 +359,18 @@ export const CharacterInput = styled.input`
     letter-spacing: -0.28px;
   }
 `;
+
+export const NoResult = styled.div`
+  text-align: center;
+  margin-top: 8px;
+
+  color: ${palette.grayscale.grayDeep};
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+
+  p {
+    margin: 0;
+  }
+`;

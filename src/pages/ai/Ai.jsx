@@ -48,14 +48,14 @@ const Ai = () => {
   const [characterInput, setCharacterInput] = useState('');
   const [mainCharacterInput, setMainCharacterInput] = useState('나');
 
+  const [resultPeople, setResultPeople] = useState([]);
+
   const selectRef = useRef(null);
 
   const location = useLocation();
   const selectedImg = location.state?.selectedImg;
 
   const navigate = useNavigate();
-
-  const [resultPeople, setResultPeople] = useState([]);
 
   const selectedPeople = resultPeople.filter((_, idx) => isSelected.includes(idx));
 
@@ -70,38 +70,6 @@ const Ai = () => {
       }
       return [...prev, idx];
     });
-  };
-
-  const handleAnalyze = async () => {
-    if (!originalPhotoId || isSelected.length === 0) return;
-
-    const selectedFaceIds = isSelected.map((idx) => resultPeople[idx].faceId);
-
-    try {
-      const analyzeRes = await postPhotoAnalyze(originalPhotoId, selectedFaceIds);
-
-      setTimes(analyzeRes.times);
-
-      setRelationShipList(
-        analyzeRes.relationship.includes(',')
-          ? analyzeRes.relationship.split(',').map((r) => r.trim())
-          : [analyzeRes.relationship.trim()],
-      );
-
-      setFeelings(
-        analyzeRes.emotion.includes(',')
-          ? analyzeRes.emotion.split(',').map((e) => e.trim())
-          : [analyzeRes.emotion.trim()],
-      );
-
-      setPlace(
-        analyzeRes.place.includes(',') ? analyzeRes.place.split(',').map((p) => p.trim()) : [analyzeRes.place.trim()],
-      );
-    } catch (error) {
-      console.error('분석 실패', error);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleMainChat = (id) => {
@@ -141,6 +109,38 @@ const Ai = () => {
       setFeelings((prev) => [feelingsInput.trim(), ...prev]);
       setFeelingsInput('');
       setFeelingsType('');
+    }
+  };
+
+  const handleAnalyze = async () => {
+    if (!originalPhotoId || isSelected.length === 0) return;
+
+    const selectedFaceIds = isSelected.map((idx) => resultPeople[idx].faceId);
+
+    try {
+      const analyzeRes = await postPhotoAnalyze(originalPhotoId, selectedFaceIds);
+
+      setTimes(analyzeRes.times);
+
+      setRelationShipList(
+        analyzeRes.relationship.includes(',')
+          ? analyzeRes.relationship.split(',').map((r) => r.trim())
+          : [analyzeRes.relationship.trim()],
+      );
+
+      setFeelings(
+        analyzeRes.emotion.includes(',')
+          ? analyzeRes.emotion.split(',').map((e) => e.trim())
+          : [analyzeRes.emotion.trim()],
+      );
+
+      setPlace(
+        analyzeRes.place.includes(',') ? analyzeRes.place.split(',').map((p) => p.trim()) : [analyzeRes.place.trim()],
+      );
+    } catch (error) {
+      console.error('분석 실패', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -200,8 +200,6 @@ const Ai = () => {
     setCharacterInput('');
   }, [isMain]);
 
-  if (!selectedImg) return null;
-
   return (
     <A.Ai>
       <H.UploadDiv>
@@ -229,36 +227,56 @@ const Ai = () => {
                 <p>인물 인식 결과</p>
               </A.Result>
 
-              <A.Grid>
-                {resultPeople.map((person, idx) => (
-                  <A.ImgDiv
-                    key={idx}
-                    onClick={() => {
-                      handleChoicePeople(idx);
-                    }}>
-                    <img src={person.faceImageUrl} alt="결과 이미지" />
-                    {isSelected.includes(idx) && (
-                      <A.ImgOverlay>
-                        <img src={CheckIcon} alt="선택됨" />
-                      </A.ImgOverlay>
-                    )}
-                  </A.ImgDiv>
-                ))}
-              </A.Grid>
+              {resultPeople.length === 0 && (
+                <A.NoResult>
+                  <p>인식된 인물이 없어요.</p>
+                  <p>다른 사진으로 시도해주세요.</p>
+                </A.NoResult>
+              )}
+              {resultPeople.length > 2 && (
+                <A.Grid>
+                  {resultPeople.map((person, idx) => (
+                    <A.ImgDiv
+                      key={idx}
+                      onClick={() => {
+                        handleChoicePeople(idx);
+                      }}>
+                      <img src={person.faceImageUrl} alt="결과 이미지" />
+                      {isSelected.includes(idx) && (
+                        <A.ImgOverlay>
+                          <img src={CheckIcon} alt="선택됨" />
+                        </A.ImgOverlay>
+                      )}
+                    </A.ImgDiv>
+                  ))}
+                </A.Grid>
+              )}
             </A.WhiteDiv>
           </A.WhiteDivWrapper>
 
           <A.ButtonDiv>
-            <Button
-              selection={1}
-              content={<img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }}></img>}
-              onClick={async () => {
-                setLoading(true);
-                setLevel((prev) => prev + 1);
-                handleAnalyze();
-              }}
-              type="button"
-            />
+            {resultPeople.length === 0 && (
+              <Button
+                selection={1}
+                content={<div style={{ cursor: 'pointer' }}>홈으로</div>}
+                onClick={() => {
+                  navigate('/');
+                }}
+                type="button"
+              />
+            )}
+            {resultPeople.length > 2 && (
+              <Button
+                selection={1}
+                content={<img src={ArrowRightIcon} alt="다음" style={{ cursor: 'pointer' }}></img>}
+                onClick={async () => {
+                  setLoading(true);
+                  setLevel((prev) => prev + 1);
+                  handleAnalyze();
+                }}
+                type="button"
+              />
+            )}
           </A.ButtonDiv>
         </A.Section>
       )}
