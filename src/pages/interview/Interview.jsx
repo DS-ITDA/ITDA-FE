@@ -56,7 +56,7 @@ const Interview = () => {
   };
 
   const location = useLocation();
-  const photoid = location.state?.originalPhotoId;
+  const { originalPhotoId, character1, character2, place, relationship, era, facialEmotion } = location.state || {};
 
   const goBack = () => {
     if (State === 'start') navigate(-1);
@@ -81,13 +81,14 @@ const Interview = () => {
 
   const startInterview = async () => {
     setState('loading');
+    console.log(originalPhotoId, character1, character2, place, relationship, era, facialEmotion);
     try {
       const response = await axiosInstance.post(
         '/api/interview/start',
         {},
         {
           params: {
-            photoId: photoid,
+            photoId: originalPhotoId,
           },
         },
       );
@@ -244,7 +245,7 @@ const Interview = () => {
     try {
       const response = await axiosInstance.get('/api/interview/transcript', {
         params: {
-          photoId: photoid,
+          photoId: originalPhotoId,
         },
       });
       console.log('응답 성공:', response.data);
