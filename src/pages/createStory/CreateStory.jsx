@@ -27,7 +27,6 @@ import { axiosInstance } from '@apis/axios';
 const CreateStory = () => {
   const location = useLocation();
   const { story, style, character1, character2, originalPhotoId } = location.state || {};
-  console.log(originalPhotoId);
   const navigate = useNavigate();
   const [state, setState] = useState('start');
   const [prompt, setPrompt] = useState('');
@@ -52,7 +51,6 @@ const CreateStory = () => {
 
   const goNext = async () => {
     setState('creating');
-    console.log(editStory, style, character1, character2);
     try {
       const response = await axiosInstance.post('/api/story/save', {
         content: editStory,
@@ -60,7 +58,6 @@ const CreateStory = () => {
         character1: character1,
         character2: character2,
       });
-      console.log(response.data.data.storyId);
       makeIllust(response.data.data.storyId);
     } catch (error) {
       console.error('스토리 저장 에러:', error);
@@ -69,11 +66,9 @@ const CreateStory = () => {
 
   const makeIllust = async (storyId) => {
     try {
-      const response = await axiosInstance.post('/api/story/illustration', {
+      await axiosInstance.post('/api/story/illustration', {
         storyId: storyId,
       });
-      console.log(response.data.data.imageUrl);
-      console.log(storyId, originalPhotoId);
       navigate('/createdStory', { state: { storyId, originalPhotoId } });
     } catch (error) {
       console.error('삽화 생성 에러:', error);
@@ -95,7 +90,6 @@ const CreateStory = () => {
         instruction: prompt,
         currentAiEditCount: currentEditCount,
       });
-      console.log(response.data);
       const data = response.data.data;
       setCurrentEditCount(data.aiEditCount);
       if (data.aiEditCount > 2) setEditable(false);
@@ -114,7 +108,6 @@ const CreateStory = () => {
         newContent: editStory,
         currentAiEditCount: currentEditCount,
       });
-      console.log(response.data);
       const data = response.data.data;
       setOriginStory(data.editedStory);
     } catch (error) {
