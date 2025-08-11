@@ -268,7 +268,7 @@ const Interview = () => {
       });
       const story = response.data.data.story;
       console.log(story);
-      navigate('/createStory', { state: { story } });
+      navigate('/createStory', { state: { story, style, character1, character2, originalPhotoId } });
     } catch (error) {
       console.error('스토리 생성 에러:', error);
     }
