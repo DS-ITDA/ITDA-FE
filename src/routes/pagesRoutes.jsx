@@ -2,14 +2,22 @@ import HomeLayout from '@layouts/HomeLayout';
 import { createBrowserRouter } from 'react-router-dom';
 import { lazyRoutes } from './routes';
 import React from 'react';
+import ProtectedLayout from '../layouts/ProtectedLayout';
 
 const routes = [
   {
     path: '/',
     element: <HomeLayout />,
+    children: [{ path: 'login', element: React.createElement(lazyRoutes.Login) }],
+  },
+];
+
+const protectedRoutes = [
+  {
+    path: '/',
+    element: <ProtectedLayout />,
     children: [
       { index: true, element: React.createElement(lazyRoutes.Home) },
-      { path: 'login', element: React.createElement(lazyRoutes.Login) },
       { path: 'ai', element: React.createElement(lazyRoutes.Ai) },
       { path: 'interview', element: React.createElement(lazyRoutes.Interview) },
       { path: 'createStory', element: React.createElement(lazyRoutes.CreateStory) },
@@ -22,7 +30,6 @@ const routes = [
     ],
   },
 ];
-
-const router = createBrowserRouter(routes);
+const router = createBrowserRouter([...routes, ...protectedRoutes]);
 
 export default router;
