@@ -16,7 +16,7 @@ const BookList = ({ storyBooks, handleBookcoverClick, selectedIdx }) => {
 
       rowBooks.forEach((book, idx) => {
         results.push(
-          <B.DetailWrapper key={idx}>
+          <B.DetailWrapper key={`${book.storybookId}-${idx}`}>
             {selectedIdx !== book.storybookId && (
               <B.CoverDiv
                 onClick={() => {
