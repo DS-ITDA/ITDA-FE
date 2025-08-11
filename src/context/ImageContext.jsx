@@ -1,11 +1,10 @@
 import { useContext, useState } from 'react';
 import { useEffect } from 'react';
-import { Children } from 'react';
 import { createContext } from 'react';
 
 export const ImageContext = createContext(undefined);
 
-export const ImageProvider = () => {
+export const ImageProvider = ({ children }) => {
   const [selectedImg, setSelectedImg] = useState(null);
 
   useEffect(() => {
@@ -30,7 +29,7 @@ export const ImageProvider = () => {
   };
 
   return (
-    <ImageContext.Provider value={{ selectedImg, setSelectedImg, handleUpload }}>{Children}</ImageContext.Provider>
+    <ImageContext.Provider value={{ selectedImg, setSelectedImg, handleUpload }}>{children}</ImageContext.Provider>
   );
 };
 
