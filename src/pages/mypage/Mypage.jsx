@@ -7,6 +7,7 @@ import checkWhite from '@assets/mypage/check_white.svg';
 import checkBrown from '@assets/mypage/check_brown.svg';
 import divider from '@assets/mypage/divider.svg';
 import palette from '@styles/theme';
+import logo from '@assets/logo.svg';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@apis/axios';
@@ -125,7 +126,7 @@ const Mypage = () => {
         <>
           <M.Overlay onClick={() => setModal('')} />
           <Modal
-            content={<div>사진</div>}
+            content={<img src={logo} style={{ width: '40px' }} />}
             info={MODAL_CONFIG[modal].info}
             btnText={MODAL_CONFIG[modal].btnText}
             onClose={() => setModal('')}
