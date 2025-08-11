@@ -10,7 +10,7 @@ import interviewStopOn from '@assets/interview/interview-stop-on-90.svg';
 import interviewNext from '@assets/interview/interview-next-90.svg';
 import edit from '@assets/interview/edit-black-20.svg';
 import editBrown from '@assets/interview/edit-brown-18.svg';
-import redo from '@assets/interview/redo-black-20.svg';
+// import redo from '@assets/interview/redo-black-20.svg';
 import x from '@assets/interview/X.svg';
 import submit from '@assets/interview/submit.svg';
 import check from '@assets/interview/check.svg';
@@ -384,7 +384,7 @@ const Interview = () => {
                   }}
                 />
               )}
-              <img src={redo} alt="재답변하기" onClick={() => startRecording()} />
+              {/* <img src={redo} alt="재답변하기" onClick={() => startRecording()} /> */}
             </I.EditBox>
             {isEditing ? (
               <I.textarea
