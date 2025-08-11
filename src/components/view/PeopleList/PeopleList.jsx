@@ -17,7 +17,7 @@ import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
 
 import Check from '@assets/view/check.svg';
 import Modal from '@components/common/Modal/Modal';
-import { deletePeople, getPeople, putName } from '../../../apis/view/view';
+import { deletePeople, getPeople, mergePeople, putName } from '../../../apis/view/view';
 
 const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
   const containerRef = useRef(null);
@@ -35,6 +35,7 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
   const [img, setImg] = useState(null);
   const [deleteUrl, setDeleteUrl] = useState('');
   const [mergeUrl, setMergeUrl] = useState([]);
+  const [faceList, setFaceList] = useState([]);
 
   const inputWidth = Math.max(nameInput?.length, 1) + 3;
 
@@ -67,9 +68,10 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
     });
   };
 
-  const handleMerge = (url1, url2) => {
+  const handleMerge = (url1, url2, id1, id2) => {
     setShowMergeModal(true);
     setMergeUrl([url1, url2]);
+    setFaceList([id1, id2]);
   };
 
   const handleDelete = (faceId, url) => {
@@ -159,7 +161,6 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
   }, [editing]);
 
   console.log(selectedPerson);
-  console.log(faceId);
 
   return (
     <>
@@ -182,9 +183,16 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
             onClose={() => {
               setShowMergeModal(false);
             }}
-            onClick={() => {
+            onClick={async () => {
+              console.log('11', faceList);
+
               setShowMergeModal(false);
               setEditing((prev) => !prev);
+
+              await mergePeople(faceList);
+
+              const updatedPeople = await getPeople();
+              setPeopleList(updatedPeople);
             }}
           />
         </P.ModalWrapper>
@@ -209,8 +217,8 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
             onClick={async () => {
               setShowDelModal(false);
               setEditing((prev) => !prev);
+
               await deletePeople(faceId);
-              console.log('face', faceId);
               setSelectedPerson([]);
 
               const updatedPeople = await getPeople();
@@ -265,7 +273,14 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                 <>
                   <P.Select
                     $isActive={true}
-                    onClick={() => handleMerge(selectedPerson[0].faceImageUrl, selectedPerson[1].faceImageUrl)}>
+                    onClick={() =>
+                      handleMerge(
+                        selectedPerson[0].faceImageUrl,
+                        selectedPerson[1].faceImageUrl,
+                        selectedPerson[0].faceId,
+                        selectedPerson[1].faceId,
+                      )
+                    }>
                     병합
                   </P.Select>
                   <P.Select $isActive={false}>삭제</P.Select>
@@ -288,7 +303,7 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                     <img src={group[0]?.faceImageUrl} alt="인물이미지" />
                     <P.Overlay $bg={group[0].name !== null && true}>
                       <p>{group[0].name || ''}</p>
-                      {editing && selectedPerson.some((item) => item.id === group[0].faceId) && (
+                      {editing && selectedPerson.some((item) => item.faceId === group[0].faceId) && (
                         <P.CheckDiv>
                           <img src={Check} alt="check" />
                         </P.CheckDiv>

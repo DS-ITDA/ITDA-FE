@@ -28,13 +28,24 @@ export const putName = async (faceId, name) => {
 
 // 특정 인물 삭제
 export const deletePeople = async (faceId) => {
-  console.log(faceId);
-
   try {
     const response = await axiosInstance.delete(`/api/mypage/characters/${faceId}`);
 
     return response.data;
   } catch (error) {
     console.error('deletePeople 에러 발생', error);
+  }
+};
+
+// 인물 병합
+export const mergePeople = async (faceIds) => {
+  try {
+    const response = await axiosInstance.post('/api/mypage/characters/merge', {
+      faceIds,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('mergePeople 에러 발생', error);
   }
 };
