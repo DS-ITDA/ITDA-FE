@@ -17,7 +17,7 @@ import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
 
 import Check from '@assets/view/check.svg';
 import Modal from '@components/common/Modal/Modal';
-import { deletePeople, getPeople, mergePeople, putName } from '../../../apis/view/view';
+import { deletePeople, getDetailPeople, getPeople, mergePeople, putName } from '../../../apis/view/view';
 
 const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
   const containerRef = useRef(null);
@@ -36,6 +36,7 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
   const [deleteUrl, setDeleteUrl] = useState('');
   const [mergeUrl, setMergeUrl] = useState([]);
   const [faceList, setFaceList] = useState([]);
+  const [detailData, setDetailData] = useState([]);
 
   const inputWidth = Math.max(nameInput?.length, 1) + 3;
 
@@ -111,12 +112,21 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
     }
   };
 
-  const setInfo = (name, faceId, img) => {
+  const setInfo = async (name, faceId, img) => {
     if (!editing) {
       setLevel(1);
       setName(name);
       setFaceId(faceId);
       setImg(img);
+    }
+
+    try {
+      const detailData = await getDetailPeople(faceId);
+      console.log('detailData', detailData);
+
+      setDetailData(detailData);
+    } catch (error) {
+      console.error('특정 인물 상세 조회 실패', error);
     }
     setFaceId(faceId);
     togglePerson(faceId, img);
@@ -159,8 +169,6 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
       document.removeEventListener('click', handleContainerClick);
     };
   }, [editing]);
-
-  console.log(selectedPerson);
 
   return (
     <>
@@ -484,58 +492,28 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
               </P.InfoWrapper>
 
               <P.Info onClick={() => setLevel(2)}>
-                <span>3</span>개의 스토리북에 등장 {'>'}
+                <span>{detailData.length}</span>개의 스토리북에 등장 {'>'}
               </P.Info>
             </P.InfoDiv>
           </P.PersonWrarpper>
 
-          <P.ListDiv>
-            <P.Cover>
-              <img src={Cover} alt="책표지" />
-            </P.Cover>
-            <B.Detail $justify={'flex-start'}>
-              <B.DetailTitle>제목제목</B.DetailTitle>
-              <B.DetailDate>25.05.23</B.DetailDate>
-              <B.DetailText>
-                <p>그때 그녀가 말했어요. "너 누구야"</p>
-              </B.DetailText>
-              <B.Arrow $bottom={10} onClick={() => navigate(`/readStory/10`)}>
-                <img src={Arrow} alt="이동하기" />
-              </B.Arrow>
-            </B.Detail>
-          </P.ListDiv>
-
-          <P.ListDiv>
-            <P.Cover>
-              <img src={Cover} alt="책표지" />
-            </P.Cover>
-            <B.Detail $justify={'flex-start'}>
-              <B.DetailTitle>제목제목</B.DetailTitle>
-              <B.DetailDate>25.05.23</B.DetailDate>
-              <B.DetailText>
-                <p>그때 그녀가 말했어요. "너 누구야"</p>
-              </B.DetailText>
-              <B.Arrow $bottom={10} onClick={() => navigate(`/readStory/10`)}>
-                <img src={Arrow} alt="이동하기" />
-              </B.Arrow>
-            </B.Detail>
-          </P.ListDiv>
-
-          <P.ListDiv>
-            <P.Cover>
-              <img src={Cover} alt="책표지" />
-            </P.Cover>
-            <B.Detail $justify={'flex-start'}>
-              <B.DetailTitle>제목제목</B.DetailTitle>
-              <B.DetailDate>25.05.23</B.DetailDate>
-              <B.DetailText>
-                <p>그때 그녀가 말했어요. "너 누구야"</p>
-              </B.DetailText>
-              <B.Arrow $bottom={10} onClick={() => navigate(`/readStory/10`)}>
-                <img src={Arrow} alt="이동하기" />
-              </B.Arrow>
-            </B.Detail>
-          </P.ListDiv>
+          {detailData?.map((list) => (
+            <P.ListDiv key={list.storybookId}>
+              <P.Cover>
+                <img src={list.originalPhotoUrl} alt="책표지" />
+              </P.Cover>
+              <B.Detail $justify={'flex-start'}>
+                <B.DetailTitle>{list.title}</B.DetailTitle>
+                <B.DetailDate>{list.displayDate}</B.DetailDate>
+                <B.DetailText>
+                  <p>{list.firstSentence}</p>
+                </B.DetailText>
+                <B.Arrow $bottom={10} onClick={() => navigate(`/readStory/${list.storybookId}`)}>
+                  <img src={Arrow} alt="이동하기" />
+                </B.Arrow>
+              </B.Detail>
+            </P.ListDiv>
+          ))}
         </>
       )}
 
@@ -543,30 +521,16 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
         <>
           <img src={Line} alt="line" style={{ marginTop: '30px', marginBottom: '30px' }} />
           <P.GridDiv>
-            <P.ListDiv>
-              <P.Cover $width={135} $height={202}>
-                <img src={Cover} alt="책표지" />
-                <P.CloseDiv>
-                  <img src={Close} alt="닫기" />
-                </P.CloseDiv>
-              </P.Cover>
-            </P.ListDiv>
-            <P.ListDiv>
-              <P.Cover $width={135} $height={202}>
-                <img src={Cover} alt="책표지" />
-                <P.CloseDiv>
-                  <img src={Close} alt="닫기" />
-                </P.CloseDiv>
-              </P.Cover>
-            </P.ListDiv>
-            <P.ListDiv>
-              <P.Cover $width={135} $height={202}>
-                <img src={Cover} alt="책표지" />
-                <P.CloseDiv>
-                  <img src={Close} alt="닫기" />
-                </P.CloseDiv>
-              </P.Cover>
-            </P.ListDiv>
+            {detailData?.map((list) => (
+              <P.ListDiv key={list.storybookId}>
+                <P.Cover $width={135} $height={202}>
+                  <img src={list.originalPhotoUrl} alt="책표지" />
+                  <P.CloseDiv>
+                    <img src={Close} alt="닫기" />
+                  </P.CloseDiv>
+                </P.Cover>
+              </P.ListDiv>
+            ))}
           </P.GridDiv>
         </>
       )}

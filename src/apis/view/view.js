@@ -49,3 +49,14 @@ export const mergePeople = async (faceIds) => {
     console.error('mergePeople 에러 발생', error);
   }
 };
+
+// 특정 인물 상세 조회
+export const getDetailPeople = async (characterId) => {
+  try {
+    const response = await axiosInstance.get(`/api/mypage/characters/${characterId}`);
+
+    return response.data;
+  } catch (error) {
+    console.log('getDetailPeople 에러 발생', error);
+  }
+};
