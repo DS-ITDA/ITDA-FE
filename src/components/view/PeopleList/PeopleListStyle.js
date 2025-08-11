@@ -36,8 +36,8 @@ export const ColFlex = styled.div`
 
 export const People = styled.div`
   position: relative;
-  width: ${({ $width }) => `${$width}px`};
-  height: ${({ $width }) => `${$width}px`};
+  width: ${({ $width }) => `${$width}`};
+  height: ${({ $width }) => `${$width}`};
 
   border-radius: 5px;
   overflow: hidden;
@@ -113,8 +113,6 @@ export const Menu = styled.div`
   align-self: center;
 
   margin-bottom: 15px;
-
-  gap: 40px;
 
   position: relative;
 
@@ -202,6 +200,8 @@ export const InfoDiv = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  flex: 1;
 `;
 
 export const Name = styled.p`
@@ -267,4 +267,42 @@ export const GridDiv = styled.div`
   grid-template-columns: repeat(2, 1fr);
   place-items: center;
   gap: 20px;
+`;
+
+export const NameInput = styled.input`
+  outline: none;
+  border: none;
+
+  width: ${({ $width }) => $width && `${$width}ch`};
+
+  color: #616161;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.32px;
+
+  &::placeholder {
+    color: #616161;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 140%;
+    letter-spacing: -0.32px;
+  }
+`;
+
+export const Select = styled.p`
+  text-align: center;
+  width: 100%;
+  margin: 0;
+
+  cursor: ${({ $isActive }) => ($isActive ? 'pointer' : 'not-allowed')};
+  color: ${({ $isActive }) => !$isActive && palette.grayscale.grayDeep};
+`;
+
+export const ImgList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 `;

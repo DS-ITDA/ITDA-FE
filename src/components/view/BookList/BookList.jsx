@@ -1,42 +1,37 @@
 import { useNavigate } from 'react-router-dom';
 
 import * as B from './BookListStyle';
-// import books from '@data/books.json';
 import Arrow from '@assets/view/arrow-up_right-30.svg';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { getStoryBookData } from '../../../apis/home/home';
 
-const BookList = ({ handleBookcoverClick, selectedIdx }) => {
+const BookList = ({ storyBooks, handleBookcoverClick, selectedIdx }) => {
   const navigate = useNavigate();
-  const [storyBooks, setStoryBooks] = useState([]);
 
   const renderBooks = () => {
     const results = [];
 
-    for (let i = 0; i < storyBooks.length; i += 3) {
-      const rowBooks = storyBooks.slice(i, i + 3);
+    for (let i = 0; i < storyBooks?.length; i += 3) {
+      const rowBooks = storyBooks?.slice(i, i + 3);
 
-      const selectedBookInRow = rowBooks.find((book) => book.id === selectedIdx);
+      const selectedBookInRow = rowBooks.find((book) => book.storybookId === selectedIdx);
 
-      rowBooks.forEach((book) => {
+      rowBooks.forEach((book, idx) => {
         results.push(
-          <B.DetailWrapper key={book.id}>
-            {selectedIdx !== book.id && (
+          <B.DetailWrapper key={`${book.storybookId}-${idx}`}>
+            {selectedIdx !== book.storybookId && (
               <B.CoverDiv
                 onClick={() => {
-                  handleBookcoverClick(book.id);
+                  handleBookcoverClick(book.storybookId);
                 }}>
-                <img src={`/images/${book.cover}`} alt="cover" />
+                <img src={book?.originalPhotoUrl} alt="cover" />
               </B.CoverDiv>
             )}
 
-            {selectedIdx === book.id && (
+            {selectedIdx === book.storybookId && (
               <B.SelectedCoverDiv
                 onClick={() => {
-                  handleBookcoverClick(book.id);
+                  handleBookcoverClick(book.storybookId);
                 }}>
-                <img src={`/images/${book.cover}`} alt="cover" />
+                <img src={book?.originalPhotoUrl} alt="cover" />
                 <B.Overlay></B.Overlay>
               </B.SelectedCoverDiv>
             )}
@@ -52,11 +47,11 @@ const BookList = ({ handleBookcoverClick, selectedIdx }) => {
         results.push(
           <B.Detail key={`detail-${selectedBookInRow.id}`}>
             <B.DetailTitle>{selectedBookInRow.title}</B.DetailTitle>
-            <B.DetailDate>{selectedBookInRow.date}</B.DetailDate>
+            <B.DetailDate>{selectedBookInRow.displayDate}</B.DetailDate>
             <B.DetailText>
-              <p>그때 그녀가 말했어요. "너 누구야"</p>
+              <p>{selectedBookInRow.firstSentence}</p>
             </B.DetailText>
-            <B.Arrow onClick={() => navigate(`/readStory/${selectedBookInRow.id}`)}>
+            <B.Arrow onClick={() => navigate(`/readStory/${selectedBookInRow.storybookId}`)}>
               <img src={Arrow} alt="이동하기" />
             </B.Arrow>
           </B.Detail>,
@@ -67,30 +62,6 @@ const BookList = ({ handleBookcoverClick, selectedIdx }) => {
     return results;
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getStoryBookData();
-        setStoryBooks(data.data);
-      } catch (error) {
-        console.error('스토리북 데이터 불러오기 실패', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getStoryBookData();
-        setStoryBooks(data.data);
-      } catch (error) {
-        console.error('스토리북 데이터 불러오기 실패', error);
-      }
-    };
-
-    fetchData();
-  }, []);
   return <B.BookList>{renderBooks()}</B.BookList>;
 };
 

@@ -31,6 +31,9 @@ export const Wrapper = styled(motion.div)`
   flex: 1;
 
   margin-top: 3vh;
+
+  min-height: 100dvh;
+  overflow-y: auto;
 `;
 
 export const Ul = styled.ul`
