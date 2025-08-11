@@ -151,8 +151,16 @@ const ReadStory = () => {
   return (
     <>
       {showSplash && <StorySplash setShowSplash={setShowSplash} />}
-      {level === 0 && <PathNavbar left={false} right={true} goBack={goBack} goNext={goNext} />}
-      {level !== 0 && <PathNavbar left={true} right={false} goBack={goBack} goNext={goNext} />}
+      {level === 0 && (
+        <R.PathDiv>
+          <PathNavbar left={false} right={true} goBack={goBack} goNext={goNext} $width={true} />
+        </R.PathDiv>
+      )}
+      {level !== 0 && (
+        <R.PathDiv>
+          <PathNavbar left={true} right={false} goBack={goBack} goNext={goNext} $width={true} />
+        </R.PathDiv>
+      )}
 
       {level === 0 && (
         <>

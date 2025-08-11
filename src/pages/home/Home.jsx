@@ -12,6 +12,7 @@ import StoryIcon from '@assets/home/storybook-24.svg';
 import useImgUpload from '@hooks/useImgUpload';
 import CloseIcon from '@assets/home/x-24.svg';
 import ArrowRightIcon from '@assets/arrow-right.svg';
+import { axiosInstance } from '../../apis/axios';
 
 const Home = () => {
   const [storyBooks, setStoryBooks] = useState([]);
@@ -25,6 +26,8 @@ const Home = () => {
   const [booksArr, setBooksArr] = useState([]);
 
   const [firstVisited, setFirstVisited] = useState(true);
+
+  const [name, setName] = useState('');
 
   const sliderRef = useRef(null);
   const inputRef = useRef(null);
@@ -104,6 +107,19 @@ const Home = () => {
     }
   }, [storyBooks]);
 
+  useEffect(() => {
+    const fetchNickname = async () => {
+      try {
+        const response = await axiosInstance.get('/api/mypage');
+        setName(response.data || '');
+      } catch (error) {
+        console.error('닉네임 에러: ', error);
+      }
+    };
+
+    fetchNickname();
+  }, []);
+
   return (
     <H.Home>
       {/* <H.BubbleWrapper onClick={() => navigate('/createdStory/10', { state: { storyBooks } })}>
@@ -121,7 +137,7 @@ const Home = () => {
         <H.User>
           <H.Title>
             <p>
-              <span>조희원</span>님의 책장
+              <span>{name}</span>님의 책장
             </p>
             <H.ArrowDiv $width={'30px'} onClick={() => navigate('/view')}>
               <img src={Arrow20} alt="이미지 생성하러 가기" />

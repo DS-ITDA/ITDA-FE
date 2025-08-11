@@ -80,9 +80,9 @@ const CreatedStory = () => {
             </R.CreatedBook>
           </R.CreatedBookWrapper>
 
-          <E.CreatedCover>
+          <C.CreatedCover>
             <img src={selectedImg.thumbnail} alt="책 표지" />
-          </E.CreatedCover>
+          </C.CreatedCover>
         </R.Created>
         <R.Board>
           <div></div>

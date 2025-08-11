@@ -428,3 +428,8 @@ export const BubbleWrapper = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+export const PathDiv = styled.div`
+  display: flex;
+  justify-content: center;
+`;

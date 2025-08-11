@@ -8,7 +8,10 @@ const routes = [
   {
     path: '/',
     element: <HomeLayout />,
-    children: [{ path: 'login', element: React.createElement(lazyRoutes.Login) }],
+    children: [
+      { path: 'login', element: React.createElement(lazyRoutes.Login) },
+      { path: 'oauth/success', element: React.createElement(lazyRoutes.LoginSuccess) },
+    ],
   },
 ];
 
@@ -26,7 +29,6 @@ const protectedRoutes = [
       { path: 'editStory/:id', element: React.createElement(lazyRoutes.EditStory) },
       { path: 'view', element: React.createElement(lazyRoutes.View) },
       { path: 'mypage', element: React.createElement(lazyRoutes.Mypage) },
-      { path: 'oauth/success', element: React.createElement(lazyRoutes.LoginSuccess) },
     ],
   },
 ];
