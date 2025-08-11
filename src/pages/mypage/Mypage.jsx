@@ -38,7 +38,7 @@ const Mypage = () => {
   useEffect(() => {
     const fetchNickname = async () => {
       try {
-        const response = await axiosInstance.get('/api/mapage');
+        const response = await axiosInstance.get('/api/mypage');
         setName(response.data || '');
         console.log(response);
         console.log(response.data);
