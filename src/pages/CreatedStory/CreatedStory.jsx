@@ -18,7 +18,7 @@ const CreatedStory = () => {
   const { state } = useLocation();
   console.log(state);
 
-  const [title, setTitle] = useState(state.BOOK.title);
+  const [title, setTitle] = useState('');
   const [titleInput, setTitleInput] = useState('');
 
   const colorList = [
@@ -29,7 +29,7 @@ const CreatedStory = () => {
     palette.bookCover.purple,
   ];
 
-  const [coverColor, setCoverColor] = useState(state.BOOK.color);
+  const [coverColor, setCoverColor] = useState(colorList[0]);
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(0);
@@ -147,7 +147,7 @@ const CreatedStory = () => {
         <R.Created>
           <R.CreatedBookWrapper>
             <R.CreatedBook height={210} color={coverColor}>
-              {title === 'custom' && state.BOOK.title}
+              {title === 'custom' && title}
               {title !== 'custom' && title}
             </R.CreatedBook>
           </R.CreatedBookWrapper>
@@ -155,7 +155,7 @@ const CreatedStory = () => {
           <E.CreatedCover $isDragging={isDragging}>
             <img
               ref={imgRef}
-              src={state.BOOK.cover}
+              src=""
               alt="책 표지"
               onMouseDown={handleMouseDown}
               onTouchStart={handleTouchStart}
@@ -214,7 +214,7 @@ const CreatedStory = () => {
           <A.WhiteDiv $padding={20} $paddingTop={12}>
             <A.SelectDiv>
               <p>생성 일시</p>
-              <E.DateDiv>{state.BOOK.date}</E.DateDiv>
+              <E.DateDiv>ss</E.DateDiv>
             </A.SelectDiv>
           </A.WhiteDiv>
         </A.WhiteDivWrapper>
