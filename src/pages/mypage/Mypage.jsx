@@ -7,7 +7,7 @@ import checkWhite from '@assets/mypage/check_white.svg';
 import checkBrown from '@assets/mypage/check_brown.svg';
 import divider from '@assets/mypage/divider.svg';
 import palette from '@styles/theme';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@apis/axios';
 
@@ -15,6 +15,7 @@ const Mypage = () => {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [modal, setModal] = useState('');
+  const [name, setName] = useState('');
 
   const MODAL_CONFIG = {
     logout: {
@@ -32,6 +33,21 @@ const Mypage = () => {
       },
     },
   };
+
+  useEffect(() => {
+    const fetchNickname = async () => {
+      try {
+        const response = await axiosInstance.get('/api/mapage');
+        setName(response.data || '');
+        console.log(response);
+        console.log(response.data);
+      } catch (error) {
+        console.error('닉네임 에러: ', error);
+      }
+    };
+
+    fetchNickname();
+  }, []);
 
   const logout = () => {
     localStorage.removeItem('refreshToken');
@@ -58,7 +74,7 @@ const Mypage = () => {
   return (
     <M.MyPage>
       <M.Nickname>
-        <span style={{ fontSize: '20px', fontWeight: 600 }}>조희원</span> 님
+        <span style={{ fontSize: '20px', fontWeight: 600 }}>{name}</span> 님
       </M.Nickname>
 
       <M.Button
