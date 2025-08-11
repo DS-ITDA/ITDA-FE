@@ -114,8 +114,6 @@ export const Menu = styled.div`
 
   margin-bottom: 15px;
 
-  gap: 40px;
-
   position: relative;
 
   font-size: 14px;
@@ -292,4 +290,19 @@ export const NameInput = styled.input`
     line-height: 140%;
     letter-spacing: -0.32px;
   }
+`;
+
+export const Select = styled.p`
+  text-align: center;
+  width: 100%;
+  margin: 0;
+
+  cursor: ${({ $isActive }) => ($isActive ? 'pointer' : 'not-allowed')};
+  color: ${({ $isActive }) => !$isActive && palette.grayscale.grayDeep};
+`;
+
+export const ImgList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 `;

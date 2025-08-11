@@ -25,3 +25,16 @@ export const putName = async (faceId, name) => {
     console.error('patchName 에러 발생', error);
   }
 };
+
+// 특정 인물 삭제
+export const deletePeople = async (faceId) => {
+  console.log(faceId);
+
+  try {
+    const response = await axiosInstance.delete(`/api/mypage/characters/${faceId}`);
+
+    return response.data;
+  } catch (error) {
+    console.error('deletePeople 에러 발생', error);
+  }
+};

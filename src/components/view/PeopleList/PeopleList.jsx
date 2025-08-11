@@ -17,7 +17,7 @@ import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
 
 import Check from '@assets/view/check.svg';
 import Modal from '@components/common/Modal/Modal';
-import { getPeople, putName } from '../../../apis/view/view';
+import { deletePeople, getPeople, putName } from '../../../apis/view/view';
 
 const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
   const containerRef = useRef(null);
@@ -33,8 +33,10 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
   const [isEditName, setIsEditName] = useState(false);
   const [faceId, setFaceId] = useState(null);
   const [img, setImg] = useState(null);
+  const [deleteUrl, setDeleteUrl] = useState('');
+  const [mergeUrl, setMergeUrl] = useState([]);
 
-  const inputWidth = Math.max(nameInput.length, 1) + 3;
+  const inputWidth = Math.max(nameInput?.length, 1) + 3;
 
   const navigate = useNavigate();
 
@@ -48,25 +50,32 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
     clearTimeout(pressTimer.current);
   };
 
-  const togglePerson = (faceId) => {
+  const togglePerson = (faceId, faceImageUrl) => {
     if (!editing) return;
 
     setSelectedPerson((prev) => {
-      if (prev.includes(faceId)) {
-        return prev.filter((id) => id !== faceId);
+      const exists = prev.some((item) => item.faceId === faceId);
+
+      if (exists) {
+        return prev.filter((item) => item.faceId !== faceId);
       } else {
-        if (prev.length >= 2) return prev;
-        return [...prev, faceId];
+        if (prev.length >= 2) {
+          return prev;
+        }
+        return [...prev, { faceId, faceImageUrl }];
       }
     });
   };
 
-  const handleMerge = () => {
+  const handleMerge = (url1, url2) => {
     setShowMergeModal(true);
+    setMergeUrl([url1, url2]);
   };
 
-  const handleDelete = () => {
+  const handleDelete = (faceId, url) => {
     setShowDelModal(true);
+    setDeleteUrl(url);
+    setFaceId(faceId);
   };
 
   const imageArray = (arr = [], size) => {
@@ -107,7 +116,8 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
       setFaceId(faceId);
       setImg(img);
     }
-    togglePerson(faceId);
+    setFaceId(faceId);
+    togglePerson(faceId, img);
   };
 
   useEffect(() => {
@@ -129,7 +139,7 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
       container.removeEventListener('touchstart', handlePressStart);
       container.removeEventListener('touchend', handlePressEnd);
     };
-  }, [level]);
+  }, [level, flat]);
 
   useEffect(() => {
     const container = imgRef.current;
@@ -148,6 +158,9 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
     };
   }, [editing]);
 
+  console.log(selectedPerson);
+  console.log(faceId);
+
   return (
     <>
       {showMergeModal && (
@@ -156,11 +169,11 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
             content={
               <P.ModalImgWrapper>
                 <P.ModalImg>
-                  <img src={Girl1} alt="인물" />
+                  <img src={mergeUrl[0]} alt="인물" />
                 </P.ModalImg>
                 <img src={Merge} alt="병합" style={{ zIndex: 20 }} />
                 <P.ModalImg>
-                  <img src={Man1} alt="인물" />
+                  <img src={mergeUrl[1]} alt="인물" />
                 </P.ModalImg>
               </P.ModalImgWrapper>
             }
@@ -183,23 +196,25 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
             content={
               <P.ModalImgWrapper>
                 <P.ModalImg $margin={6}>
-                  <img src={Girl1} alt="인물" />
-                  <P.DeleteImg src={Delete} alt="삭제하기" style={{ zIndex: 20 }} />
-                </P.ModalImg>
-                <P.ModalImg $margin={6}>
-                  <img src={Man1} alt="인물" />
+                  <img src={deleteUrl} alt="인물" />
                   <P.DeleteImg src={Delete} alt="삭제하기" style={{ zIndex: 20 }} />
                 </P.ModalImg>
               </P.ModalImgWrapper>
             }
-            info={'선택한 인물들을 삭제할까요?'}
+            info={'선택한 인물을 삭제할까요?'}
             btnText={'삭제하기'}
             onClose={() => {
               setShowDelModal(false);
             }}
-            onClick={() => {
+            onClick={async () => {
               setShowDelModal(false);
               setEditing((prev) => !prev);
+              await deletePeople(faceId);
+              console.log('face', faceId);
+              setSelectedPerson([]);
+
+              const updatedPeople = await getPeople();
+              setPeopleList(updatedPeople);
             }}
           />
         </P.ModalWrapper>
@@ -222,25 +237,58 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
 
           {flat && editing && (
             <P.Menu>
-              <p onClick={handleMerge}>병합</p>
-              <p onClick={handleDelete}>삭제</p>
+              {selectedPerson.length === 0 && (
+                <>
+                  <P.Select $isActive={false} onClick={() => {}}>
+                    병합
+                  </P.Select>
+                  <P.Select $isActive={false}>삭제</P.Select>
+                </>
+              )}
+
+              {selectedPerson.length === 1 && (
+                <>
+                  <P.Select $isActive={false} onClick={() => {}}>
+                    병합
+                  </P.Select>
+                  <P.Select
+                    $isActive={true}
+                    onClick={() => {
+                      handleDelete(selectedPerson[0].faceId, selectedPerson[0]?.faceImageUrl);
+                    }}>
+                    삭제
+                  </P.Select>
+                </>
+              )}
+
+              {selectedPerson.length === 2 && (
+                <>
+                  <P.Select
+                    $isActive={true}
+                    onClick={() => handleMerge(selectedPerson[0].faceImageUrl, selectedPerson[1].faceImageUrl)}>
+                    병합
+                  </P.Select>
+                  <P.Select $isActive={false}>삭제</P.Select>
+                </>
+              )}
+
               <div></div>
             </P.Menu>
           )}
 
-          <div ref={imgRef}>
+          <P.ImgList ref={imgRef}>
             {imageArray(peopleList?.people, 3)?.map((group, idx) => (
               <P.Flex key={idx}>
                 {group.length === 1 && (
                   <P.People
-                    $width="100%"
+                    $width="336px"
                     onClick={() => {
                       setInfo(group[0].name, group[0].faceId, group[0].faceImageUrl);
                     }}>
-                    <img src={group[0].faceImageUrl} alt="인물이미지" />
+                    <img src={group[0]?.faceImageUrl} alt="인물이미지" />
                     <P.Overlay $bg={group[0].name !== null && true}>
                       <p>{group[0].name || ''}</p>
-                      {editing && selectedPerson.includes(group[0].faceId) && (
+                      {editing && selectedPerson.some((item) => item.id === group[0].faceId) && (
                         <P.CheckDiv>
                           <img src={Check} alt="check" />
                         </P.CheckDiv>
@@ -250,16 +298,17 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                 )}
 
                 {group.length === 2 &&
-                  group.map((person) => (
+                  group.map((person, idx) => (
                     <P.People
-                      $width="100%"
+                      key={idx}
+                      $width="168px"
                       onClick={() => {
                         setInfo(person.name, person.faceId, person.faceImageUrl);
                       }}>
-                      <img src={person.faceImageUrl} alt="인물이미지" />
+                      <img src={person?.faceImageUrl} alt="인물이미지" />
                       <P.Overlay $bg={person.name !== null && true}>
                         <p>{person.name || ''}</p>
-                        {editing && selectedPerson.includes(person.faceId) && (
+                        {editing && selectedPerson.some((item) => item.faceId === person.faceId) && (
                           <P.CheckDiv>
                             <img src={Check} alt="check" />
                           </P.CheckDiv>
@@ -275,10 +324,10 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                       onClick={() => {
                         setInfo(group[0].name, group[0].faceId, group[0].faceImageUrl);
                       }}>
-                      <img src={Man1} alt="인물이미지" />
+                      <img src={group[0]?.faceImageUrl} alt="인물이미지" />
                       <P.Overlay $bg={group[0].name !== null && true}>
                         <p>{group[0].name || ''}</p>
-                        {editing && selectedPerson.includes(group[0].faceId) && (
+                        {editing && selectedPerson.some((item) => item.faceId === group[0].faceId) && (
                           <P.CheckDiv>
                             <img src={Check} alt="check" />
                           </P.CheckDiv>
@@ -292,10 +341,10 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                         onClick={() => {
                           setInfo(group[1].name, group[1].faceId, group[1].faceImageUrl);
                         }}>
-                        <img src={Man1} alt="인물이미지" />
+                        <img src={group[1]?.faceImageUrl} alt="인물이미지" />
                         <P.Overlay $bg={group[1].name !== null && true}>
                           <p>{group[1].name || ''}</p>
-                          {editing && selectedPerson.includes(group[1].faceId) && (
+                          {editing && selectedPerson.some((item) => item.faceId === group[1].faceId) && (
                             <P.CheckDiv>
                               <img src={Check} alt="check" />
                             </P.CheckDiv>
@@ -308,10 +357,10 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                         onClick={() => {
                           setInfo(group[2].name, group[2].faceId, group[2].faceImageUrl);
                         }}>
-                        <img src={Man1} alt="인물이미지" />
+                        <img src={group[2]?.faceImageUrl} alt="인물이미지" />
                         <P.Overlay $bg={group[2].name !== null && true}>
                           <p>{group[2].name || ''}</p>
-                          {editing && selectedPerson.includes(group[2].faceId) && (
+                          {editing && selectedPerson.some((item) => item.faceId === group[2].faceId) && (
                             <P.CheckDiv>
                               <img src={Check} alt="check" />
                             </P.CheckDiv>
@@ -330,10 +379,10 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                         onClick={() => {
                           setInfo(group[0].name, group[0].faceId, group[0].faceImageUrl);
                         }}>
-                        <img src={Man1} alt="인물이미지" />
+                        <img src={group[0]?.faceImageUrl} alt="인물이미지" />
                         <P.Overlay $bg={true}>
                           <p>{group[1].name || ''}</p>
-                          {editing && selectedPerson.includes(group[0].faceId) && (
+                          {editing && selectedPerson.some((item) => item.faceId === group[0].faceId) && (
                             <P.CheckDiv>
                               <img src={Check} alt="check" />
                             </P.CheckDiv>
@@ -346,10 +395,10 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                         onClick={() => {
                           setInfo(group[1].name, group[1].faceId, group[1].faceImageUrl);
                         }}>
-                        <img src={Man1} alt="인물이미지" />
+                        <img src={group[1]?.faceImageUrl} alt="인물이미지" />
                         <P.Overlay $bg={true}>
                           <p>{group[2].name || ''}</p>
-                          {editing && selectedPerson.includes(group[1].faceId) && (
+                          {editing && selectedPerson.some((item) => item.faceId === group[1].faceId) && (
                             <P.CheckDiv>
                               <img src={Check} alt="check" />
                             </P.CheckDiv>
@@ -362,10 +411,10 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                       onClick={() => {
                         setInfo(group[2].name, group[2].faceId, group[2].faceImageUrl);
                       }}>
-                      <img src={Man1} alt="인물이미지" />
+                      <img src={group[2]?.faceImageUrl} alt="인물이미지" />
                       <P.Overlay $bg={true}>
                         <p>{group[0].name || ''}</p>
-                        {editing && selectedPerson.includes(group[2].faceId) && (
+                        {editing && selectedPerson.some((item) => item.faceId === group[2].faceId) && (
                           <P.CheckDiv>
                             <img src={Check} alt="check" />
                           </P.CheckDiv>
@@ -376,7 +425,7 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                 )}
               </P.Flex>
             ))}
-          </div>
+          </P.ImgList>
         </P.ColFlex>
       )}
 
