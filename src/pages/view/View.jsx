@@ -1,20 +1,22 @@
+import { useState, useRef, useEffect } from 'react';
+import { motion as M } from 'motion/react';
+
 import * as V from '@view/ViewStyle';
+import * as R from '@readStory/ReadStoryStyle';
+import palette from '@styles/theme';
+
 import PathNavbar from '@components/common/Navbar/PathNavbar';
 import Books from '@components/Books/Books';
-import { useState } from 'react';
-import palette from '@styles/theme';
-import { motion as M } from 'motion/react';
+import BookList from '@components/view/BookList/BookList';
+import PeopleList from '@components/view/PeopleList/PeopleList';
 
 import Tab_Book from '@assets/view/book-selected-24.svg';
 import Tab_Book_Not from '@assets/view/book-nonselected-24.svg';
 import Tab_People from '@assets/view/people-selected-24.svg';
 import Tab_People_Not from '@assets/view/people-nonselected-24.svg';
-import BookList from '@components/view/BookList/BookList';
-import PeopleList from '@components/view/PeopleList/PeopleList';
-import { useRef } from 'react';
-import { useEffect } from 'react';
-import { getStoryBookData } from '../../apis/home/home';
-import { getPeople } from '../../apis/view/view';
+
+import { getStoryBookData } from '@apis/home/home';
+import { getPeople } from '@apis/view/view';
 
 const View = () => {
   const [selectedBookId, setSelectedBookId] = useState(null);
@@ -76,9 +78,9 @@ const View = () => {
 
   return (
     <V.View>
-      <div>
+      <R.PathDiv>
         <PathNavbar left={true} right={false} goBack={() => {}} goNext={() => {}} />
-      </div>
+      </R.PathDiv>
 
       <V.BooksWrapper>
         <Books
