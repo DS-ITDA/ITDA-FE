@@ -3,7 +3,17 @@ import palette from '@styles/theme';
 
 export const CreatePage = styled.div`
   width: calc(100% - 20px);
-  margin: 0 10px;
+  height: calc(100% - 120px);
+  margin: 65px 10px 0;
+  overflow: scroll;
+`;
+
+export const NavBar = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 `;
 
 export const InfoText = styled.div`
@@ -12,11 +22,11 @@ export const InfoText = styled.div`
   line-height: 140%;
   letter-spacing: -0.32px;
 
-  margin: 30px 20px 26px;
+  margin: 0 20px 20px;
 `;
 
 export const ContentBox = styled.div`
-  width: calc(100% - 20px);
+  width: calc(100% - 30px);
   padding: 13px 15px 20px;
   margin: 0 10px;
 
@@ -28,6 +38,8 @@ export const ContentBox = styled.div`
   border-radius: 17px;
   background: ${palette.grayscale.white};
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+
+  height: 40%;
 `;
 
 export const ContentHeader = styled.div`
@@ -41,6 +53,8 @@ export const Content = styled.div`
   font-weight: 400;
   line-height: 150%;
   letter-spacing: -0.28px;
+
+  overflow: scroll;
 `;
 
 export const InputBox = styled.div`
@@ -56,7 +70,7 @@ export const InputBox = styled.div`
   justify-content: space-between;
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.05);
 
-  position: absolute;
+  position: fixed;
   bottom: 18px;
 `;
 
@@ -93,8 +107,9 @@ export const textarea = styled.textarea`
   letter-spacing: -0.28px;
 
   width: 100%;
-  overflow: hidden;
-  height: auto;
+  overflow-y: hidden;
+  height: 40%;
+  overflow: scroll;
   outline: none;
   border: none;
   resize: none;
@@ -125,10 +140,14 @@ export const Selection = styled.div`
 `;
 
 export const PromptList = styled.div`
+  width: calc(100% - 40px);
+  max-height: calc(40% - 55px);
+  overflow: scroll;
   display: flex;
   flex-direction: column;
-  margin: 15px 20px;
+  margin: 15px 20px 40px;
   gap: 10px;
+  height: auto;
 `;
 
 export const Text = styled.div`
