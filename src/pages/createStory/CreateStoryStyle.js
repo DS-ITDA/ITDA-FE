@@ -14,6 +14,9 @@ export const NavBar = styled.div`
   left: 0;
   width: 100%;
   z-index: 1000;
+
+  display: flex;
+  justify-content: center;
 `;
 
 export const InfoText = styled.div`

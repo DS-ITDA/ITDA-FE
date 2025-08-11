@@ -13,6 +13,9 @@ export const NavBar = styled.div`
   left: 0;
   width: 100%;
   z-index: 1000;
+
+  display: flex;
+  justify-content: center;
 `;
 
 //첫 화면
