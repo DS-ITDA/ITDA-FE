@@ -60,3 +60,14 @@ export const getDetailPeople = async (characterId) => {
     console.log('getDetailPeople 에러 발생', error);
   }
 };
+
+// 특정 인물과 스토리북 연결 해제
+export const deleteConnection = async (characterId, storybookId) => {
+  try {
+    const response = await axiosInstance.delete(`/api/mypage/characters/${characterId}/storybooks/${storybookId}`);
+
+    return response.data;
+  } catch (error) {
+    console.log('deleteConnection 에러 발생', error);
+  }
+};

@@ -17,7 +17,14 @@ import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
 
 import Check from '@assets/view/check.svg';
 import Modal from '@components/common/Modal/Modal';
-import { deletePeople, getDetailPeople, getPeople, mergePeople, putName } from '../../../apis/view/view';
+import {
+  deleteConnection,
+  deletePeople,
+  getDetailPeople,
+  getPeople,
+  mergePeople,
+  putName,
+} from '../../../apis/view/view';
 
 const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
   const containerRef = useRef(null);
@@ -122,14 +129,25 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
 
     try {
       const detailData = await getDetailPeople(faceId);
-      console.log('detailData', detailData);
 
       setDetailData(detailData);
     } catch (error) {
       console.error('특정 인물 상세 조회 실패', error);
     }
+
     setFaceId(faceId);
     togglePerson(faceId, img);
+  };
+
+  const handleDeleteConnection = async (characterId, storybookId) => {
+    try {
+      await deleteConnection(characterId, storybookId);
+
+      const updatedDetailData = await getDetailPeople(characterId);
+      setDetailData(updatedDetailData);
+    } catch (error) {
+      console.error('인물, 스토리북 연결 해제 실패', error);
+    }
   };
 
   useEffect(() => {
@@ -192,8 +210,6 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
               setShowMergeModal(false);
             }}
             onClick={async () => {
-              console.log('11', faceList);
-
               setShowMergeModal(false);
               setEditing((prev) => !prev);
 
@@ -525,7 +541,10 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
               <P.ListDiv key={list.storybookId}>
                 <P.Cover $width={135} $height={202}>
                   <img src={list.originalPhotoUrl} alt="책표지" />
-                  <P.CloseDiv>
+                  <P.CloseDiv
+                    onClick={() => {
+                      handleDeleteConnection(faceId, list.storybookId);
+                    }}>
                     <img src={Close} alt="닫기" />
                   </P.CloseDiv>
                 </P.Cover>
