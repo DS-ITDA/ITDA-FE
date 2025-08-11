@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import * as E from '@editStory/EditStoryStyle';
+import palette from '../../styles/theme';
 
 export const Span = styled.span`
   font-size: 16px;
@@ -10,4 +11,20 @@ export const Span = styled.span`
 
 export const Color = styled(E.ColorDiv)`
   background-color: ${({ color }) => color};
+`;
+
+export const CreatedCover = styled.div`
+  width: 150px;
+  height: 210px;
+  border-radius: 3px;
+  border: 5px solid ${palette.main.ivory};
+  overflow: hidden;
+
+  position: relative;
+  top: 5px;
+
+  img {
+    width: auto;
+    height: 100%;
+  }
 `;
