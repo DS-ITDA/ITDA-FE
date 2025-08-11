@@ -14,6 +14,9 @@ export const NavBar = styled.div`
   left: 0;
   width: 100%;
   z-index: 1000;
+
+  display: flex;
+  justify-content: center;
 `;
 
 export const InfoText = styled.div`
@@ -26,7 +29,7 @@ export const InfoText = styled.div`
 `;
 
 export const ContentBox = styled.div`
-  width: calc(100% - 30px);
+  width: calc(100% - 20px);
   padding: 13px 15px 20px;
   margin: 0 10px;
 
@@ -58,7 +61,11 @@ export const Content = styled.div`
 `;
 
 export const InputBox = styled.div`
-  width: calc(100% - 40px);
+  width: 343px;
+
+  @media (max-width: 767px) {
+    width: calc(100vw - 40px);
+  }
   padding: 6px 6px 6px 20px;
   border-radius: 25px;
   border: 1px solid ${palette.main.ivory};

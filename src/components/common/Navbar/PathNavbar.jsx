@@ -26,11 +26,11 @@ const PathNavbar = ({ left, right, goBack, goNext }) => {
   const navigate = useNavigate();
 
   return (
-    <N.Nav>
+    <N.PathNav>
       {left === true ? <N.Img24 src={Back} alt="뒤로 가기" onClick={goBack} /> : <N.Img24 src={BackOff} />}
       <N.Logo src={logo} onClick={() => navigate('/')} />
       {right === true ? <N.Img24 src={Next} alt="다음" onClick={goNext} /> : <N.Img24 src={NextOff} />}
-    </N.Nav>
+    </N.PathNav>
   );
 };
 
