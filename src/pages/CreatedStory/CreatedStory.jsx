@@ -151,7 +151,6 @@ const CreatedStory = () => {
           content={<p style={{ cursor: 'pointer' }}>스토리북 보러가기</p>}
           onClick={async () => {
             const response = await postStoryBook(state.storyId, state.originalPhotoId, title, coverColor.slice(1));
-            console.log(response);
 
             navigate(`/readStory/${response?.data.storybookId}`);
           }}

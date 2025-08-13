@@ -155,7 +155,7 @@ const Ai = () => {
         feelings.length === 1 ? feelings[0] : feelings.join(','),
       );
     } catch (error) {
-      console.log('저장 실패', error);
+      console.error('저장 실패', error);
     }
   };
 

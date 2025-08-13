@@ -122,7 +122,7 @@ const ReadStory = () => {
 
         setContent(['', ...sentences]);
       } catch (error) {
-        console.log('책 내용 조회 실패'), error;
+        console.error('책 내용 조회 실패'), error;
       } finally {
         setLoading(false);
       }
