@@ -325,6 +325,7 @@ const Ai = () => {
                 <img src={PeopleIcon} alt="인물 인식 결과" />
                 <p>주인공</p>
               </A.Result>
+              {isMain === null && <A.SubText>2명의 등장인물 중 주인공을 선택해주세요. </A.SubText>}
 
               {isSelected.length === 1 && loading && (
                 <div style={{ width: '100%', height: '150px' }}>

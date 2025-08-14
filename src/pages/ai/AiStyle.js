@@ -378,3 +378,12 @@ export const NoResult = styled.div`
     font-weight: 600;
   }
 `;
+
+export const SubText = styled.p`
+  margin: 0;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
+`;
