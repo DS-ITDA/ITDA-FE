@@ -250,7 +250,7 @@ const Ai = () => {
               {resultPeople.length > 0 && (
                 <>
                   <A.Grid>
-                    {resultPeople.map((person, idx) => (
+                    {resultPeople?.map((person, idx) => (
                       <A.ImgDiv
                         key={idx}
                         onClick={() => {
@@ -357,7 +357,7 @@ const Ai = () => {
 
               {!loading && (
                 <A.Grid>
-                  {selectedPeople.map((person, idx) => (
+                  {selectedPeople?.map((person, idx) => (
                     <div key={idx}>
                       <A.ImgDiv
                         onClick={() => {
@@ -435,7 +435,7 @@ const Ai = () => {
 
                       {showSelect && (
                         <A.List>
-                          {relationshipList.map((relationship) => (
+                          {relationshipList?.map((relationship) => (
                             <li key={relationship}>
                               <A.SelectButton
                                 onClick={() => {
@@ -528,7 +528,7 @@ const Ai = () => {
                     </A.FeelingsBtn>
                   )}
 
-                  {feelings.map((feeling, idx) => {
+                  {feelings?.map((feeling, idx) => {
                     return (
                       <A.FeelingsBtn key={(feeling, idx)} onClick={() => handleDeleteFeelings(idx)}>
                         {feeling}
