@@ -29,6 +29,7 @@ const Ai = () => {
 
   const [relationship, setRelationShip] = useState('');
   const [relationInput, setRelationInput] = useState('');
+  const [placeholder, setPlaceholder] = useState('[직접 입력]');
 
   const [place, setPlace] = useState([]);
   const [prevPlace, setPrevPlace] = useState('');
@@ -81,6 +82,10 @@ const Ai = () => {
     if (e.key === 'Enter' && relationInput.trim()) {
       setRelationInput(relationInput.trim());
       setRelationShip(relationInput.trim());
+
+      if (showSelect) {
+        setShowSelect((prev) => !prev);
+      }
     }
   };
 
@@ -105,11 +110,17 @@ const Ai = () => {
     setFeelings((prev) => prev.filter((_, index) => index !== idx));
   };
 
-  const handleFeelingsSubmin = (e) => {
-    if (e.key === 'Enter' && feelingsInput.trim()) {
+  const handleFeelingsSubmit = () => {
+    if (feelingsInput.trim()) {
       setFeelings((prev) => [feelingsInput.trim(), ...prev]);
       setFeelingsInput('');
       setFeelingsType('');
+    }
+  };
+
+  const handleFeelingsKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleFeelingsSubmit();
     }
   };
 
@@ -314,7 +325,7 @@ const Ai = () => {
           <A.TextDiv>
             <p>사진 속 이야기를 잇다가 이렇게 읽어봤어요.</p>
             <div>
-              <span>사실과 다른 부분이 있다면,</span>
+              <span>사실과 다른 부분이 있다면, </span>
               <span>알맞게 수정해주세요.</span>
             </div>
           </A.TextDiv>
@@ -393,11 +404,18 @@ const Ai = () => {
                 <A.SelectWrapper ref={selectRef}>
                   {loading && <S.Skeleton $width={184} $height={40} />}
                   {!loading && (
-                    <A.SelectBtn>
+                    <A.SelectBtn
+                      onClick={() => {
+                        if (relationship !== 'custom') {
+                          setRelationInput(relationship);
+                          setPlaceholder(relationship);
+                        }
+                        setRelationShip('custom');
+                      }}>
                       {relationship !== 'custom' && relationship}
                       {relationship === 'custom' && (
                         <A.Input
-                          placeholder="[직접 입력]"
+                          placeholder={placeholder}
                           value={relationInput}
                           onChange={(e) => setRelationInput(e.target.value)}
                           onKeyDown={handleInputSubmit}
@@ -471,14 +489,17 @@ const Ai = () => {
               </A.SelectDiv>
             </A.WhiteDiv>
 
-            <A.WhiteDiv $padding={20}>
+            <A.WhiteDiv $padding={20} onClick={handleFeelingsSubmit}>
               <A.SelectDiv>
                 <p>감정</p>
                 <A.FeelingsDiv>
                   {loading && <S.Skeleton $width={184} $height={40} />}
 
                   {!loading && feelings.length < 3 && feelingsType !== 'custom' && (
-                    <A.PlusBtn onClick={() => setFeelingsType('custom')}>
+                    <A.PlusBtn
+                      onClick={() => {
+                        setFeelingsType('custom');
+                      }}>
                       <img src={PlusIcon} alt="추가" />
                     </A.PlusBtn>
                   )}
@@ -492,7 +513,7 @@ const Ai = () => {
                             setFeelingsInput(e.target.value);
                           }
                         }}
-                        onKeyDown={handleFeelingsSubmin}
+                        onKeyDown={handleFeelingsKeyDown}
                       />
 
                       {feelingsInput.length > 0 && (

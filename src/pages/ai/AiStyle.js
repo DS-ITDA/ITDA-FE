@@ -242,6 +242,8 @@ export const Input = styled.input`
   line-height: 140%;
   letter-spacing: -0.28px;
 
+  padding: 0;
+
   color: ${palette.main.brown};
 
   &::placeholder {
@@ -312,6 +314,12 @@ export const CancleImg = styled(ToggleImg)`
   position: absolute;
   top: -5px;
   right: -5px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 export const PlusBtn = styled(FeelingsBtn)`
@@ -328,7 +336,7 @@ export const PlusBtn = styled(FeelingsBtn)`
 
 export const FeelingsInput = styled(Input)`
   min-width: 10px;
-  width: ${({ value }) => (value.length === 0 ? 0 : value.length + 1)}em;
+  width: ${({ value }) => (value.length === 0 ? 0 : value.length * 0.9)}em;
   background-color: ${palette.main.ivory};
   border-radius: 10px;
 `;
@@ -349,6 +357,11 @@ export const CharacterInput = styled.input`
   margin-top: 12px;
 
   color: ${palette.grayscale.grayDeep};
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.28px;
 
   &::placeholder {
     font-family: Pretendard;
