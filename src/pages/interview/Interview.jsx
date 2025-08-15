@@ -12,7 +12,7 @@ import edit from '@assets/interview/edit-black-20.svg';
 import editBrown from '@assets/interview/edit-brown-18.svg';
 // import redo from '@assets/interview/redo-black-20.svg';
 import x from '@assets/interview/X.svg';
-import submit from '@assets/interview/submit.svg';
+// import submit from '@assets/interview/submit.svg';
 import check from '@assets/interview/check.svg';
 import loading from '@assets/interview/loading.gif';
 // import notifications from '@assets/interview/notifications-24.svg';
@@ -244,8 +244,11 @@ const Interview = () => {
 
   const goNext = async () => {
     setState('creating');
+    if (style == 'custom') {
+      setStyle('');
+    }
     try {
-      await axiosInstance.post('/api/story/style', { selectedStyle: style });
+      await axiosInstance.post('/api/story/style', { selectedStyle: style, customStyle: example });
       createStory();
     } catch (error) {
       console.error('스타일 선택 에러:', error);
@@ -408,24 +411,46 @@ const Interview = () => {
             <I.MainInfo>
               원하는 스타일이 있다면 <I.Span>&nbsp;직접 입력</I.Span>해보세요.
             </I.MainInfo>
-
-            <I.SubInfo style={{ marginTop: '8px' }}>스토리 스타일과 일러스트 스타일 모두</I.SubInfo>
-            <I.SubInfo>자세히 적어주면 더 정확한 결과를 만나볼 수 있어요.</I.SubInfo>
+            <I.SubInfo style={{ marginTop: '8px' }}>자세히 적어주면 더 정확한 결과를 만나볼 수 있어요.</I.SubInfo>
           </I.SelectInfo>
 
-          <I.InputBox>
-            <I.StyleInput
-              placeholder={'💭 예시 문구를 작성해보세요...'}
-              type={'text'}
-              value={example}
-              onChange={(e) => {
-                setExample(e.target.value);
-              }}
-            />
-            <img src={submit} style={{ width: '40px' }} />
-          </I.InputBox>
-
           <I.StyleContainer>
+            {style === 'custom' ? (
+              <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
+                <I.MainInfo>
+                  <img src={check} style={{ marginRight: '3px' }} />
+                  <I.Span style={{ color: palette.grayscale.white }}>직접 입력</I.Span>
+                </I.MainInfo>
+                <I.StyleInput
+                  style={{ color: palette.grayscale.white, backgroundColor: palette.main.brown }}
+                  placeholder={'스타일을 입력해보세요...'}
+                  type={'text'}
+                  value={example}
+                  onChange={(e) => {
+                    setExample(e.target.value);
+                  }}
+                />
+              </I.StyleBox>
+            ) : (
+              <I.StyleBox
+                onClick={() => {
+                  setStyle('custom');
+                }}>
+                <I.MainInfo>
+                  <I.Span style={{ color: palette.grayscale.gray }}>직접 입력</I.Span>
+                </I.MainInfo>
+                <I.StyleInput
+                  style={{ color: palette.grayscale.black }}
+                  placeholder={'스타일을 입력해보세요...'}
+                  type={'text'}
+                  value={example}
+                  onChange={(e) => {
+                    setExample(e.target.value);
+                  }}
+                />
+              </I.StyleBox>
+            )}
+
             {style === '동화' ? (
               <I.StyleBox style={{ backgroundColor: palette.main.brown }}>
                 <I.MainInfo>
@@ -620,7 +645,9 @@ const Interview = () => {
                   if (interviewData.questionId === 4) {
                     setState('selectStyle');
                     InterviewfinalCheck();
-                  } else setState('recordOn');
+                  } else {
+                    setState('recordOn');
+                  }
                 }
               }}
             />
