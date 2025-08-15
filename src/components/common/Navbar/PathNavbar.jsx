@@ -5,7 +5,7 @@ import Back from '@assets/back-black.svg';
 import Next from '@assets/next-black.svg';
 import BackOff from '@assets/back-gray.svg';
 import NextOff from '@assets/next-gray.svg';
-import logo from '@assets/logo.svg';
+import logo from '@assets/logo-img.png';
 
 /**
  * 버튼 컴포넌트

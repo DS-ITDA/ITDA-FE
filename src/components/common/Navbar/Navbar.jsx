@@ -2,7 +2,7 @@ import * as N from '@components/common/Navbar/NavbarStyle';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import Profile from '@assets/profile.svg';
-import logo from '@assets/logo.svg';
+import logo from '@assets/logo-img.png';
 
 /* 
     페이지마다 헤더 다르게 띄우기
