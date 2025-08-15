@@ -507,9 +507,9 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                 </div>
               </P.InfoWrapper>
 
-              {/* <P.Info onClick={() => setLevel(2)}>
-                <span>{detailData.length}</span>개의 스토리북에 등장 {'>'}
-              </P.Info> */}
+              <P.Info>
+                <span>{detailData.length}</span>개의 스토리북에 등장
+              </P.Info>
             </P.InfoDiv>
           </P.PersonWrarpper>
 

@@ -272,7 +272,7 @@ export const NameInput = styled.input`
   outline: none;
   border: none;
 
-  width: ${({ $width }) => $width && `${$width}ch`};
+  width: 100%;
 
   color: #616161;
   font-size: 16px;
