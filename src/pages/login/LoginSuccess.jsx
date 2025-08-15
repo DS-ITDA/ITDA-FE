@@ -22,7 +22,7 @@ function LoginSuccess() {
     }
   }, [navigate]);
 
-  return <div>로그인 중... 잠시만 기다려 주세요.</div>;
+  return <></>;
 }
 
 export default LoginSuccess;

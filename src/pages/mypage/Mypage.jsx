@@ -40,8 +40,6 @@ const Mypage = () => {
       try {
         const response = await axiosInstance.get('/api/mypage');
         setName(response.data || '');
-        console.log(response);
-        console.log(response.data);
       } catch (error) {
         console.error('닉네임 에러: ', error);
       }
