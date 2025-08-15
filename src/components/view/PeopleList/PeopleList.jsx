@@ -507,9 +507,9 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                 </div>
               </P.InfoWrapper>
 
-              <P.Info onClick={() => setLevel(2)}>
+              {/* <P.Info onClick={() => setLevel(2)}>
                 <span>{detailData.length}</span>개의 스토리북에 등장 {'>'}
-              </P.Info>
+              </P.Info> */}
             </P.InfoDiv>
           </P.PersonWrarpper>
 
@@ -533,7 +533,7 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
         </>
       )}
 
-      {level === 2 && (
+      {/* {level === 2 && (
         <>
           <img src={Line} alt="line" style={{ marginTop: '30px', marginBottom: '30px' }} />
           <P.GridDiv>
@@ -552,7 +552,7 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
             ))}
           </P.GridDiv>
         </>
-      )}
+      )} */}
     </>
   );
 };
