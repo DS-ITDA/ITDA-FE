@@ -59,7 +59,7 @@ const Interview = () => {
   const { originalPhotoId, character1, character2, place, relationship, era, facialEmotion } = location.state || {};
 
   const goBack = () => {
-    if (State === 'start') navigate(-1);
+    if (State === 'start') navigate('/');
     else if (State === 'selectStyle') setState('next');
     else setState('start');
   };

@@ -28,7 +28,7 @@ export const Text = styled.div`
   display: flex;
   flex-direction: row;
 
-  font-size: 1.1rem;
+  font-size: 14px;
   font-weight: 400;
   line-height: 140%;
   letter-spacing: -0.28px;
@@ -246,6 +246,8 @@ export const SelectPage = styled.div`
   display: flex;
   flex-direction: column;
   margin: 30px 10px;
+
+  overflow: hidden;
 `;
 
 export const SelectInfo = styled.div`
