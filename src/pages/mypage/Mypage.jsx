@@ -1,10 +1,10 @@
 import * as M from '@mypage/MypageStyle';
 import Modal from '@components/common/Modal/Modal';
 import book from '@assets/mypage/book-24.svg';
-import notifications from '@assets/mypage/notifications-24.svg';
+// import notifications from '@assets/mypage/notifications-24.svg';
 import goStory from '@assets/mypage/arrow_outward.svg';
-import checkWhite from '@assets/mypage/check_white.svg';
-import checkBrown from '@assets/mypage/check_brown.svg';
+// import checkWhite from '@assets/mypage/check_white.svg';
+// import checkBrown from '@assets/mypage/check_brown.svg';
 import divider from '@assets/mypage/divider.svg';
 import palette from '@styles/theme';
 import logo from '@assets/logo.svg';
@@ -14,7 +14,7 @@ import { axiosInstance } from '@apis/axios';
 
 const Mypage = () => {
   const navigate = useNavigate();
-  const [checking, setChecking] = useState(true);
+  // const [checking, setChecking] = useState(true);
   const [modal, setModal] = useState('');
   const [name, setName] = useState('');
 
@@ -87,10 +87,10 @@ const Mypage = () => {
           <M.Img src={book} />
           <M.Text>스토리북 열람</M.Text>
         </M.ButtonLeft>
-        <M.Img src={goStory} />
+        <M.Img src={goStory} style={{ position: 'relative', left: '5px' }} />
       </M.Button>
 
-      <M.Button style={{ backgroundColor: palette.grayscale.white }}>
+      {/* <M.Button style={{ backgroundColor: palette.grayscale.white }}>
         <M.ButtonLeft>
           <M.Img src={notifications} />
           <M.Text>알림 수신 동의</M.Text>
@@ -101,7 +101,7 @@ const Mypage = () => {
             setChecking((prev) => !prev);
           }}
         />
-      </M.Button>
+      </M.Button> */}
 
       <M.Divider>
         <img src={divider} />
