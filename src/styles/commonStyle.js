@@ -3,7 +3,7 @@ import palette from '@styles/theme';
 
 export const Page = styled.div`
   width: 100vw;
-  height: 100%;
+  height: 100dvh;
   background-color: ${palette.grayscale.ivory};
 
   display: flex;
@@ -17,12 +17,12 @@ export const Page = styled.div`
 
 export const Container = styled.div`
   width: 393px;
-  height: 100%;
+  height: 100dvh;
   background-color: ${palette.main.ivory};
   box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.1);
 
   @media (max-width: 767px) {
     width: 100vw;
-    height: 100%;
+    height: 100dvh;
   }
 `;
