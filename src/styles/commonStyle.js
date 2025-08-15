@@ -19,6 +19,7 @@ export const Container = styled.div`
   width: 393px;
   height: 100dvh;
   background-color: ${palette.main.ivory};
+  box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.1);
 
   @media (max-width: 767px) {
     width: 100vw;

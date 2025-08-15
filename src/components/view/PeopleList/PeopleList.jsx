@@ -260,7 +260,7 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                 selection={'down'}
                 content={
                   <div>
-                    사진을 꾹 눌러 <span>편집모드</span>로 전환해보세요
+                    꾹 눌러 <span>편집모드</span>로 전환해보세요
                   </div>
                 }
               />

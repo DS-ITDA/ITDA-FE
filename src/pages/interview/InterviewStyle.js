@@ -5,6 +5,9 @@ export const InterviewPage = styled.div`
   width: calc(100% - 20px);
   height: calc(100% - 80px);
   margin: 60px 10px;
+
+  display: flex;
+  justify-content: center;
 `;
 
 export const NavBar = styled.div`
@@ -20,6 +23,7 @@ export const NavBar = styled.div`
 
 //첫 화면
 export const FirstInfo = styled.div`
+  width: 100%;
   margin-left: 20px;
   margin-top: 30px;
 `;
@@ -28,7 +32,7 @@ export const Text = styled.div`
   display: flex;
   flex-direction: row;
 
-  font-size: 1.1rem;
+  font-size: 14px;
   font-weight: 400;
   line-height: 140%;
   letter-spacing: -0.28px;
@@ -246,6 +250,8 @@ export const SelectPage = styled.div`
   display: flex;
   flex-direction: column;
   margin: 30px 10px;
+
+  overflow-y: hidden;
 `;
 
 export const SelectInfo = styled.div`

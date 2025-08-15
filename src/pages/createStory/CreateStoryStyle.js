@@ -8,6 +8,15 @@ export const CreatePage = styled.div`
   overflow: scroll;
 `;
 
+export const EditPage = styled.div`
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
 export const NavBar = styled.div`
   position: fixed;
   top: 0;

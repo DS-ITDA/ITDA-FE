@@ -128,7 +128,7 @@ const CreateStory = () => {
 
         {/* 수정 화면 */}
         {state === 'start' && (
-          <>
+          <C.EditPage>
             <C.InfoText>
               <div>아래 스토리북 내용을 확인하고</div>
               <div>내용을 수정해보세요.</div>
@@ -234,7 +234,7 @@ const CreateStory = () => {
                 <img src={whiteSubmit} style={{ width: '40px' }} />
               )}
             </C.InputBox>
-          </>
+          </C.EditPage>
         )}
         {/* 나레이션 선택 페이지 */}
         {state === 'setNar' && (
