@@ -298,6 +298,7 @@ const Ai = () => {
             {resultPeople.length > 1 && (
               <Button
                 selection={1}
+                $disabled={isSelected.length !== 2}
                 content={
                   <>
                     {isSelected.length !== 2 && (
@@ -546,6 +547,7 @@ const Ai = () => {
           <A.ButtonDiv>
             <Button
               selection={1}
+              $disabled={isMain === null}
               content={
                 <>
                   {isMain !== null && characterInput !== '' && (
