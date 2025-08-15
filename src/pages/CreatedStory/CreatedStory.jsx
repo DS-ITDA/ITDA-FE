@@ -37,8 +37,14 @@ const CreatedStory = () => {
 
   const navigate = useNavigate();
 
-  const handleInputSubmit = (e) => {
-    if (e.key === 'Enter' && titleInput.trim()) {
+  const handleInputChange = (e) => {
+    if (e.key === 'Enter') {
+      handleInputSubmit;
+    }
+  };
+
+  const handleInputSubmit = () => {
+    if (titleInput.trim()) {
       setTitle(titleInput.trim());
     }
   };
@@ -124,7 +130,8 @@ const CreatedStory = () => {
                     placeholder="[직접 입력]"
                     value={titleInput}
                     onChange={(e) => setTitleInput(e.target.value)}
-                    onKeyDown={handleInputSubmit}
+                    onKeyDown={handleInputChange}
+                    onClick={handleInputSubmit}
                   />
                 )}
                 <A.ToggleImg onClick={handleSetTitle}>
@@ -151,7 +158,6 @@ const CreatedStory = () => {
           content={<p style={{ cursor: 'pointer' }}>스토리북 보러가기</p>}
           onClick={async () => {
             const response = await postStoryBook(state.storyId, state.originalPhotoId, title, coverColor.slice(1));
-            console.log(response);
 
             navigate(`/readStory/${response?.data.storybookId}`);
           }}

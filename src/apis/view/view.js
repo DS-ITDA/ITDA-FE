@@ -13,8 +13,6 @@ export const getPeople = async () => {
 
 // 특정 인물 이름 수정
 export const putName = async (faceId, name) => {
-  console.log(faceId, name);
-
   try {
     const response = await axiosInstance.put(`/api/mypage/people/${faceId}/name`, {
       name,
@@ -57,7 +55,7 @@ export const getDetailPeople = async (characterId) => {
 
     return response.data;
   } catch (error) {
-    console.log('getDetailPeople 에러 발생', error);
+    console.error('getDetailPeople 에러 발생', error);
   }
 };
 
@@ -68,6 +66,6 @@ export const deleteConnection = async (characterId, storybookId) => {
 
     return response.data;
   } catch (error) {
-    console.log('deleteConnection 에러 발생', error);
+    console.error('deleteConnection 에러 발생', error);
   }
 };

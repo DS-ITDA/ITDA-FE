@@ -13,8 +13,6 @@ export const getStoryBook = async (storybookId) => {
 
 // 스토리북 저장
 export const postStoryBook = async (storyId, photoId, title, spineColor) => {
-  console.log(storyId, photoId, title, spineColor);
-
   try {
     const response = await axiosInstance.post('/api/storybook', {
       storyId,

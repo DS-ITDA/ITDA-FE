@@ -7,7 +7,9 @@ export const ButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
   border-radius: 25px;
-  background-color: ${palette.grayscale.white};
+  background-color: ${({ $disabled }) => ($disabled ? palette.grayscale.grayLight : palette.grayscale.white)};
+  transition: background-color 0.2s ease-in-out;
+
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
 `;
 

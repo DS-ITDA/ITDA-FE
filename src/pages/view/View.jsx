@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion as M } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 
 import * as V from '@view/ViewStyle';
 import * as R from '@readStory/ReadStoryStyle';
@@ -33,6 +34,8 @@ const View = () => {
 
   const [flat, setFlat] = useState(false);
   const wrapperRef = useRef();
+
+  const navigate = useNavigate();
 
   const handleBookcoverClick = (id) => {
     if (selectedIdx === id) {
@@ -79,7 +82,14 @@ const View = () => {
   return (
     <V.View>
       <R.PathDiv>
-        <PathNavbar left={true} right={false} goBack={() => {}} goNext={() => {}} />
+        <PathNavbar
+          left={true}
+          right={false}
+          goBack={() => {
+            navigate(-1);
+          }}
+          goNext={() => {}}
+        />
       </R.PathDiv>
 
       <V.BooksWrapper>

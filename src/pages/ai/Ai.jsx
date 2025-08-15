@@ -29,6 +29,7 @@ const Ai = () => {
 
   const [relationship, setRelationShip] = useState('');
   const [relationInput, setRelationInput] = useState('');
+  const [placeholder, setPlaceholder] = useState('[직접 입력]');
 
   const [place, setPlace] = useState([]);
   const [prevPlace, setPrevPlace] = useState('');
@@ -81,6 +82,10 @@ const Ai = () => {
     if (e.key === 'Enter' && relationInput.trim()) {
       setRelationInput(relationInput.trim());
       setRelationShip(relationInput.trim());
+
+      if (showSelect) {
+        setShowSelect((prev) => !prev);
+      }
     }
   };
 
@@ -105,11 +110,17 @@ const Ai = () => {
     setFeelings((prev) => prev.filter((_, index) => index !== idx));
   };
 
-  const handleFeelingsSubmin = (e) => {
-    if (e.key === 'Enter' && feelingsInput.trim()) {
+  const handleFeelingsSubmit = () => {
+    if (feelingsInput.trim()) {
       setFeelings((prev) => [feelingsInput.trim(), ...prev]);
       setFeelingsInput('');
       setFeelingsType('');
+    }
+  };
+
+  const handleFeelingsKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleFeelingsSubmit();
     }
   };
 
@@ -155,7 +166,7 @@ const Ai = () => {
         feelings.length === 1 ? feelings[0] : feelings.join(','),
       );
     } catch (error) {
-      console.log('저장 실패', error);
+      console.error('저장 실패', error);
     }
   };
 
@@ -239,7 +250,7 @@ const Ai = () => {
               {resultPeople.length > 0 && (
                 <>
                   <A.Grid>
-                    {resultPeople.map((person, idx) => (
+                    {resultPeople?.map((person, idx) => (
                       <A.ImgDiv
                         key={idx}
                         onClick={() => {
@@ -287,6 +298,7 @@ const Ai = () => {
             {resultPeople.length > 1 && (
               <Button
                 selection={1}
+                $disabled={isSelected.length !== 2}
                 content={
                   <>
                     {isSelected.length !== 2 && (
@@ -314,7 +326,7 @@ const Ai = () => {
           <A.TextDiv>
             <p>사진 속 이야기를 잇다가 이렇게 읽어봤어요.</p>
             <div>
-              <span>사실과 다른 부분이 있다면,</span>
+              <span>사실과 다른 부분이 있다면, </span>
               <span>알맞게 수정해주세요.</span>
             </div>
           </A.TextDiv>
@@ -325,6 +337,7 @@ const Ai = () => {
                 <img src={PeopleIcon} alt="인물 인식 결과" />
                 <p>주인공</p>
               </A.Result>
+              {isMain === null && <A.SubText>2명의 등장인물 중 주인공을 선택해주세요. </A.SubText>}
 
               {isSelected.length === 1 && loading && (
                 <div style={{ width: '100%', height: '150px' }}>
@@ -345,7 +358,7 @@ const Ai = () => {
 
               {!loading && (
                 <A.Grid>
-                  {selectedPeople.map((person, idx) => (
+                  {selectedPeople?.map((person, idx) => (
                     <div key={idx}>
                       <A.ImgDiv
                         onClick={() => {
@@ -392,11 +405,18 @@ const Ai = () => {
                 <A.SelectWrapper ref={selectRef}>
                   {loading && <S.Skeleton $width={184} $height={40} />}
                   {!loading && (
-                    <A.SelectBtn>
+                    <A.SelectBtn
+                      onClick={() => {
+                        if (relationship !== 'custom') {
+                          setRelationInput(relationship);
+                          setPlaceholder(relationship);
+                        }
+                        setRelationShip('custom');
+                      }}>
                       {relationship !== 'custom' && relationship}
                       {relationship === 'custom' && (
                         <A.Input
-                          placeholder="[직접 입력]"
+                          placeholder={placeholder}
                           value={relationInput}
                           onChange={(e) => setRelationInput(e.target.value)}
                           onKeyDown={handleInputSubmit}
@@ -416,7 +436,7 @@ const Ai = () => {
 
                       {showSelect && (
                         <A.List>
-                          {relationshipList.map((relationship) => (
+                          {relationshipList?.map((relationship) => (
                             <li key={relationship}>
                               <A.SelectButton
                                 onClick={() => {
@@ -470,14 +490,17 @@ const Ai = () => {
               </A.SelectDiv>
             </A.WhiteDiv>
 
-            <A.WhiteDiv $padding={20}>
+            <A.WhiteDiv $padding={20} onClick={handleFeelingsSubmit}>
               <A.SelectDiv>
                 <p>감정</p>
                 <A.FeelingsDiv>
                   {loading && <S.Skeleton $width={184} $height={40} />}
 
                   {!loading && feelings.length < 3 && feelingsType !== 'custom' && (
-                    <A.PlusBtn onClick={() => setFeelingsType('custom')}>
+                    <A.PlusBtn
+                      onClick={() => {
+                        setFeelingsType('custom');
+                      }}>
                       <img src={PlusIcon} alt="추가" />
                     </A.PlusBtn>
                   )}
@@ -491,7 +514,7 @@ const Ai = () => {
                             setFeelingsInput(e.target.value);
                           }
                         }}
-                        onKeyDown={handleFeelingsSubmin}
+                        onKeyDown={handleFeelingsKeyDown}
                       />
 
                       {feelingsInput.length > 0 && (
@@ -506,7 +529,7 @@ const Ai = () => {
                     </A.FeelingsBtn>
                   )}
 
-                  {feelings.map((feeling, idx) => {
+                  {feelings?.map((feeling, idx) => {
                     return (
                       <A.FeelingsBtn key={(feeling, idx)} onClick={() => handleDeleteFeelings(idx)}>
                         {feeling}
@@ -524,6 +547,7 @@ const Ai = () => {
           <A.ButtonDiv>
             <Button
               selection={1}
+              $disabled={isMain === null}
               content={
                 <>
                   {isMain !== null && characterInput !== '' && (

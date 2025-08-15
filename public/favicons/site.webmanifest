@@ -1,6 +1,6 @@
 {
   "name": "잇다: 사진을 이야기로 잇다",
-  "short_name": "잇다",
+  "short_name": "잇다: 사진을 이야기로 잇다",
   "icons": [
     {
       "src": "/favicons/web-app-manifest-192x192.png",
@@ -11,6 +11,18 @@
     {
       "src": "/favicons/web-app-manifest-512x512.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicons/favicon-96x96.png",
+      "sizes": "96x96",
       "type": "image/png",
       "purpose": "any maskable"
     }

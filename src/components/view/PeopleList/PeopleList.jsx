@@ -18,7 +18,7 @@ import SpeechBubble from '@components/common/SpeechBubble/SpeechBubble';
 import Check from '@assets/view/check.svg';
 import Modal from '@components/common/Modal/Modal';
 import {
-  deleteConnection,
+  // deleteConnection,
   deletePeople,
   getDetailPeople,
   getPeople,
@@ -139,16 +139,16 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
     togglePerson(faceId, img);
   };
 
-  const handleDeleteConnection = async (characterId, storybookId) => {
-    try {
-      await deleteConnection(characterId, storybookId);
+  // const handleDeleteConnection = async (characterId, storybookId) => {
+  //   try {
+  //     await deleteConnection(characterId, storybookId);
 
-      const updatedDetailData = await getDetailPeople(characterId);
-      setDetailData(updatedDetailData);
-    } catch (error) {
-      console.error('인물, 스토리북 연결 해제 실패', error);
-    }
-  };
+  //     const updatedDetailData = await getDetailPeople(characterId);
+  //     setDetailData(updatedDetailData);
+  //   } catch (error) {
+  //     console.error('인물, 스토리북 연결 해제 실패', error);
+  //   }
+  // };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -507,8 +507,8 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
                 </div>
               </P.InfoWrapper>
 
-              <P.Info onClick={() => setLevel(2)}>
-                <span>{detailData.length}</span>개의 스토리북에 등장 {'>'}
+              <P.Info>
+                <span>{detailData.length}</span>개의 스토리북에 등장
               </P.Info>
             </P.InfoDiv>
           </P.PersonWrarpper>
@@ -533,7 +533,7 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
         </>
       )}
 
-      {level === 2 && (
+      {/* {level === 2 && (
         <>
           <img src={Line} alt="line" style={{ marginTop: '30px', marginBottom: '30px' }} />
           <P.GridDiv>
@@ -552,7 +552,7 @@ const PeopleList = ({ peopleList, setPeopleList, flat, level, setLevel }) => {
             ))}
           </P.GridDiv>
         </>
-      )}
+      )} */}
     </>
   );
 };
