@@ -7,7 +7,7 @@ import goStory from '@assets/mypage/arrow_outward.svg';
 // import checkBrown from '@assets/mypage/check_brown.svg';
 import divider from '@assets/mypage/divider.svg';
 import palette from '@styles/theme';
-import logo from '@assets/logo.svg';
+import logo from '@assets/logo-img.png';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@apis/axios';
@@ -126,7 +126,7 @@ const Mypage = () => {
         <>
           <M.Overlay onClick={() => setModal('')} />
           <Modal
-            content={<img src={logo} style={{ width: '40px' }} />}
+            content={<img src={logo} style={{ width: '60px' }} />}
             info={MODAL_CONFIG[modal].info}
             btnText={MODAL_CONFIG[modal].btnText}
             onClose={() => setModal('')}
