@@ -28,3 +28,16 @@ export const CreatedCover = styled.div`
     height: 100%;
   }
 `;
+
+export const Text = styled.div`
+  color: ${palette.grayscale.black};
+
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.32px;
+
+  margin-left: 20px;
+  margin-top: 40px;
+  margin-bottom: 45px;
+`;

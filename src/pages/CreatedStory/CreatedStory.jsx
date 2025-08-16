@@ -65,17 +65,20 @@ const CreatedStory = () => {
 
   return (
     <E.EditStory>
-      <PathNavbar
-        left={true}
-        right={false}
-        goBack={() => {
-          navigate('/');
-        }}
-        goNext={() => {}}
-      />
-      <E.Text>
+      <R.PathDiv>
+        <PathNavbar
+          left={true}
+          right={false}
+          goBack={() => {
+            navigate('/');
+          }}
+          goNext={() => {}}
+        />
+      </R.PathDiv>
+
+      <C.Text>
         스토리북이 <C.Span>완성</C.Span>되었어요.
-      </E.Text>
+      </C.Text>
 
       <R.CreatedWrapper>
         <R.Created>
