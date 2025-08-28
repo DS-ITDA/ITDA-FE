@@ -327,6 +327,8 @@ export const CreatedEdit = styled(Edit)`
 export const ResultWrapper = styled.div`
   width: 100%;
   padding: 0 30px;
+
+  margin-top: 43px;
 `;
 
 export const Result = styled.div`

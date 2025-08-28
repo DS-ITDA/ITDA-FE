@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import * as R from '@readStory/ReadStoryStyle';
 import * as S from '@components/SkeletonUi/SkeletonUiStyle';
@@ -13,10 +13,7 @@ import Button from '@components/common/Button/Button';
 import SingAlong from '@assets/storybook/sing_along-white-16.svg?react';
 import TextOnly from '@assets/storybook/text_only-white-16.svg?react';
 import Bgm from '@assets/storybook/bgm-white-16.svg?react';
-import EmptyStar from '@assets/storybook/star-32.svg';
-import Star from '@assets/storybook/star-filled-32.svg';
 import Share from '@assets/storybook/share-20.svg';
-import Opinion from '@assets/storybook/opinion-20.svg';
 
 import { getStoryBook } from '../../apis/storybook/storybook';
 
@@ -28,7 +25,6 @@ const ReadStory = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [showBubble, setShowBubble] = useState(false);
   const [level, setLevel] = useState(0);
-  // const [stars, setStars] = useState([EmptyStar, EmptyStar, EmptyStar, EmptyStar, EmptyStar]);
 
   const [bookData, setBookData] = useState();
   const [content, setContent] = useState();
@@ -36,7 +32,7 @@ const ReadStory = () => {
 
   const [toggleClicked, setToggleClicked] = useState(false);
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const { id } = useParams();
 
@@ -61,10 +57,6 @@ const ReadStory = () => {
     else setLevel(0);
   };
 
-  // const handleRating = (idx) => {
-  //   setStars((prev) => prev.map((_, i) => (i <= idx ? Star : EmptyStar)));
-  // };
-
   // const handleShare = () => {
   //   if (navigator.share) {
   //     navigator.share({
@@ -77,14 +69,14 @@ const ReadStory = () => {
   //   }
   // };
 
-  // const handleReRead = () => {
-  //   setLevel(0);
-  //   setCurrentPage(0);
-  // };
+  const handleReRead = () => {
+    setLevel(0);
+    setCurrentPage(0);
+  };
 
-  // const handleGoHome = () => {
-  //   navigate('/');
-  // };
+  const handleGoHome = () => {
+    navigate('/');
+  };
 
   // const handleEditPage = () => {
   //   navigate(`/editStory/${id}`, { state: { bookData, level } });
@@ -264,68 +256,50 @@ const ReadStory = () => {
         </>
       )}
 
-      {/* {level === 1 && (
-          <R.StoryBook>
-            <div>
-              <R.CreatedWrapper>
-                <R.Created>
-                  <R.CreatedBookWrapper>
-                    <R.CreatedBook height={210} color={`#${bookData?.spineColor}`}>
-                      {bookData?.title}
-                    </R.CreatedBook>
-                  </R.CreatedBookWrapper>
+      {level === 1 && (
+        <R.StoryBook>
+          <div>
+            <R.CreatedWrapper>
+              <R.Created>
+                <R.CreatedBookWrapper>
+                  <R.CreatedBook height={210} color={`#${bookData?.spineColor}`}>
+                    {bookData?.title}
+                  </R.CreatedBook>
+                </R.CreatedBookWrapper>
 
-                  <R.CreatedCover>
-                    <img src={bookData?.illustration.imageUrl} alt="책 표지" />
-                  </R.CreatedCover>
-                </R.Created>
-                <R.Board>
-                  <div></div>
-                </R.Board>
-                <R.CreatedEdit onClick={handleEditPage}>수정 {'>'}</R.CreatedEdit>
-              </R.CreatedWrapper>
+                <R.CreatedCover>
+                  <img src={bookData?.photo.photoUrl} alt="책 표지" />
+                </R.CreatedCover>
+              </R.Created>
+              <R.Board>
+                <div></div>
+              </R.Board>
+            </R.CreatedWrapper>
 
-              <R.ResultWrapper>
-                <R.Result>
-                  <p>완성된 스토리북 어떠셨나요?</p>
+            <R.ResultWrapper>
+              <R.Result>
+                <p>완성된 스토리북 어떠셨나요?</p>
 
-                  <R.StarWrapper>
-                    {stars.map((star, idx) => (
-                      <img
-                        src={star}
-                        alt="별점"
-                        key={idx}
-                        onClick={() => {
-                          handleRating(idx);
-                        }}
-                      />
-                    ))}
-                  </R.StarWrapper>
+                <R.MenuWrapper>
+                  <R.Menu onClick={() => {}}>
+                    <img src={Share} alt="친구에게 공유하기" />
+                    <p>친구에게 공유하기</p>
+                  </R.Menu>
+                </R.MenuWrapper>
+              </R.Result>
+            </R.ResultWrapper>
+          </div>
 
-                  <R.MenuWrapper>
-                    <R.Menu onClick={handleShare}>
-                      <img src={Share} alt="친구에게 공유하기" />
-                      <p>친구에게 공유하기</p>
-                    </R.Menu>
-                    <R.Menu>
-                      <img src={Opinion} alt="다른 의견 남기기" />
-                      <p>다른 의견 남기기</p>
-                    </R.Menu>
-                  </R.MenuWrapper>
-                </R.Result>
-              </R.ResultWrapper>
-            </div>
-
-            <div>
-              <Button
-                selection={2}
-                content={[<p style={{ cursor: 'pointer' }}>다시 읽기</p>, <p style={{ cursor: 'pointer' }}>홈으로</p>]}
-                onClick={[handleReRead, handleGoHome]}
-                type="button"
-              />
-            </div>
-          </R.StoryBook>
-        )} */}
+          <div>
+            <Button
+              selection={2}
+              content={[<p style={{ cursor: 'pointer' }}>다시 읽기</p>, <p style={{ cursor: 'pointer' }}>홈으로</p>]}
+              onClick={[handleReRead, handleGoHome]}
+              type="button"
+            />
+          </div>
+        </R.StoryBook>
+      )}
     </>
   );
 };
