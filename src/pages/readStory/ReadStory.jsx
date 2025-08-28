@@ -116,7 +116,7 @@ const ReadStory = () => {
         setBookData(response.data);
 
         const sentences = response.data.story.content
-          .split(/[\n]+|(?<=\.)|(?<=\?)/)
+          .split(/(?<=[.!?])\s+|[\n]+/)
           .map((s) => s.trim())
           .filter((s) => s.length > 0);
 
