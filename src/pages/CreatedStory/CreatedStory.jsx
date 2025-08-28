@@ -39,7 +39,7 @@ const CreatedStory = () => {
 
   const handleInputChange = (e) => {
     if (e.key === 'Enter') {
-      handleInputSubmit;
+      handleInputSubmit();
     }
   };
 

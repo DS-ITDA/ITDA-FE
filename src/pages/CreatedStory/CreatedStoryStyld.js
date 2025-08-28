@@ -26,6 +26,7 @@ export const CreatedCover = styled.div`
   img {
     width: auto;
     height: 100%;
+    object-fit: cover;
   }
 `;
 
