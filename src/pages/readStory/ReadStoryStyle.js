@@ -42,7 +42,6 @@ export const Book = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: left;
   }
 `;
 
@@ -295,7 +294,6 @@ export const CreatedCover = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: left;
   }
 `;
 
@@ -329,6 +327,8 @@ export const CreatedEdit = styled(Edit)`
 export const ResultWrapper = styled.div`
   width: 100%;
   padding: 0 30px;
+
+  margin-top: 43px;
 `;
 
 export const Result = styled.div`
@@ -383,6 +383,8 @@ export const Menu = styled.div`
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
 
   cursor: pointer;
+
+  width: 100%;
 
   p {
     margin: 0;

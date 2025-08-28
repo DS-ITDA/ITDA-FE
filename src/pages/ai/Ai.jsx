@@ -29,7 +29,6 @@ const Ai = () => {
 
   const [relationship, setRelationShip] = useState('');
   const [relationInput, setRelationInput] = useState('');
-  const [placeholder, setPlaceholder] = useState('[직접 입력]');
 
   const [place, setPlace] = useState([]);
   const [prevPlace, setPrevPlace] = useState('');
@@ -41,7 +40,7 @@ const Ai = () => {
 
   const [originalPhotoId, setOriginalPhotoId] = useState(null);
 
-  const [relationshipList, setRelationShipList] = useState('');
+  const [relationshipList, setRelationShipList] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -134,11 +133,14 @@ const Ai = () => {
 
       setTimes(analyzeRes.times);
 
-      setRelationShipList(
-        analyzeRes.relationship.includes(',')
+      setRelationShipList([
+        ...(analyzeRes.relationship.includes(',')
           ? analyzeRes.relationship.split(',').map((r) => r.trim())
-          : [analyzeRes.relationship.trim()],
-      );
+          : [analyzeRes.relationship.trim()]),
+        '가족',
+        '친구',
+        '연인',
+      ]);
 
       setFeelings(
         analyzeRes.emotion.includes(',')
@@ -405,53 +407,56 @@ const Ai = () => {
                 <A.SelectWrapper ref={selectRef}>
                   {loading && <S.Skeleton $width={184} $height={40} />}
                   {!loading && (
-                    <A.SelectBtn
-                      onClick={() => {
-                        if (relationship !== 'custom') {
-                          setRelationInput(relationship);
-                          setPlaceholder(relationship);
-                        }
-                        setRelationShip('custom');
-                      }}>
+                    <A.SelectBtn>
                       {relationship !== 'custom' && relationship}
                       {relationship === 'custom' && (
                         <A.Input
-                          placeholder={placeholder}
+                          placeholder=""
                           value={relationInput}
                           onChange={(e) => setRelationInput(e.target.value)}
                           onKeyDown={handleInputSubmit}
                         />
                       )}
                       {!showSelect && (
-                        <A.ToggleImg onClick={() => setShowSelect((prev) => !prev)}>
+                        <A.ToggleImg
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowSelect((prev) => !prev);
+                          }}>
                           <img src={toggleIcon} alt="toggle" />
                         </A.ToggleImg>
                       )}
 
                       {showSelect && (
-                        <A.ToggleImg onClick={() => setShowSelect((prev) => !prev)}>
+                        <A.ToggleImg
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowSelect((prev) => !prev);
+                          }}>
                           <img src={toggleUpIcon} alt="toggle" />
                         </A.ToggleImg>
                       )}
 
                       {showSelect && (
                         <A.List>
-                          {relationshipList?.map((relationship) => (
-                            <li key={relationship}>
-                              <A.SelectButton
-                                onClick={() => {
-                                  setRelationShip(relationship);
-                                  setShowSelect(false);
-                                }}>
-                                {relationship}
-                              </A.SelectButton>
-                            </li>
-                          ))}
+                          {relationshipList?.map((relationship) => {
+                            return (
+                              <li key={relationship}>
+                                <A.SelectButton
+                                  onClick={() => {
+                                    setRelationShip(relationship);
+                                    setShowSelect((prev) => !prev);
+                                  }}>
+                                  {relationship}
+                                </A.SelectButton>
+                              </li>
+                            );
+                          })}
                           <li>
                             <A.CustomButton
                               onClick={() => {
                                 setRelationShip('custom');
-                                setShowSelect(false);
+                                setShowSelect((prev) => !prev);
                               }}>
                               [직접 입력]
                             </A.CustomButton>
