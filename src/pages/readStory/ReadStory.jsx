@@ -57,15 +57,32 @@ const ReadStory = () => {
     else setLevel(0);
   };
 
-  // const handleShare = () => {
-  //   if (navigator.share) {
-  //     navigator.share({
-  //       title: '잇다: 사진을 이야기로 잇다',
-  //       text: '잇다를 통해 생성된 이야기입니다.',
-  //       url: 'https://example.com',
-  //     });
-  //   } else {
-  //     alert('공유가 지원되지 않는 디바이스입니다.');
+  // const handleShare = async () => {
+  //   try {
+  //     const response = await postShare(id, 1234);
+  //     console.log(response);
+
+  //     if (navigator.share) {
+  //       navigator
+  //         .share({
+  //           title: '잇다: 그리움을 곁에 잇다',
+  //           text: '잇다를 통해 생성된 이야기입니다.',
+  //           url: response?.data?.shareUrl,
+  //         })
+  //         .then(() => {
+  //           console.log('공유 성공');
+  //         })
+  //         .catch((error) => {
+  //           console.log('공유 취소', error);
+  //         })
+  //         .finally(async () => {
+  //           await deleteShare(id);
+  //         });
+  //     } else {
+  //       alert('공유가 지원되지 않는 디바이스입니다.');
+  //     }
+  //   } catch (error) {
+  //     console.error('공유 링크 생성 실패', error);
   //   }
   // };
 
@@ -77,10 +94,6 @@ const ReadStory = () => {
   const handleGoHome = () => {
     navigate('/');
   };
-
-  // const handleEditPage = () => {
-  //   navigate(`/editStory/${id}`, { state: { bookData, level } });
-  // };
 
   useEffect(() => {
     if (currentPage === content?.length - 1) {
