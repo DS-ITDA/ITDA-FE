@@ -411,7 +411,7 @@ const Ai = () => {
                       {relationship !== 'custom' && relationship}
                       {relationship === 'custom' && (
                         <A.Input
-                          placeholder="직접 입력"
+                          placeholder=""
                           value={relationInput}
                           onChange={(e) => setRelationInput(e.target.value)}
                           onKeyDown={handleInputSubmit}
