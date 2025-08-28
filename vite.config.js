@@ -18,9 +18,9 @@ export default defineConfig({
         'favicons/favicon.svg',
       ],
       manifest: {
-        name: '잇다: 사진을 이야기로 잇다',
-        short_name: '잇다: 사진을 이야기로 잇다',
-        description: '잇다: 사진을 이야기로 잇다',
+        name: '잇다:그리움을곁에잇다',
+        short_name: '잇다:그리움을곁에잇다',
+        description: '잇다:그리움을곁에잇다',
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',
